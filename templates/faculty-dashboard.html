@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard - EduPortal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/faculty.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>EduPortal</span>
+                </div>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#dashboard" class="menu-item active" onclick="showSection('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a></li>
+                <li><a href="#classes" class="menu-item" onclick="showSection('classes')">
+                    <i class="fas fa-chalkboard"></i> My Classes
+                </a></li>
+                <li><a href="#attendance" class="menu-item" onclick="showSection('attendance')">
+                    <i class="fas fa-calendar-check"></i> Mark Attendance
+                </a></li>
+                <li><a href="#materials" class="menu-item" onclick="showSection('materials')">
+                    <i class="fas fa-upload"></i> Upload Materials
+                </a></li>
+                <li><a href="#marks" class="menu-item" onclick="showSection('marks')">
+                    <i class="fas fa-edit"></i> Manage Marks
+                </a></li>
+                <li><a href="#mentorship" class="menu-item" onclick="showSection('mentorship')">
+                    <i class="fas fa-users"></i> Mentorship
+                </a></li>
+                <li><a href="#schedule" class="menu-item" onclick="showSection('schedule')">
+                    <i class="fas fa-clock"></i> Today's Schedule
+                </a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <button onclick="logout()" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 id="pageTitle">Faculty Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count">2</span>
+                    </div>
+                    <div class="user-profile">
+                        <img src="https://via.placeholder.com/40" alt="Profile" class="profile-img">
+                        <span id="facultyName">Prof. John Smith</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="faculty-info-card">
+                    <h2>Faculty Information</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Faculty ID:</label>
+                            <span id="facultyId">FAC001</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Department:</label>
+                            <span id="department">Computer Science</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Designation:</label>
+                            <span id="designation">Assistant Professor</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Experience:</label>
+                            <span id="experience">5 Years</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <div class="card-icon classes-icon">
+                            <i class="fas fa-chalkboard"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Total Classes</h3>
+                            <p class="card-value">8</p>
+                            <p class="card-status">This Semester</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-icon students-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Total Students</h3>
+                            <p class="card-value">240</p>
+                            <p class="card-status">Across All Classes</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-icon mentees-icon">
+                            <i class="fas fa-user-friends"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Mentees</h3>
+                            <p class="card-value">15</p>
+                            <p class="card-status">Under Guidance</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="today-schedule">
+                    <h3>Today's Schedule</h3>
+                    <div class="schedule-list">
+                        <div class="schedule-item">
+                            <div class="time">9:00 - 10:00 AM</div>
+                            <div class="subject">Data Structures - CSE 3rd Year</div>
+                            <div class="room">Room 101</div>
+                        </div>
+                        <div class="schedule-item">
+                            <div class="time">11:00 - 12:00 PM</div>
+                            <div class="subject">Algorithms - CSE 3rd Year</div>
+                            <div class="room">Room 102</div>
+                        </div>
+                        <div class="schedule-item">
+                            <div class="time">2:00 - 3:00 PM</div>
+                            <div class="subject">Database Systems - CSE 4th Year</div>
+                            <div class="room">Room 201</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Classes Section -->
+            <section id="classes" class="content-section">
+                <div class="section-header">
+                    <h2>My Classes</h2>
+                    <button class="add-btn" onclick="addClass()">
+                        <i class="fas fa-plus"></i> Add Class
+                    </button>
+                </div>
+                
+                <div class="classes-grid">
+                    <div class="class-card">
+                        <h4>Data Structures</h4>
+                        <p><strong>Course:</strong> CSE 3rd Year</p>
+                        <p><strong>Students:</strong> 45</p>
+                        <p><strong>Schedule:</strong> Mon, Wed, Fri - 9:00 AM</p>
+                        <div class="class-actions">
+                            <button onclick="markAttendance('DS001')">Mark Attendance</button>
+                            <button onclick="viewStudents('DS001')">View Students</button>
+                        </div>
+                    </div>
+                    
+                    <div class="class-card">
+                        <h4>Algorithms</h4>
+                        <p><strong>Course:</strong> CSE 3rd Year</p>
+                        <p><strong>Students:</strong> 42</p>
+                        <p><strong>Schedule:</strong> Tue, Thu - 11:00 AM</p>
+                        <div class="class-actions">
+                            <button onclick="markAttendance('ALG001')">Mark Attendance</button>
+                            <button onclick="viewStudents('ALG001')">View Students</button>
+                        </div>
+                    </div>
+                    
+                    <div class="class-card">
+                        <h4>Database Systems</h4>
+                        <p><strong>Course:</strong> CSE 4th Year</p>
+                        <p><strong>Students:</strong> 38</p>
+                        <p><strong>Schedule:</strong> Mon, Wed - 2:00 PM</p>
+                        <div class="class-actions">
+                            <button onclick="markAttendance('DB001')">Mark Attendance</button>
+                            <button onclick="viewStudents('DB001')">View Students</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Attendance Section -->
+            <section id="attendance" class="content-section">
+                <div class="section-header">
+                    <h2>Mark Attendance</h2>
+                    <select id="classSelect" onchange="loadStudentList()">
+                        <option value="">Select Class</option>
+                        <option value="DS001">Data Structures - CSE 3rd Year</option>
+                        <option value="ALG001">Algorithms - CSE 3rd Year</option>
+                        <option value="DB001">Database Systems - CSE 4th Year</option>
+                    </select>
+                </div>
+                
+                <div class="attendance-form" id="attendanceForm" style="display: none;">
+                    <div class="form-header">
+                        <h3 id="selectedClass">Data Structures - CSE 3rd Year</h3>
+                        <div class="date-time">
+                            <span id="currentDate"></span> | <span id="currentTime"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="student-list">
+                        <div class="list-header">
+                            <span>Roll No.</span>
+                            <span>Student Name</span>
+                            <span>Attendance</span>
+                        </div>
+                        <div id="studentsList">
+                            <!-- Students will be loaded dynamically -->
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button onclick="submitAttendance()" class="submit-btn">Submit Attendance</button>
+                        <button onclick="cancelAttendance()" class="cancel-btn">Cancel</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Materials Section -->
+            <section id="materials" class="content-section">
+                <div class="section-header">
+                    <h2>Upload Study Materials</h2>
+                </div>
+                
+                <div class="upload-form">
+                    <form id="materialUploadForm">
+                        <div class="form-group">
+                            <label for="materialTitle">Title:</label>
+                            <input type="text" id="materialTitle" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="materialSubject">Subject:</label>
+                            <select id="materialSubject" required>
+                                <option value="">Select Subject</option>
+                                <option value="DS">Data Structures</option>
+                                <option value="ALG">Algorithms</option>
+                                <option value="DB">Database Systems</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="materialSemester">Semester:</label>
+                            <select id="materialSemester" required>
+                                <option value="">Select Semester</option>
+                                <option value="3">3rd Semester</option>
+                                <option value="4">4th Semester</option>
+                                <option value="5">5th Semester</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="materialDescription">Description:</label>
+                            <textarea id="materialDescription" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="materialFile">File:</label>
+                            <input type="file" id="materialFile" accept=".pdf,.doc,.docx,.ppt,.pptx" required>
+                        </div>
+                        
+                        <button type="submit" class="upload-btn">
+                            <i class="fas fa-upload"></i> Upload Material
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="uploaded-materials">
+                    <h3>Recently Uploaded Materials</h3>
+                    <div class="materials-list">
+                        <div class="material-item">
+                            <div class="material-info">
+                                <h4>Chapter 5 - Trees and Graphs</h4>
+                                <p>Data Structures • 3rd Semester</p>
+                                <span class="upload-date">Uploaded 2 days ago</span>
+                            </div>
+                            <div class="material-actions">
+                                <button onclick="editMaterial('MAT001')">Edit</button>
+                                <button onclick="deleteMaterial('MAT001')">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Marks Section -->
+            <section id="marks" class="content-section">
+                <div class="section-header">
+                    <h2>Manage Marks</h2>
+                    <select id="marksClassSelect">
+                        <option value="">Select Class</option>
+                        <option value="DS001">Data Structures - CSE 3rd Year</option>
+                        <option value="ALG001">Algorithms - CSE 3rd Year</option>
+                        <option value="DB001">Database Systems - CSE 4th Year</option>
+                    </select>
+                </div>
+                
+                <div class="marks-management">
+                    <div class="exam-type-selector">
+                        <button class="exam-type-btn active" onclick="selectExamType('internal')">Internal Exam</button>
+                        <button class="exam-type-btn" onclick="selectExamType('assignment')">Assignment</button>
+                        <button class="exam-type-btn" onclick="selectExamType('external')">External Exam</button>
+                    </div>
+                    
+                    <div class="marks-table-container">
+                        <table class="marks-table">
+                            <thead>
+                                <tr>
+                                    <th>Roll No.</th>
+                                    <th>Student Name</th>
+                                    <th>Marks Obtained</th>
+                                    <th>Max Marks</th>
+                                    <th>Percentage</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="marksTableBody">
+                                <!-- Marks data will be loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="marks-actions">
+                        <button onclick="saveMarks()" class="save-marks-btn">Save All Marks</button>
+                        <button onclick="exportMarks()" class="export-btn">Export to Excel</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mentorship Section -->
+            <section id="mentorship" class="content-section">
+                <div class="section-header">
+                    <h2>Mentorship</h2>
+                </div>
+                
+                <div class="mentorship-overview">
+                    <div class="mentees-stats">
+                        <div class="stat-card">
+                            <h4>Total Mentees</h4>
+                            <span class="stat-number">15</span>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Low Attendance</h4>
+                            <span class="stat-number warning">3</span>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Excellent Performance</h4>
+                            <span class="stat-number good">8</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mentees-list">
+                    <h3>My Mentees</h3>
+                    <div class="mentee-cards">
+                        <div class="mentee-card">
+                            <div class="mentee-info">
+                                <h4>John Doe</h4>
+                                <p>Roll: 2023001 | CSE 3rd Year</p>
+                                <p>CGPA: 8.5 | Attendance: 85%</p>
+                            </div>
+                            <div class="mentee-status good">Good</div>
+                            <button onclick="chatWithMentee('2023001')" class="chat-btn">
+                                <i class="fas fa-comment"></i> Chat
+                            </button>
+                        </div>
+                        
+                        <div class="mentee-card">
+                            <div class="mentee-info">
+                                <h4>Jane Smith</h4>
+                                <p>Roll: 2023002 | CSE 3rd Year</p>
+                                <p>CGPA: 6.8 | Attendance: 68%</p>
+                            </div>
+                            <div class="mentee-status warning">Needs Attention</div>
+                            <button onclick="chatWithMentee('2023002')" class="chat-btn">
+                                <i class="fas fa-comment"></i> Chat
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Schedule Section -->
+            <section id="schedule" class="content-section">
+                <div class="section-header">
+                    <h2>Today's Schedule</h2>
+                    <div class="date-display" id="todayDate"></div>
+                </div>
+                
+                <div class="schedule-timeline">
+                    <div class="timeline-item">
+                        <div class="time-slot">9:00 - 10:00 AM</div>
+                        <div class="class-info">
+                            <h4>Data Structures</h4>
+                            <p>CSE 3rd Year • Room 101</p>
+                            <span class="students-count">45 students</span>
+                        </div>
+                        <div class="class-actions">
+                            <button onclick="markAttendance('DS001')">Mark Attendance</button>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="time-slot">11:00 - 12:00 PM</div>
+                        <div class="class-info">
+                            <h4>Algorithms</h4>
+                            <p>CSE 3rd Year • Room 102</p>
+                            <span class="students-count">42 students</span>
+                        </div>
+                        <div class="class-actions">
+                            <button onclick="markAttendance('ALG001')">Mark Attendance</button>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="time-slot">2:00 - 3:00 PM</div>
+                        <div class="class-info">
+                            <h4>Database Systems</h4>
+                            <p>CSE 4th Year • Room 201</p>
+                            <span class="students-count">38 students</span>
+                        </div>
+                        <div class="class-actions">
+                            <button onclick="markAttendance('DB001')">Mark Attendance</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/faculty-dashboard.js') }}"></script>
+</body>
+</html>

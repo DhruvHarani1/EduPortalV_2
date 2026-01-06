@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - EduPortal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>EduPortal</span>
+                </div>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#dashboard" class="menu-item active" onclick="showSection('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a></li>
+                <li><a href="#attendance" class="menu-item" onclick="showSection('attendance')">
+                    <i class="fas fa-calendar-check"></i> Attendance
+                </a></li>
+                <li><a href="#marks" class="menu-item" onclick="showSection('marks')">
+                    <i class="fas fa-chart-line"></i> Marks
+                </a></li>
+                <li><a href="#notes" class="menu-item" onclick="showSection('notes')">
+                    <i class="fas fa-book"></i> Notes
+                </a></li>
+                <li><a href="#events" class="menu-item" onclick="showSection('events')">
+                    <i class="fas fa-calendar-alt"></i> Events
+                </a></li>
+                <li><a href="#notices" class="menu-item" onclick="showSection('notices')">
+                    <i class="fas fa-bullhorn"></i> Notices
+                </a></li>
+                <li><a href="#fees" class="menu-item" onclick="showSection('fees')">
+                    <i class="fas fa-money-bill"></i> Fee Status
+                </a></li>
+                <li><a href="#queries" class="menu-item" onclick="showSection('queries')">
+                    <i class="fas fa-question-circle"></i> Queries
+                </a></li>
+                <li><a href="#examination" class="menu-item" onclick="showSection('examination')">
+                    <i class="fas fa-clipboard-list"></i> Examination
+                </a></li>
+                <li><a href="#clubs" class="menu-item" onclick="showSection('clubs')">
+                    <i class="fas fa-users"></i> Clubs
+                </a></li>
+                <li><a href="#idcard" class="menu-item" onclick="showSection('idcard')">
+                    <i class="fas fa-id-card"></i> ID Card
+                </a></li>
+                <li><a href="#timetable" class="menu-item" onclick="showSection('timetable')">
+                    <i class="fas fa-clock"></i> Timetable
+                </a></li>
+                <li><a href="#scholarship" class="menu-item" onclick="showSection('scholarship')">
+                    <i class="fas fa-award"></i> Scholarships
+                </a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <button onclick="logout()" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 id="pageTitle">Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count">3</span>
+                    </div>
+                    <div class="user-profile">
+                        <img src="https://via.placeholder.com/40" alt="Profile" class="profile-img">
+                        <span id="studentName">John Doe</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="student-info-card">
+                    <h2>Student Information</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Roll Number:</label>
+                            <span id="rollNumber">2023001</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Enrollment Number:</label>
+                            <span id="enrollmentNumber">EN2023001</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Current Semester:</label>
+                            <span id="currentSemester">5th Semester</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Branch:</label>
+                            <span id="branch">Computer Science</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <div class="card-icon attendance-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Overall Attendance</h3>
+                            <p class="card-value">85%</p>
+                            <p class="card-status good">Good Standing</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-icon marks-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Current CGPA</h3>
+                            <p class="card-value">8.5</p>
+                            <p class="card-status excellent">Excellent</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-icon fee-icon">
+                            <i class="fas fa-money-bill"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Fee Status</h3>
+                            <p class="card-value">Paid</p>
+                            <p class="card-status good">Up to Date</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <h3>Quick Actions</h3>
+                    <div class="action-buttons">
+                        <button onclick="showSection('timetable')" class="action-btn">
+                            <i class="fas fa-clock"></i> View Timetable
+                        </button>
+                        <button onclick="showSection('marks')" class="action-btn">
+                            <i class="fas fa-chart-line"></i> Check Marks
+                        </button>
+                        <button onclick="showSection('notes')" class="action-btn">
+                            <i class="fas fa-book"></i> Download Notes
+                        </button>
+                        <button onclick="showSection('examination')" class="action-btn">
+                            <i class="fas fa-clipboard-list"></i> Exam Schedule
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Attendance Section -->
+            <section id="attendance" class="content-section">
+                <div class="section-header">
+                    <h2>Attendance Management</h2>
+                    <div class="attendance-summary">
+                        <span class="overall-attendance">Overall: 85%</span>
+                        <span class="min-requirement">Minimum Required: 75%</span>
+                    </div>
+                </div>
+                
+                <div class="attendance-cards">
+                    <div class="subject-attendance">
+                        <h3>Mathematics</h3>
+                        <div class="attendance-bar">
+                            <div class="attendance-fill" style="width: 90%"></div>
+                        </div>
+                        <span class="attendance-percent">90%</span>
+                        <p class="attendance-status good">Excellent</p>
+                    </div>
+                    
+                    <div class="subject-attendance">
+                        <h3>Physics</h3>
+                        <div class="attendance-bar">
+                            <div class="attendance-fill" style="width: 72%"></div>
+                        </div>
+                        <span class="attendance-percent">72%</span>
+                        <p class="attendance-status warning">Need 3 more classes</p>
+                    </div>
+                    
+                    <div class="subject-attendance">
+                        <h3>Computer Science</h3>
+                        <div class="attendance-bar">
+                            <div class="attendance-fill" style="width: 88%"></div>
+                        </div>
+                        <span class="attendance-percent">88%</span>
+                        <p class="attendance-status good">Good</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Marks Section -->
+            <section id="marks" class="content-section">
+                <div class="section-header">
+                    <h2>Academic Performance</h2>
+                    <select id="semesterSelect" onchange="loadMarks()">
+                        <option value="current">Current Semester</option>
+                        <option value="4">4th Semester</option>
+                        <option value="3">3rd Semester</option>
+                        <option value="2">2nd Semester</option>
+                        <option value="1">1st Semester</option>
+                    </select>
+                </div>
+                
+                <div class="marks-container">
+                    <div class="marks-chart">
+                        <canvas id="marksChart"></canvas>
+                    </div>
+                    
+                    <div class="marks-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Internal</th>
+                                    <th>External</th>
+                                    <th>Total</th>
+                                    <th>Grade</th>
+                                </tr>
+                            </thead>
+                            <tbody id="marksTableBody">
+                                <tr>
+                                    <td>Mathematics</td>
+                                    <td>85</td>
+                                    <td>78</td>
+                                    <td>163</td>
+                                    <td>A</td>
+                                </tr>
+                                <tr>
+                                    <td>Physics</td>
+                                    <td>80</td>
+                                    <td>82</td>
+                                    <td>162</td>
+                                    <td>A</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <button class="download-btn" onclick="downloadMarksheet()">
+                    <i class="fas fa-download"></i> Download Marksheet
+                </button>
+            </section>
+
+            <!-- Notes Section -->
+            <section id="notes" class="content-section">
+                <div class="section-header">
+                    <h2>Study Materials</h2>
+                    <div class="filter-options">
+                        <select id="subjectFilter">
+                            <option value="all">All Subjects</option>
+                            <option value="math">Mathematics</option>
+                            <option value="physics">Physics</option>
+                            <option value="cs">Computer Science</option>
+                        </select>
+                        <select id="facultyFilter">
+                            <option value="all">All Faculty</option>
+                            <option value="prof1">Prof. Smith</option>
+                            <option value="prof2">Prof. Johnson</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="notes-grid">
+                    <div class="note-card">
+                        <div class="note-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <h4>Calculus Chapter 5</h4>
+                        <p>Prof. Smith • Mathematics</p>
+                        <p class="upload-date">Uploaded: 2 days ago</p>
+                        <button class="download-note-btn">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                    
+                    <div class="note-card">
+                        <div class="note-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <h4>Quantum Physics Notes</h4>
+                        <p>Prof. Johnson • Physics</p>
+                        <p class="upload-date">Uploaded: 1 week ago</p>
+                        <button class="download-note-btn">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Events Section -->
+            <section id="events" class="content-section">
+                <div class="section-header">
+                    <h2>College Events</h2>
+                    <div class="event-filters">
+                        <select id="eventTypeFilter" onchange="filterEvents()">
+                            <option value="all">All Events</option>
+                            <option value="technical">Technical</option>
+                            <option value="cultural">Cultural</option>
+                            <option value="sports">Sports</option>
+                            <option value="workshop">Workshop</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="events-container" id="eventsContainer">
+                    <!-- Events will be loaded dynamically -->
+                </div>
+            </section>
+
+            <!-- Enhanced Fees Section -->
+            <section id="fees" class="content-section">
+                <div class="section-header">
+                    <h2>Fee Management</h2>
+                    <div class="fee-tabs">
+                        <button class="tab-btn active" onclick="showFeeTab('current')">Current Semester</button>
+                        <button class="tab-btn" onclick="showFeeTab('history')">Payment History</button>
+                    </div>
+                </div>
+                
+                <div id="currentFeeTab" class="fee-tab-content active">
+                    <div class="fee-status-card">
+                        <!-- Current fee details will be loaded here -->
+                    </div>
+                </div>
+                
+                <div id="historyFeeTab" class="fee-tab-content">
+                    <div class="fee-history-container">
+                        <table class="fee-history-table">
+                            <thead>
+                                <tr>
+                                    <th>Semester</th>
+                                    <th>Academic Year</th>
+                                    <th>Amount Paid</th>
+                                    <th>Payment Date</th>
+                                    <th>Transaction ID</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="feeHistoryTableBody">
+                                <!-- Fee history will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Enhanced Queries Section -->
+            <section id="queries" class="content-section">
+                <div class="section-header">
+                    <h2>Academic Queries</h2>
+                    <button onclick="openAcademicQueryModal()" class="add-btn">
+                        <i class="fas fa-plus"></i> Ask Faculty
+                    </button>
+                </div>
+                <div class="queries-container">
+                    <div class="query-stats">
+                        <div class="stat-item">
+                            <span class="stat-number" id="totalQueries">0</span>
+                            <span class="stat-label">Total Queries</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="pendingQueries">0</span>
+                            <span class="stat-label">Pending</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="answeredQueries">0</span>
+                            <span class="stat-label">Answered</span>
+                        </div>
+                    </div>
+                    <div class="queries-list" id="academicQueriesList">
+                        <!-- Academic queries will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- ID Card Section -->
+            <section id="idcard" class="content-section">
+                <div class="section-header">
+                    <h2>Student ID Card</h2>
+                    <button onclick="downloadIdCard()" class="download-btn">
+                        <i class="fas fa-download"></i> Download ID Card
+                    </button>
+                </div>
+                <div class="id-card-container">
+                    <div class="id-card" id="studentIdCard">
+                        <!-- ID card will be generated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Enhanced Clubs Section -->
+            <section id="clubs" class="content-section">
+                <div class="section-header">
+                    <h2>College Clubs</h2>
+                    <button onclick="openInterestSurvey()" class="add-btn">
+                        <i class="fas fa-search"></i> Find My Clubs
+                    </button>
+                </div>
+                
+                <div class="clubs-tabs">
+                    <button class="tab-btn active" onclick="showClubTab('recommendations')">Recommendations</button>
+                    <button class="tab-btn" onclick="showClubTab('all')">All Clubs</button>
+                </div>
+                
+                <div id="recommendationsTab" class="club-tab-content active">
+                    <div class="club-recommendations" id="clubRecommendations">
+                        <p class="no-recommendations">Take the interest survey to get personalized club recommendations!</p>
+                    </div>
+                </div>
+                
+                <div id="allClubsTab" class="club-tab-content">
+                    <div class="clubs-grid" id="allClubsGrid">
+                        <!-- All clubs will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Enhanced Timetable Section -->
+            <section id="timetable" class="content-section">
+                <div class="section-header">
+                    <h2>Class Timetable</h2>
+                    <div class="timetable-info">
+                        <span>Semester: <strong id="timetableSemester">5</strong></span>
+                        <span>Academic Year: <strong>2025-26</strong></span>
+                    </div>
+                </div>
+                <div class="timetable-container">
+                    <div class="timetable-wrapper">
+                        <table class="timetable" id="studentTimetable">
+                            <!-- Timetable will be generated here -->
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Enhanced Scholarship Section -->
+            <section id="scholarship" class="content-section">
+                <div class="section-header">
+                    <h2>Scholarship Opportunities</h2>
+                    <button onclick="openScholarshipEligibilityCheck()" class="add-btn">
+                        <i class="fas fa-calculator"></i> Check Eligibility
+                    </button>
+                </div>
+                <div class="scholarship-container">
+                    <div class="eligibility-status" id="eligibilityStatus" style="display: none;">
+                        <!-- Eligibility status will be shown here -->
+                    </div>
+                    <div class="scholarships-grid" id="eligibleScholarships">
+                        <!-- Eligible scholarships will be loaded here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Academic Query Modal -->
+    <div id="academicQueryModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAcademicQueryModal()">&times;</span>
+            <h3>Ask Faculty - Academic Query</h3>
+            <form id="academicQueryForm">
+                <div class="form-group">
+                    <label for="querySubject">Subject:</label>
+                    <select id="querySubject" required>
+                        <option value="">Select Subject</option>
+                        <!-- Subjects will be loaded dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="queryFaculty">Faculty:</label>
+                    <select id="queryFaculty" required>
+                        <option value="">Select Faculty</option>
+                        <!-- Faculty will be loaded based on subject -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="queryTitle">Query Title:</label>
+                    <input type="text" id="queryTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="queryDescription">Describe your query:</label>
+                    <textarea id="queryDescription" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="queryAttachment">Attach Image (Optional):</label>
+                    <input type="file" id="queryAttachment" accept="image/*">
+                </div>
+                <button type="submit" class="submit-query-btn">Submit Query</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Interest Survey Modal -->
+    <div id="interestSurveyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeInterestSurvey()">&times;</span>
+            <h3>Find Your Perfect Club</h3>
+            <p>Select your interests to get personalized club recommendations:</p>
+            <form id="interestSurveyForm">
+                <div class="interests-grid">
+                    <label class="interest-item">
+                        <input type="checkbox" value="programming">
+                        <span>Programming</span>
+                    </label>
+                    <label class="interest-item">
+                        <input type="checkbox" value="robotics">
+                        <span>Robotics</span>
+                    </label>
+                    <label class="interest-item">
+                        <input type="checkbox" value="music">
+                        <span>Music</span>
+                    </label>
+                    <label class="interest-item">
+                        <input type="checkbox" value="photography">
+                        <span>Photography</span>
+                    </label>
+                    <label class="interest-item">
+                        <input type="checkbox" value="sports">
+                        <span>Sports</span>
+                    </label>
+                    <label class="interest-item">
+                        <input type="checkbox" value="dance">
+                        <span>Dance</span>
+                    </label>
+                    <label class="interest-item">
+                        <input type="checkbox" value="drama">
+                        <span>Drama</span>
+                    </label>
+                    <label class="interest-item">
+                        <input type="checkbox" value="debate">
+                        <span>Debate</span>
+                    </label>
+                    <label class="interest-item">
+                        <input type="checkbox" value="art">
+                        <span>Art & Craft</span>
+                    </label>
+                    <label class="interest-item">
+                        <input type="checkbox" value="literature">
+                        <span>Literature</span>
+                    </label>
+                </div>
+                <button type="submit" class="find-clubs-btn">Find My Clubs</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scholarship Eligibility Modal -->
+    <div id="scholarshipEligibilityModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeScholarshipEligibility()">&times;</span>
+            <h3>Scholarship Eligibility Check</h3>
+            <form id="scholarshipEligibilityForm">
+                <div class="form-group">
+                    <label for="familyIncome">Annual Family Income (₹):</label>
+                    <input type="number" id="familyIncome" required>
+                </div>
+                <div class="form-group">
+                    <label for="studentCategory">Category:</label>
+                    <select id="studentCategory" required>
+                        <option value="">Select Category</option>
+                        <option value="general">General</option>
+                        <option value="obc">OBC</option>
+                        <option value="sc">SC</option>
+                        <option value="st">ST</option>
+                        <option value="ews">EWS</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="studentGender">Gender:</label>
+                    <select id="studentGender" required>
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <button type="submit" class="check-eligibility-btn">Check Eligible Scholarships</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Fee Receipt Modal -->
+    <div id="feeReceiptModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeFeeReceiptModal()">&times;</span>
+            <h3>Fee Receipt</h3>
+            <div id="receiptDetails">
+                <!-- Receipt details will be loaded here -->
+            </div>
+            <button onclick="downloadReceipt()" class="download-btn">Download PDF</button>
+        </div>
+    </div>
+
+    <!-- Low Attendance Modal -->
+    <div id="attendanceModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>⚠️ Low Attendance Alert</h3>
+            <p>Your attendance in Physics is below the minimum requirement (75%).</p>
+            <p><strong>Current:</strong> 72%</p>
+            <p><strong>Required:</strong> Attend next 3 consecutive classes to meet minimum criteria.</p>
+            <button class="modal-btn">Understood</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/student-dashboard.js') }}"></script>
+</body>
+</html>

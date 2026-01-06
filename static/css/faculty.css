@@ -1,0 +1,544 @@
+/* Import dashboard base styles */
+@import url('dashboard.css');
+
+/* Faculty-specific overrides and additions */
+.classes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.class-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+}
+
+.class-card:hover {
+    transform: translateY(-5px);
+}
+
+.class-card h4 {
+    color: #333;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+}
+
+.class-card p {
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.class-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.class-actions button {
+    flex: 1;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: transform 0.3s ease;
+}
+
+.class-actions button:hover {
+    transform: translateY(-2px);
+}
+
+/* Today's Schedule */
+.today-schedule {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    margin-top: 2rem;
+}
+
+.schedule-list {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.schedule-item {
+    display: grid;
+    grid-template-columns: 150px 1fr 100px;
+    align-items: center;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #667eea;
+}
+
+.time {
+    font-weight: 600;
+    color: #333;
+}
+
+.subject {
+    font-weight: 500;
+    color: #333;
+}
+
+.room {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Attendance Form */
+.attendance-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    margin-top: 2rem;
+}
+
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.date-time {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.student-list {
+    margin: 2rem 0;
+}
+
+.list-header {
+    display: grid;
+    grid-template-columns: 150px 1fr 150px;
+    gap: 1rem;
+    padding: 1rem;
+    background: #667eea;
+    color: white;
+    border-radius: 8px 8px 0 0;
+    font-weight: 600;
+}
+
+.student-row {
+    display: grid;
+    grid-template-columns: 150px 1fr 150px;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid #e9ecef;
+    align-items: center;
+}
+
+.attendance-toggle {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.attendance-toggle label {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    cursor: pointer;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.submit-btn {
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.cancel-btn {
+    padding: 1rem 2rem;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* Upload Form */
+.upload-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.upload-btn {
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.3s ease;
+}
+
+.upload-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Uploaded Materials */
+.uploaded-materials {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.materials-list {
+    margin-top: 1.5rem;
+}
+
+.material-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+.material-info h4 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.material-info p {
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+.material-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.material-actions button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.material-actions button:first-child {
+    background: #667eea;
+    color: white;
+}
+
+.material-actions button:last-child {
+    background: #e74c3c;
+    color: white;
+}
+
+/* Marks Management */
+.marks-management {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.exam-type-selector {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.exam-type-btn {
+    padding: 0.75rem 1.5rem;
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.exam-type-btn.active {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+.marks-table-container {
+    overflow-x: auto;
+    margin: 2rem 0;
+}
+
+.marks-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.marks-table th,
+.marks-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.marks-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+}
+
+.marks-table input {
+    width: 80px;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.marks-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.save-marks-btn {
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.export-btn {
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* Mentorship */
+.mentorship-overview {
+    margin-bottom: 2rem;
+}
+
+.mentees-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    text-align: center;
+}
+
+.stat-card h4 {
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.stat-number.warning {
+    color: #f39c12;
+}
+
+.stat-number.good {
+    color: #27ae60;
+}
+
+.mentees-list {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.mentee-cards {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.mentee-card {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+}
+
+.mentee-info h4 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.mentee-info p {
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+.mentee-status {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.mentee-status.good {
+    background: #d4edda;
+    color: #155724;
+}
+
+.mentee-status.warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.chat-btn {
+    padding: 0.75rem 1rem;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Schedule Timeline */
+.schedule-timeline {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.timeline-item {
+    display: grid;
+    grid-template-columns: 150px 1fr auto;
+    align-items: center;
+    gap: 2rem;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.timeline-item:last-child {
+    border-bottom: none;
+}
+
+.time-slot {
+    font-weight: 600;
+    color: #667eea;
+    font-size: 1.1rem;
+}
+
+.class-info h4 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.class-info p {
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+.students-count {
+    color: #999;
+    font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .classes-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .schedule-item {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+    
+    .list-header,
+    .student-row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+    
+    .mentee-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    
+    .timeline-item {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}

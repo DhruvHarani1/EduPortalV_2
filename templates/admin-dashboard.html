@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - EduPortal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>EduPortal</span>
+                </div>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#dashboard" class="menu-item active" onclick="showSection('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a></li>
+                <li><a href="#students" class="menu-item" onclick="showSection('students')">
+                    <i class="fas fa-user-graduate"></i> Manage Students
+                </a></li>
+                <li><a href="#faculty" class="menu-item" onclick="showSection('faculty')">
+                    <i class="fas fa-chalkboard-teacher"></i> Manage Faculty
+                </a></li>
+                <li><a href="#courses" class="menu-item" onclick="showSection('courses')">
+                    <i class="fas fa-book"></i> Manage Courses
+                </a></li>
+                <li><a href="#assignments" class="menu-item" onclick="showSection('assignments')">
+                    <i class="fas fa-tasks"></i> Subject Assignments
+                </a></li>
+                <li><a href="#calendar" class="menu-item" onclick="showSection('calendar')">
+                    <i class="fas fa-calendar"></i> Academic Calendar
+                </a></li>
+                <li><a href="#notices" class="menu-item" onclick="showSection('notices')">
+                    <i class="fas fa-bullhorn"></i> Publish Notices
+                </a></li>
+                <li><a href="#fees" class="menu-item" onclick="showSection('fees')">
+                    <i class="fas fa-money-bill"></i> Fee Management
+                </a></li>
+                <li><a href="#reports" class="menu-item" onclick="showSection('reports')">
+                    <i class="fas fa-chart-bar"></i> Reports
+                </a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <button onclick="logout()" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 id="pageTitle">Admin Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count">5</span>
+                    </div>
+                    <div class="user-profile">
+                        <img src="https://via.placeholder.com/40" alt="Profile" class="profile-img">
+                        <span id="adminName">System Administrator</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-icon students-stat">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Total Students</h3>
+                            <p class="stat-number" id="totalStudents">1,245</p>
+                            <span class="stat-change positive">+12 this month</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon faculty-stat">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Total Faculty</h3>
+                            <p class="stat-number" id="totalFaculty">85</p>
+                            <span class="stat-change positive">+3 this month</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon courses-stat">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Active Courses</h3>
+                            <p class="stat-number" id="totalCourses">12</p>
+                            <span class="stat-change neutral">No change</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon revenue-stat">
+                            <i class="fas fa-rupee-sign"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Fee Collection</h3>
+                            <p class="stat-number" id="totalRevenue">₹2.4M</p>
+                            <span class="stat-change positive">+8% this month</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-charts">
+                    <div class="chart-container">
+                        <h3>Student Enrollment Trends</h3>
+                        <canvas id="enrollmentChart"></canvas>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <h3>Department-wise Distribution</h3>
+                        <canvas id="departmentChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="recent-activities">
+                    <h3>Recent Activities</h3>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="activity-content">
+                                <p><strong>New Student Admission</strong></p>
+                                <span>John Doe admitted to CSE Department</span>
+                                <small>2 hours ago</small>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-bullhorn"></i>
+                            </div>
+                            <div class="activity-content">
+                                <p><strong>Notice Published</strong></p>
+                                <span>Exam schedule for mid-semester released</span>
+                                <small>4 hours ago</small>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-money-bill"></i>
+                            </div>
+                            <div class="activity-content">
+                                <p><strong>Fee Payment</strong></p>
+                                <span>₹50,000 collected from semester fees</span>
+                                <small>6 hours ago</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Students Management Section -->
+            <section id="students" class="content-section">
+                <div class="section-header">
+                    <h2>Manage Students</h2>
+                    <div class="header-actions">
+                        <button class="add-btn" onclick="addStudent()">
+                            <i class="fas fa-plus"></i> Add Student
+                        </button>
+                        <button class="import-btn" onclick="importStudents()">
+                            <i class="fas fa-upload"></i> Import CSV
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="search-filters">
+                    <input type="text" id="studentSearch" placeholder="Search students..." onkeyup="searchStudents()">
+                    <select id="departmentFilter" onchange="filterStudents()">
+                        <option value="">All Departments</option>
+                        <option value="CSE">Computer Science</option>
+                        <option value="ECE">Electronics</option>
+                        <option value="ME">Mechanical</option>
+                        <option value="CE">Civil</option>
+                    </select>
+                    <select id="semesterFilter" onchange="filterStudents()">
+                        <option value="">All Semesters</option>
+                        <option value="1">1st Semester</option>
+                        <option value="2">2nd Semester</option>
+                        <option value="3">3rd Semester</option>
+                        <option value="4">4th Semester</option>
+                        <option value="5">5th Semester</option>
+                        <option value="6">6th Semester</option>
+                        <option value="7">7th Semester</option>
+                        <option value="8">8th Semester</option>
+                    </select>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Roll No.</th>
+                                <th>Name</th>
+                                <th>Department</th>
+                                <th>Semester</th>
+                                <th>CGPA</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody">
+                            <!-- Student data will be loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Faculty Management Section -->
+            <section id="faculty" class="content-section">
+                <div class="section-header">
+                    <h2>Manage Faculty</h2>
+                    <button class="add-btn" onclick="addFaculty()">
+                        <i class="fas fa-plus"></i> Add Faculty
+                    </button>
+                </div>
+                
+                <div class="faculty-grid">
+                    <div class="faculty-card">
+                        <div class="faculty-avatar">
+                            <img src="https://via.placeholder.com/80" alt="Faculty">
+                        </div>
+                        <div class="faculty-info">
+                            <h4>Prof. John Smith</h4>
+                            <p>Computer Science Department</p>
+                            <p>Assistant Professor</p>
+                            <span class="experience">5 years experience</span>
+                        </div>
+                        <div class="faculty-actions">
+                            <button onclick="editFaculty('FAC001')">Edit</button>
+                            <button onclick="viewFacultyDetails('FAC001')">View Details</button>
+                        </div>
+                    </div>
+                    
+                    <div class="faculty-card">
+                        <div class="faculty-avatar">
+                            <img src="https://via.placeholder.com/80" alt="Faculty">
+                        </div>
+                        <div class="faculty-info">
+                            <h4>Dr. Sarah Johnson</h4>
+                            <p>Electronics Department</p>
+                            <p>Associate Professor</p>
+                            <span class="experience">8 years experience</span>
+                        </div>
+                        <div class="faculty-actions">
+                            <button onclick="editFaculty('FAC002')">Edit</button>
+                            <button onclick="viewFacultyDetails('FAC002')">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Courses Management Section -->
+            <section id="courses" class="content-section">
+                <div class="section-header">
+                    <h2>Manage Courses</h2>
+                    <button class="add-btn" onclick="addCourse()">
+                        <i class="fas fa-plus"></i> Add Course
+                    </button>
+                </div>
+                
+                <div class="courses-list">
+                    <div class="course-item">
+                        <div class="course-info">
+                            <h4>Computer Science Engineering</h4>
+                            <p>Course Code: CSE | Duration: 4 Years | 8 Semesters</p>
+                            <span class="students-enrolled">245 students enrolled</span>
+                        </div>
+                        <div class="course-actions">
+                            <button onclick="editCourse('CSE')">Edit</button>
+                            <button onclick="viewSyllabus('CSE')">View Syllabus</button>
+                            <button onclick="manageSemesters('CSE')">Manage Semesters</button>
+                        </div>
+                    </div>
+                    
+                    <div class="course-item">
+                        <div class="course-info">
+                            <h4>Electronics & Communication</h4>
+                            <p>Course Code: ECE | Duration: 4 Years | 8 Semesters</p>
+                            <span class="students-enrolled">180 students enrolled</span>
+                        </div>
+                        <div class="course-actions">
+                            <button onclick="editCourse('ECE')">Edit</button>
+                            <button onclick="viewSyllabus('ECE')">View Syllabus</button>
+                            <button onclick="manageSemesters('ECE')">Manage Semesters</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Subject Assignments Section -->
+            <section id="assignments" class="content-section">
+                <div class="section-header">
+                    <h2>Subject Assignments</h2>
+                    <button class="add-btn" onclick="createAssignment()">
+                        <i class="fas fa-plus"></i> Create Assignment
+                    </button>
+                </div>
+                
+                <div class="assignment-filters">
+                    <select id="assignmentDepartment">
+                        <option value="">All Departments</option>
+                        <option value="CSE">Computer Science</option>
+                        <option value="ECE">Electronics</option>
+                        <option value="ME">Mechanical</option>
+                    </select>
+                    <select id="assignmentSemester">
+                        <option value="">All Semesters</option>
+                        <option value="1">1st Semester</option>
+                        <option value="2">2nd Semester</option>
+                        <option value="3">3rd Semester</option>
+                        <option value="4">4th Semester</option>
+                    </select>
+                </div>
+                
+                <div class="assignments-table">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Faculty</th>
+                                <th>Department</th>
+                                <th>Semester</th>
+                                <th>Academic Year</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="assignmentsTableBody">
+                            <!-- Assignment data will be loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Academic Calendar Section -->
+            <section id="calendar" class="content-section">
+                <div class="section-header">
+                    <h2>Academic Calendar</h2>
+                    <button class="add-btn" onclick="addEvent()">
+                        <i class="fas fa-plus"></i> Add Event
+                    </button>
+                </div>
+                
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button onclick="previousMonth()">&lt;</button>
+                        <h3 id="currentMonth">January 2026</h3>
+                        <button onclick="nextMonth()">&gt;</button>
+                    </div>
+                    
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- Calendar will be generated dynamically -->
+                    </div>
+                </div>
+                
+                <div class="upcoming-events">
+                    <h3>Upcoming Events</h3>
+                    <div class="events-list">
+                        <div class="event-item">
+                            <div class="event-date">Jan 15</div>
+                            <div class="event-info">
+                                <h4>Mid-Semester Exams Begin</h4>
+                                <p>All departments</p>
+                            </div>
+                        </div>
+                        
+                        <div class="event-item">
+                            <div class="event-date">Jan 20</div>
+                            <div class="event-info">
+                                <h4>Republic Day Holiday</h4>
+                                <p>College closed</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Notices Section -->
+            <section id="notices" class="content-section">
+                <div class="section-header">
+                    <h2>Publish Notices</h2>
+                    <button class="add-btn" onclick="createNotice()">
+                        <i class="fas fa-plus"></i> Create Notice
+                    </button>
+                </div>
+                
+                <div class="notice-form">
+                    <form id="noticeForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="noticeTitle">Title:</label>
+                                <input type="text" id="noticeTitle" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="noticeType">Type:</label>
+                                <select id="noticeType" required>
+                                    <option value="">Select Type</option>
+                                    <option value="general">General</option>
+                                    <option value="exam">Exam</option>
+                                    <option value="holiday">Holiday</option>
+                                    <option value="event">Event</option>
+                                    <option value="urgent">Urgent</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="targetAudience">Target Audience:</label>
+                                <select id="targetAudience" required>
+                                    <option value="">Select Audience</option>
+                                    <option value="all">All</option>
+                                    <option value="students">Students Only</option>
+                                    <option value="faculty">Faculty Only</option>
+                                    <option value="department">Specific Department</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group" id="departmentGroup" style="display: none;">
+                                <label for="noticeDepartment">Department:</label>
+                                <select id="noticeDepartment">
+                                    <option value="">Select Department</option>
+                                    <option value="CSE">Computer Science</option>
+                                    <option value="ECE">Electronics</option>
+                                    <option value="ME">Mechanical</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="noticeContent">Content:</label>
+                            <textarea id="noticeContent" rows="5" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expiryDate">Expiry Date (Optional):</label>
+                            <input type="date" id="expiryDate">
+                        </div>
+                        
+                        <button type="submit" class="publish-btn">
+                            <i class="fas fa-bullhorn"></i> Publish Notice
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="published-notices">
+                    <h3>Recently Published Notices</h3>
+                    <div class="notices-list">
+                        <div class="notice-item">
+                            <div class="notice-header">
+                                <h4>Mid-Semester Exam Schedule</h4>
+                                <span class="notice-type exam">Exam</span>
+                            </div>
+                            <p>The mid-semester examination schedule has been released...</p>
+                            <div class="notice-meta">
+                                <span>Published 2 hours ago</span>
+                                <div class="notice-actions">
+                                    <button onclick="editNotice('NOT001')">Edit</button>
+                                    <button onclick="deleteNotice('NOT001')">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Fee Management Section -->
+            <section id="fees" class="content-section">
+                <div class="section-header">
+                    <h2>Fee Management</h2>
+                    <button class="add-btn" onclick="updateFeeStructure()">
+                        <i class="fas fa-edit"></i> Update Fee Structure
+                    </button>
+                </div>
+                
+                <div class="fee-overview">
+                    <div class="fee-stats">
+                        <div class="fee-stat-card">
+                            <h4>Total Collection</h4>
+                            <span class="amount">₹2,40,00,000</span>
+                        </div>
+                        <div class="fee-stat-card">
+                            <h4>Pending Amount</h4>
+                            <span class="amount pending">₹15,00,000</span>
+                        </div>
+                        <div class="fee-stat-card">
+                            <h4>Collection Rate</h4>
+                            <span class="percentage">94%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="fee-structure">
+                    <h3>Current Fee Structure</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Course</th>
+                                <th>Semester</th>
+                                <th>Tuition Fee</th>
+                                <th>Lab Fee</th>
+                                <th>Other Fees</th>
+                                <th>Total</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="feeStructureBody">
+                            <!-- Fee structure data will be loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports" class="content-section">
+                <div class="section-header">
+                    <h2>Reports & Analytics</h2>
+                </div>
+                
+                <div class="reports-grid">
+                    <div class="report-card">
+                        <h4>Student Performance Report</h4>
+                        <p>Semester-wise academic performance analysis</p>
+                        <button onclick="generateReport('student-performance')">Generate Report</button>
+                    </div>
+                    
+                    <div class="report-card">
+                        <h4>Attendance Report</h4>
+                        <p>Department and class-wise attendance statistics</p>
+                        <button onclick="generateReport('attendance')">Generate Report</button>
+                    </div>
+                    
+                    <div class="report-card">
+                        <h4>Fee Collection Report</h4>
+                        <p>Financial summary and collection analysis</p>
+                        <button onclick="generateReport('fee-collection')">Generate Report</button>
+                    </div>
+                    
+                    <div class="report-card">
+                        <h4>Faculty Performance Report</h4>
+                        <p>Teaching load and performance metrics</p>
+                        <button onclick="generateReport('faculty-performance')">Generate Report</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/admin-dashboard.js') }}"></script>
+</body>
+</html>
