@@ -3,7 +3,7 @@ let currentUser = null;
 let marksChart = null;
 
 // Initialize dashboard
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Load user data from localStorage
     const userData = localStorage.getItem('userData');
     if (userData) {
@@ -13,10 +13,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // Redirect to login if no user data
         window.location.href = '/';
     }
-    
+
     // Initialize charts
     initializeCharts();
-    
+
     // Load initial data
     loadAttendanceData();
     loadMarksData();
@@ -25,16 +25,16 @@ document.addEventListener('DOMContentLoaded', function() {
     loadScholarships();
     loadQueries();
     loadNotifications();
-    
+
     // Setup scholarship category filter
     const scholarshipCategory = document.getElementById('scholarshipCategory');
     if (scholarshipCategory) {
         scholarshipCategory.addEventListener('change', loadScholarships);
     }
-    
+
     // Check for low attendance and show modal if needed
     checkLowAttendance();
-    
+
     // Setup modal close functionality
     setupModals();
 });
@@ -55,22 +55,22 @@ function showSection(sectionId) {
     // Hide all sections
     const sections = document.querySelectorAll('.content-section');
     sections.forEach(section => section.classList.remove('active'));
-    
+
     // Show selected section
     const targetSection = document.getElementById(sectionId);
     if (targetSection) {
         targetSection.classList.add('active');
     }
-    
+
     // Update menu items
     const menuItems = document.querySelectorAll('.menu-item');
     menuItems.forEach(item => item.classList.remove('active'));
-    
+
     const activeMenuItem = document.querySelector(`[onclick="showSection('${sectionId}')"]`);
     if (activeMenuItem) {
         activeMenuItem.classList.add('active');
     }
-    
+
     // Update page title
     const titles = {
         'dashboard': 'Dashboard',
@@ -85,11 +85,11 @@ function showSection(sectionId) {
         'timetable': 'Class Timetable',
         'scholarship': 'Scholarship Opportunities'
     };
-    
+
     document.getElementById('pageTitle').textContent = titles[sectionId] || 'Dashboard';
-    
+
     // Load section-specific data
-    switch(sectionId) {
+    switch (sectionId) {
         case 'attendance':
             loadAttendanceData();
             break;
@@ -176,7 +176,7 @@ function initializeCharts() {
 // Load attendance data
 function loadAttendanceData() {
     if (!currentUser) return;
-    
+
     fetch(`/api/student/attendance/${currentUser.id}`)
         .then(response => response.json())
         .then(data => {
@@ -198,17 +198,17 @@ function loadAttendanceData() {
 function updateAttendanceDisplay(attendanceData) {
     const container = document.querySelector('.attendance-cards');
     if (!container) return;
-    
+
     container.innerHTML = '';
-    
+
     attendanceData.forEach(subject => {
         const card = document.createElement('div');
         card.className = 'subject-attendance';
-        
+
         const statusClass = subject.attendance_percentage >= 75 ? 'good' : 'warning';
-        const statusText = subject.attendance_percentage >= 75 ? 'Good' : 
-                          `Need ${Math.ceil((75 * subject.total_classes / 100) - subject.present_classes)} more classes`;
-        
+        const statusText = subject.attendance_percentage >= 75 ? 'Good' :
+            `Need ${Math.ceil((75 * subject.total_classes / 100) - subject.present_classes)} more classes`;
+
         card.innerHTML = `
             <h3>${subject.subject_name}</h3>
             <div class="attendance-bar">
@@ -217,7 +217,7 @@ function updateAttendanceDisplay(attendanceData) {
             <span class="attendance-percent">${subject.attendance_percentage}%</span>
             <p class="attendance-status ${statusClass}">${statusText}</p>
         `;
-        
+
         container.appendChild(card);
     });
 }
@@ -225,7 +225,7 @@ function updateAttendanceDisplay(attendanceData) {
 // Load marks data
 function loadMarksData() {
     if (!currentUser) return;
-    
+
     fetch(`/api/student/marks/${currentUser.id}`)
         .then(response => response.json())
         .then(data => {
@@ -247,9 +247,9 @@ function loadMarksData() {
 function updateMarksDisplay(marksData) {
     const tableBody = document.getElementById('marksTableBody');
     if (!tableBody) return;
-    
+
     tableBody.innerHTML = '';
-    
+
     // Group marks by subject
     const subjectMarks = {};
     marksData.forEach(mark => {
@@ -258,13 +258,13 @@ function updateMarksDisplay(marksData) {
         }
         subjectMarks[mark.subject_name][mark.exam_type] = mark.marks_obtained;
     });
-    
+
     Object.keys(subjectMarks).forEach(subject => {
         const internal = subjectMarks[subject].internal || 0;
         const external = subjectMarks[subject].external || 0;
         const total = internal + external;
         const grade = getGrade(total);
-        
+
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${subject}</td>
@@ -291,7 +291,7 @@ function getGrade(marks) {
 function loadNotices() {
     const role = currentUser ? currentUser.role : 'student';
     const department = currentUser ? currentUser.department : '';
-    
+
     fetch(`/api/notices?role=${role}&department=${department}`)
         .then(response => response.json())
         .then(data => {
@@ -322,15 +322,15 @@ function loadNotices() {
 function updateNoticesDisplay(notices) {
     const container = document.querySelector('.notices-container');
     if (!container) return;
-    
+
     container.innerHTML = '';
-    
+
     notices.forEach(notice => {
         const card = document.createElement('div');
         card.className = `notice-card ${notice.notice_type === 'urgent' ? 'urgent' : ''}`;
-        
+
         const timeAgo = getTimeAgo(new Date(notice.created_at));
-        
+
         card.innerHTML = `
             <div class="notice-header">
                 <h4>${notice.title}</h4>
@@ -339,7 +339,7 @@ function updateNoticesDisplay(notices) {
             <p>${notice.content}</p>
             <span class="notice-type">${notice.notice_type.charAt(0).toUpperCase() + notice.notice_type.slice(1)} Notice</span>
         `;
-        
+
         container.appendChild(card);
     });
 }
@@ -348,26 +348,49 @@ function updateNoticesDisplay(notices) {
 function getTimeAgo(date) {
     const now = new Date();
     const diffInSeconds = Math.floor((now - date) / 1000);
-    
+
     if (diffInSeconds < 60) return 'Just now';
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
     return `${Math.floor(diffInSeconds / 86400)} days ago`;
 }
 
-// Load scholarships
-function loadScholarships() {
-    if (!currentUser) return;
-    
-    const category = document.getElementById('scholarshipCategory')?.value || 'all';
-    
-    fetch(`/api/scholarships?student_id=${currentUser.id}&category=${category}`)
+// Find scholarships based on criteria
+function findScholarships() {
+    const income = document.getElementById('searchIncome').value;
+    const category = document.getElementById('searchCategory').value;
+    const gender = document.getElementById('searchGender').value;
+
+    if (!income || !category || !gender) {
+        alert('Please fill in all details to find matching scholarships.');
+        return;
+    }
+
+    // Show loading state
+    const container = document.getElementById('scholarshipCards');
+    container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px;"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Finding best matches...</p></div>';
+
+    const requestData = {
+        family_income: parseFloat(income),
+        category: category,
+        gender: gender,
+        cgpa: currentUser ? currentUser.cgpa : 0.0 // Include CGPA from profile
+    };
+
+    fetch('/api/scholarships/eligible', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
         .then(response => response.json())
         .then(data => {
             updateScholarshipsDisplay(data);
         })
         .catch(error => {
-            console.error('Error loading scholarships:', error);
+            console.error('Error finding scholarships:', error);
+            container.innerHTML = '<p class="error-text">Failed to load scholarships. Please try again.</p>';
         });
 }
 
@@ -375,92 +398,130 @@ function loadScholarships() {
 function updateScholarshipsDisplay(scholarships) {
     const container = document.getElementById('scholarshipCards');
     if (!container) return;
-    
+
     container.innerHTML = '';
-    
+
+    // Use Flex Column for vertical list layout (Top-Bottom)
+    container.style.display = 'flex';
+    container.style.flexDirection = 'column';
+    container.style.gap = '20px';
+
     if (scholarships.length === 0) {
-        container.innerHTML = '<p class="no-scholarships">No scholarships available for your profile.</p>';
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 8px; width: 100%;">
+                <i class="fas fa-search-minus" style="font-size: 2rem; color: #6c757d; margin-bottom: 15px;"></i>
+                <p>No scholarships found matching your specific criteria.</p>
+                <p>Try adjusting your filters or checking back later.</p>
+            </div>`;
         return;
     }
-    
+
     scholarships.forEach(scholarship => {
         const card = document.createElement('div');
-        card.className = `scholarship-card ${scholarship.eligible ? 'eligible' : 'not-eligible'}`;
-        
-        const deadline = new Date(scholarship.deadline).toLocaleDateString();
-        
+        card.className = 'scholarship-card';
+        // Horizontal Card Styling
+        card.style.background = 'white';
+        card.style.borderRadius = '12px';
+        card.style.padding = '0'; // Padding handled by internal containers
+        card.style.boxShadow = '0 4px 15px rgba(0,0,0,0.05)';
+        card.style.display = 'flex';
+        card.style.flexDirection = 'row'; // Horizontal layout
+        card.style.overflow = 'hidden';
+        card.style.border = '1px solid #e0e0e0';
+        card.style.transition = 'transform 0.2s, box-shadow 0.2s';
+
+        // Add hover effect via JS since inline styles are hard for hover
+        card.onmouseenter = () => { card.style.transform = 'translateY(-2px)'; card.style.boxShadow = '0 8px 25px rgba(0,0,0,0.1)'; };
+        card.onmouseleave = () => { card.style.transform = 'translateY(0)'; card.style.boxShadow = '0 4px 15px rgba(0,0,0,0.05)'; };
+
+        // Left blue accent strip
+        const accentColor = scholarship.eligible ? '#4caf50' : '#1565c0'; // Green if eligible logic was used, else Blue
+
         card.innerHTML = `
-            <div class="scholarship-header">
-                <h4>${scholarship.name}</h4>
-                <span class="scholarship-amount">₹${scholarship.amount.toLocaleString()}</span>
+            <div style="width: 6px; background: ${accentColor}; flex-shrink: 0;"></div>
+            
+            <div style="flex: 1; padding: 25px; display: flex; flex-direction: column; justify-content: center;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                    <h3 style="color: #1a237e; font-size: 1.3rem; margin: 0; font-weight: 600;">${scholarship.name}</h3>
+                    <span style="background: #e3f2fd; color: #1565c0; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 500;">
+                        ${scholarship.category.toUpperCase()}
+                    </span>
+                </div>
+                
+                <p style="color: #546e7a; font-size: 0.95rem; line-height: 1.5; margin-bottom: 15px;">${scholarship.description}</p>
+                
+                <div style="display: flex; flex-wrap: wrap; gap: 20px; font-size: 0.9rem; color: #455a64;">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-rupee-sign" style="color: #ff9800; margin-right: 8px;"></i>
+                        <span style="font-weight: 600;">₹${scholarship.amount.toLocaleString()}/yr</span>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-user-graduate" style="color: #4caf50; margin-right: 8px;"></i>
+                        <span>Min Grade: ${scholarship.min_cgpa > 0 ? scholarship.min_cgpa + ' CGPA' : 'N/A'}</span>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-wallet" style="color: #2196f3; margin-right: 8px;"></i>
+                        <span>Max Income: ₹${scholarship.max_family_income ? scholarship.max_family_income.toLocaleString() : 'No Limit'}</span>
+                    </div>
+                     <div style="display: flex; align-items: center;">
+                        <i class="fas fa-venus-mars" style="color: #9c27b0; margin-right: 8px;"></i>
+                        <span>${scholarship.eligible_genders || 'All'}</span>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #cfd8dc; font-size: 0.85rem; color: #78909c;">
+                    <i class="fas fa-info-circle"></i> Criteria: ${scholarship.eligibility_criteria}
+                </div>
             </div>
-            <p class="scholarship-description">${scholarship.description}</p>
-            <div class="scholarship-details">
-                <p><strong>Category:</strong> ${scholarship.category.charAt(0).toUpperCase() + scholarship.category.slice(1)}</p>
-                <p><strong>Deadline:</strong> ${deadline}</p>
-                <p><strong>Eligibility:</strong> ${scholarship.eligibility_criteria}</p>
-            </div>
-            <div class="scholarship-status">
-                <span class="status ${scholarship.eligible ? 'eligible' : 'not-eligible'}">
-                    ${scholarship.eligibility_status}
-                </span>
-            </div>
-            <div class="scholarship-actions">
-                <button onclick="viewScholarshipDetails(${scholarship.id})" class="view-details-btn">
-                    View Details
-                </button>
-                ${scholarship.eligible ? 
-                    `<button onclick="applyScholarship(${scholarship.id})" class="apply-scholarship-btn">Apply Now</button>` :
-                    `<button class="apply-scholarship-btn disabled" disabled>Not Eligible</button>`
-                }
+            
+            <div style="width: 200px; background: #f5f7fa; padding: 25px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-left: 1px solid #eee;">
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <div style="color: #78909c; font-size: 0.85rem; margin-bottom: 5px;">Application Deadline</div>
+                    <div style="color: #d32f2f; font-weight: 600;">${new Date(scholarship.deadline).toLocaleDateString()}</div>
+                </div>
+                
+                <a href="${scholarship.official_website}" target="_blank" style="width: 100%; text-align: center; padding: 12px; background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%); color: white; text-decoration: none; border-radius: 6px; font-weight: 600; box-shadow: 0 4px 6px rgba(33, 150, 243, 0.3); transition: all 0.2s;">
+                    Visit Official Page <i class="fas fa-arrow-right" style="margin-left: 5px;"></i>
+                </a>
             </div>
         `;
-        
+
         container.appendChild(card);
     });
 }
-
-// Apply for scholarship
-function applyScholarship(scholarshipId) {
-    if (!currentUser) return;
-    
-    // Show application modal
-    const modal = document.getElementById('scholarshipModal');
-    modal.style.display = 'block';
-    
-    // Store scholarship ID for form submission
-    modal.dataset.scholarshipId = scholarshipId;
+// Function to handle "Apply Now" (mock)
+function applyScholarship(id) {
+    alert("Application process started! You will be redirected to the application form.");
 }
 
-// View scholarship details
-function viewScholarshipDetails(scholarshipId) {
-    // Implementation to show detailed scholarship information
-    alert(`Viewing details for scholarship ID: ${scholarshipId}`);
-}
-
-// Close scholarship modal
-function closeScholarshipModal() {
-    document.getElementById('scholarshipModal').style.display = 'none';
+// Helper to load default scholarships (optional, maybe distinct from search)
+function loadScholarships() {
+    // We can leave this empty or load some featured scholarships
+    // For now, let's just let the user search.
+    const container = document.getElementById('scholarshipCards');
+    if (container && container.children.length === 0) {
+        // Only show initial state if empty
+    }
 }
 
 // Submit scholarship application
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const scholarshipForm = document.getElementById('scholarshipApplicationForm');
     if (scholarshipForm) {
-        scholarshipForm.addEventListener('submit', function(e) {
+        scholarshipForm.addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             const modal = document.getElementById('scholarshipModal');
             const scholarshipId = modal.dataset.scholarshipId;
-            
+
             if (!scholarshipId || !currentUser) return;
-            
+
             const applicationData = {
                 student_id: currentUser.id,
                 scholarship_id: scholarshipId,
                 reason: document.getElementById('applicationReason').value
             };
-            
+
             fetch('/api/scholarship/apply', {
                 method: 'POST',
                 headers: {
@@ -468,20 +529,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify(applicationData)
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Scholarship application submitted successfully!');
-                    closeScholarshipModal();
-                    loadScholarships(); // Refresh the list
-                } else {
-                    alert(data.message || 'Failed to submit application');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while submitting the application');
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Scholarship application submitted successfully!');
+                        closeScholarshipModal();
+                        loadScholarships(); // Refresh the list
+                    } else {
+                        alert(data.message || 'Failed to submit application');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while submitting the application');
+                });
         });
     }
 });
@@ -489,7 +550,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Load queries
 function loadQueries() {
     if (!currentUser) return;
-    
+
     fetch(`/api/queries?student_id=${currentUser.id}`)
         .then(response => response.json())
         .then(data => {
@@ -510,21 +571,21 @@ function updateQueriesDisplay(queries) {
         queryList.className = 'query-list';
         queriesSection.appendChild(queryList);
     }
-    
+
     const queryList = document.querySelector('#queries .query-list');
     queryList.innerHTML = '';
-    
+
     if (queries.length === 0) {
         queryList.innerHTML = '<p class="no-queries">No queries submitted yet.</p>';
         return;
     }
-    
+
     queries.forEach(query => {
         const queryCard = document.createElement('div');
         queryCard.className = `query-card status-${query.status}`;
-        
+
         const createdDate = new Date(query.created_at).toLocaleDateString();
-        
+
         queryCard.innerHTML = `
             <div class="query-header">
                 <h4>${query.subject}</h4>
@@ -548,7 +609,7 @@ function updateQueriesDisplay(queries) {
                 </div>
             ` : ''}
         `;
-        
+
         queryList.appendChild(queryCard);
     });
 }
@@ -564,14 +625,14 @@ function closeQueryModal() {
 }
 
 // Submit query
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const queryForm = document.getElementById('queryForm');
     if (queryForm) {
-        queryForm.addEventListener('submit', function(e) {
+        queryForm.addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             if (!currentUser) return;
-            
+
             const queryData = {
                 student_id: currentUser.id,
                 query_type: document.getElementById('queryType').value,
@@ -579,7 +640,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 description: document.getElementById('queryDescription').value,
                 priority: document.getElementById('queryPriority').value
             };
-            
+
             fetch('/api/queries', {
                 method: 'POST',
                 headers: {
@@ -587,21 +648,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify(queryData)
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Query submitted successfully!');
-                    closeQueryModal();
-                    queryForm.reset();
-                    loadQueries(); // Refresh the list
-                } else {
-                    alert(data.message || 'Failed to submit query');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while submitting the query');
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Query submitted successfully!');
+                        closeQueryModal();
+                        queryForm.reset();
+                        loadQueries(); // Refresh the list
+                    } else {
+                        alert(data.message || 'Failed to submit query');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while submitting the query');
+                });
         });
     }
 });
@@ -609,7 +670,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Load fee details
 function loadFeeDetails() {
     if (!currentUser) return;
-    
+
     fetch(`/api/fee/details/${currentUser.id}`)
         .then(response => response.json())
         .then(data => {
@@ -624,11 +685,11 @@ function loadFeeDetails() {
 function updateFeeDisplay(feeData) {
     const feeSection = document.getElementById('fees');
     if (!feeSection) return;
-    
+
     // Update current semester fee status
     const currentFee = feeData.current_semester;
     const feeStatusCard = feeSection.querySelector('.fee-status-card');
-    
+
     if (feeStatusCard) {
         feeStatusCard.innerHTML = `
             <h3>Semester ${currentFee.semester} Fee Status</h3>
@@ -666,7 +727,7 @@ function updateFeeDisplay(feeData) {
 function showFeeReceipt() {
     const modal = document.getElementById('feeReceiptModal');
     modal.style.display = 'block';
-    
+
     // Load receipt details
     const receiptDetails = document.getElementById('receiptDetails');
     receiptDetails.innerHTML = `
@@ -699,7 +760,7 @@ function downloadFeeReceipt() {
 // Load notifications
 function loadNotifications() {
     if (!currentUser) return;
-    
+
     fetch(`/api/notifications/${currentUser.id}`)
         .then(response => response.json())
         .then(data => {
@@ -736,21 +797,21 @@ function loadEvents() {
 function updateEventsDisplay(events) {
     const container = document.getElementById('eventsContainer');
     if (!container) return;
-    
+
     container.innerHTML = '';
-    
+
     if (events.length === 0) {
         container.innerHTML = '<p class="no-events">No events scheduled at the moment.</p>';
         return;
     }
-    
+
     events.forEach(event => {
         const eventCard = document.createElement('div');
         eventCard.className = `event-card ${event.event_type}`;
-        
+
         const startDate = new Date(event.start_date);
         const endDate = new Date(event.end_date);
-        
+
         eventCard.innerHTML = `
             <div class="event-header">
                 <h4>${event.title}</h4>
@@ -790,7 +851,7 @@ function updateEventsDisplay(events) {
                 </div>
             ` : ''}
         `;
-        
+
         container.appendChild(eventCard);
     });
 }
@@ -809,7 +870,7 @@ function registerForEvent(eventId) {
 // Load fee history
 function loadFeeHistory() {
     if (!currentUser) return;
-    
+
     fetch(`/api/student/fee-history/${currentUser.id}`)
         .then(response => response.json())
         .then(data => {
@@ -824,9 +885,9 @@ function loadFeeHistory() {
 function updateFeeHistoryDisplay(feeHistory) {
     const tableBody = document.getElementById('feeHistoryTableBody');
     if (!tableBody) return;
-    
+
     tableBody.innerHTML = '';
-    
+
     feeHistory.forEach(payment => {
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -853,11 +914,11 @@ function showFeeTab(tabName) {
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('active');
     });
-    
+
     // Show selected tab
     document.getElementById(`${tabName}FeeTab`).classList.add('active');
     event.target.classList.add('active');
-    
+
     if (tabName === 'history') {
         loadFeeHistory();
     }
@@ -880,14 +941,14 @@ function viewFeeReceipt(paymentId) {
             <p><strong>Status:</strong> Completed</p>
         </div>
     `;
-    
+
     document.getElementById('feeReceiptModal').style.display = 'block';
 }
 
 // Load academic queries
 function loadAcademicQueries() {
     if (!currentUser) return;
-    
+
     fetch(`/api/student/queries?student_id=${currentUser.id}`)
         .then(response => response.json())
         .then(data => {
@@ -903,18 +964,18 @@ function loadAcademicQueries() {
 function updateAcademicQueriesDisplay(queries) {
     const container = document.getElementById('academicQueriesList');
     if (!container) return;
-    
+
     container.innerHTML = '';
-    
+
     if (queries.length === 0) {
         container.innerHTML = '<p class="no-queries">No academic queries submitted yet.</p>';
         return;
     }
-    
+
     queries.forEach(query => {
         const queryCard = document.createElement('div');
         queryCard.className = `academic-query-card status-${query.status}`;
-        
+
         queryCard.innerHTML = `
             <div class="query-header">
                 <h4>${query.query_title}</h4>
@@ -938,7 +999,7 @@ function updateAcademicQueriesDisplay(queries) {
                 </div>
             ` : '<p class="no-response">Waiting for faculty response...</p>'}
         `;
-        
+
         container.appendChild(queryCard);
     });
 }
@@ -948,7 +1009,7 @@ function updateQueryStats(queries) {
     const totalQueries = queries.length;
     const pendingQueries = queries.filter(q => q.status === 'pending').length;
     const answeredQueries = queries.filter(q => q.status === 'answered').length;
-    
+
     document.getElementById('totalQueries').textContent = totalQueries;
     document.getElementById('pendingQueries').textContent = pendingQueries;
     document.getElementById('answeredQueries').textContent = answeredQueries;
@@ -974,19 +1035,19 @@ function loadSubjectsForQuery() {
         { id: 2, name: 'Algorithms', code: 'CS502' },
         { id: 3, name: 'Database Systems', code: 'CS503' }
     ];
-    
+
     const subjectSelect = document.getElementById('querySubject');
     subjectSelect.innerHTML = '<option value="">Select Subject</option>';
-    
+
     subjects.forEach(subject => {
         const option = document.createElement('option');
         option.value = subject.id;
         option.textContent = `${subject.name} (${subject.code})`;
         subjectSelect.appendChild(option);
     });
-    
+
     // Load faculty when subject changes
-    subjectSelect.addEventListener('change', function() {
+    subjectSelect.addEventListener('change', function () {
         if (this.value) {
             loadFacultyForSubject(this.value);
         }
@@ -1000,10 +1061,10 @@ function loadFacultyForSubject(subjectId) {
         { id: 1, name: 'Prof. John Smith' },
         { id: 2, name: 'Dr. Sarah Johnson' }
     ];
-    
+
     const facultySelect = document.getElementById('queryFaculty');
     facultySelect.innerHTML = '<option value="">Select Faculty</option>';
-    
+
     faculty.forEach(fac => {
         const option = document.createElement('option');
         option.value = fac.id;
@@ -1015,7 +1076,7 @@ function loadFacultyForSubject(subjectId) {
 // Load student ID card
 function loadStudentIdCard() {
     if (!currentUser) return;
-    
+
     fetch(`/api/student/id-card/${currentUser.id}`)
         .then(response => response.json())
         .then(data => {
@@ -1030,7 +1091,7 @@ function loadStudentIdCard() {
 function generateIdCard(data) {
     const idCardContainer = document.getElementById('studentIdCard');
     if (!idCardContainer) return;
-    
+
     idCardContainer.innerHTML = `
         <div class="id-card-front">
             <div class="id-card-header">
@@ -1098,7 +1159,7 @@ function downloadIdCard() {
 function checkLowAttendance() {
     // Mock check - in real implementation, this would check actual attendance data
     const hasLowAttendance = Math.random() > 0.7; // 30% chance for demo
-    
+
     if (hasLowAttendance) {
         setTimeout(() => {
             const modal = document.getElementById('attendanceModal');
@@ -1112,24 +1173,24 @@ function checkLowAttendance() {
 // Setup modal functionality
 function setupModals() {
     const modals = document.querySelectorAll('.modal');
-    
+
     modals.forEach(modal => {
         const closeBtn = modal.querySelector('.close');
         const modalBtn = modal.querySelector('.modal-btn');
-        
+
         if (closeBtn) {
-            closeBtn.onclick = function() {
+            closeBtn.onclick = function () {
                 modal.style.display = 'none';
             }
         }
-        
+
         if (modalBtn) {
-            modalBtn.onclick = function() {
+            modalBtn.onclick = function () {
                 modal.style.display = 'none';
             }
         }
-        
-        window.onclick = function(event) {
+
+        window.onclick = function (event) {
             if (event.target === modal) {
                 modal.style.display = 'none';
             }
@@ -1174,13 +1235,13 @@ function loadAllClubs() {
 function updateAllClubsDisplay(clubs) {
     const container = document.getElementById('allClubsGrid');
     if (!container) return;
-    
+
     container.innerHTML = '';
-    
+
     clubs.forEach(club => {
         const clubCard = document.createElement('div');
         clubCard.className = `club-card ${club.category}`;
-        
+
         clubCard.innerHTML = `
             <div class="club-header">
                 <h4>${club.name}</h4>
@@ -1195,7 +1256,7 @@ function updateAllClubsDisplay(clubs) {
             </div>
             <button onclick="joinClub(${club.id})" class="join-club-btn">Join Club</button>
         `;
-        
+
         container.appendChild(clubCard);
     });
 }
@@ -1218,10 +1279,10 @@ function showClubTab(tabName) {
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('active');
     });
-    
+
     document.getElementById(`${tabName}Tab`).classList.add('active');
     event.target.classList.add('active');
-    
+
     if (tabName === 'all') {
         loadAllClubs();
     }
@@ -1235,7 +1296,7 @@ function joinClub(clubId) {
 // Load student timetable
 function loadStudentTimetable() {
     if (!currentUser) return;
-    
+
     fetch(`/api/student/timetable/${currentUser.id}`)
         .then(response => response.json())
         .then(data => {
@@ -1250,17 +1311,17 @@ function loadStudentTimetable() {
 function generateTimetableTable(timetableData) {
     const table = document.getElementById('studentTimetable');
     if (!table) return;
-    
-    const timeSlots = ['09:00-10:00', '10:00-11:00', '11:30-12:30', '12:30-13:30', '14:30-15:30', '15:30-16:30'];
+
+    const timeSlots = ['08:45-09:45', '09:45-10:45', '11:30-12:30', '12:30-13:30'];
     const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    
+
     // Create table header
     let headerHTML = '<thead><tr><th>Time</th>';
     days.forEach(day => {
         headerHTML += `<th>${day.charAt(0).toUpperCase() + day.slice(1)}</th>`;
     });
     headerHTML += '</tr></thead>';
-    
+
     // Create table body
     let bodyHTML = '<tbody>';
     timeSlots.forEach(timeSlot => {
@@ -1283,7 +1344,7 @@ function generateTimetableTable(timetableData) {
         bodyHTML += '</tr>';
     });
     bodyHTML += '</tbody>';
-    
+
     table.innerHTML = headerHTML + bodyHTML;
 }
 
@@ -1305,7 +1366,7 @@ function checkScholarshipEligibility(formData) {
         category: formData.get('studentCategory'),
         gender: formData.get('studentGender')
     };
-    
+
     fetch('/api/scholarships/eligible', {
         method: 'POST',
         headers: {
@@ -1313,47 +1374,47 @@ function checkScholarshipEligibility(formData) {
         },
         body: JSON.stringify(eligibilityData)
     })
-    .then(response => response.json())
-    .then(data => {
-        updateEligibleScholarshipsDisplay(data);
-        showEligibilityStatus(eligibilityData);
-    })
-    .catch(error => {
-        console.error('Error checking eligibility:', error);
-    });
+        .then(response => response.json())
+        .then(data => {
+            updateEligibleScholarshipsDisplay(data);
+            showEligibilityStatus(eligibilityData);
+        })
+        .catch(error => {
+            console.error('Error checking eligibility:', error);
+        });
 }
 
 // Update eligible scholarships display
 function updateEligibleScholarshipsDisplay(scholarships) {
     const container = document.getElementById('eligibleScholarships');
     if (!container) return;
-    
+
     container.innerHTML = '';
-    
+
     const eligibleScholarships = scholarships.filter(s => s.eligible);
     const ineligibleScholarships = scholarships.filter(s => !s.eligible);
-    
+
     if (eligibleScholarships.length > 0) {
         const eligibleSection = document.createElement('div');
         eligibleSection.innerHTML = '<h3 class="section-title eligible">✅ Eligible Scholarships</h3>';
-        
+
         eligibleScholarships.forEach(scholarship => {
             const card = createScholarshipCard(scholarship, true);
             eligibleSection.appendChild(card);
         });
-        
+
         container.appendChild(eligibleSection);
     }
-    
+
     if (ineligibleScholarships.length > 0) {
         const ineligibleSection = document.createElement('div');
         ineligibleSection.innerHTML = '<h3 class="section-title ineligible">❌ Not Eligible</h3>';
-        
+
         ineligibleScholarships.forEach(scholarship => {
             const card = createScholarshipCard(scholarship, false);
             ineligibleSection.appendChild(card);
         });
-        
+
         container.appendChild(ineligibleSection);
     }
 }
@@ -1362,7 +1423,7 @@ function updateEligibleScholarshipsDisplay(scholarships) {
 function createScholarshipCard(scholarship, eligible) {
     const card = document.createElement('div');
     card.className = `scholarship-card ${eligible ? 'eligible' : 'ineligible'}`;
-    
+
     card.innerHTML = `
         <div class="scholarship-header">
             <h4>${scholarship.name}</h4>
@@ -1392,7 +1453,7 @@ function createScholarshipCard(scholarship, eligible) {
             ` : ''}
         </div>
     `;
-    
+
     return card;
 }
 
@@ -1400,7 +1461,7 @@ function createScholarshipCard(scholarship, eligible) {
 function showEligibilityStatus(eligibilityData) {
     const statusContainer = document.getElementById('eligibilityStatus');
     statusContainer.style.display = 'block';
-    
+
     statusContainer.innerHTML = `
         <div class="eligibility-summary">
             <h4>Your Profile Summary</h4>
@@ -1420,13 +1481,13 @@ function applyForScholarship(scholarshipId) {
 }
 
 // Form submission handlers
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Academic query form
     const academicQueryForm = document.getElementById('academicQueryForm');
     if (academicQueryForm) {
-        academicQueryForm.addEventListener('submit', function(e) {
+        academicQueryForm.addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             const formData = new FormData(this);
             const queryData = {
                 student_id: currentUser.id,
@@ -1435,7 +1496,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 query_title: formData.get('queryTitle'),
                 query_description: formData.get('queryDescription')
             };
-            
+
             fetch('/api/student/queries', {
                 method: 'POST',
                 headers: {
@@ -1443,38 +1504,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify(queryData)
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Query submitted successfully!');
-                    closeAcademicQueryModal();
-                    this.reset();
-                    loadAcademicQueries();
-                } else {
-                    alert('Failed to submit query');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while submitting the query');
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Query submitted successfully!');
+                        closeAcademicQueryModal();
+                        this.reset();
+                        loadAcademicQueries();
+                    } else {
+                        alert('Failed to submit query');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while submitting the query');
+                });
         });
     }
-    
+
     // Interest survey form
     const interestSurveyForm = document.getElementById('interestSurveyForm');
     if (interestSurveyForm) {
-        interestSurveyForm.addEventListener('submit', function(e) {
+        interestSurveyForm.addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             const formData = new FormData(this);
             const interests = formData.getAll('interests');
-            
+
             if (interests.length === 0) {
                 alert('Please select at least one interest');
                 return;
             }
-            
+
             fetch('/api/student/club-recommendations', {
                 method: 'POST',
                 headers: {
@@ -1482,25 +1543,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify({ interests: interests })
             })
-            .then(response => response.json())
-            .then(data => {
-                updateClubRecommendations(data);
-                closeInterestSurvey();
-                showClubTab('recommendations');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while getting recommendations');
-            });
+                .then(response => response.json())
+                .then(data => {
+                    updateClubRecommendations(data);
+                    closeInterestSurvey();
+                    showClubTab('recommendations');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while getting recommendations');
+                });
         });
     }
-    
+
     // Scholarship eligibility form
     const scholarshipEligibilityForm = document.getElementById('scholarshipEligibilityForm');
     if (scholarshipEligibilityForm) {
-        scholarshipEligibilityForm.addEventListener('submit', function(e) {
+        scholarshipEligibilityForm.addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             const formData = new FormData(this);
             checkScholarshipEligibility(formData);
             closeScholarshipEligibility();
@@ -1512,19 +1573,19 @@ document.addEventListener('DOMContentLoaded', function() {
 function updateClubRecommendations(recommendations) {
     const container = document.getElementById('clubRecommendations');
     if (!container) return;
-    
+
     container.innerHTML = '';
-    
+
     if (recommendations.length === 0) {
         container.innerHTML = '<p class="no-recommendations">No clubs match your interests. Try selecting different interests!</p>';
         return;
     }
-    
+
     recommendations.forEach(rec => {
         const club = rec.club;
         const card = document.createElement('div');
         card.className = 'club-recommendation-card';
-        
+
         card.innerHTML = `
             <div class="recommendation-header">
                 <h4>${club.name}</h4>
@@ -1541,7 +1602,7 @@ function updateClubRecommendations(recommendations) {
             </div>
             <button onclick="joinClub(${club.id})" class="join-club-btn">Join This Club</button>
         `;
-        
+
         container.appendChild(card);
     });
 }

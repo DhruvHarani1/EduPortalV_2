@@ -451,18 +451,57 @@
 
             <!-- Enhanced Scholarship Section -->
             <section id="scholarship" class="content-section">
-                <div class="section-header">
-                    <h2>Scholarship Opportunities</h2>
-                    <button onclick="openScholarshipEligibilityCheck()" class="add-btn">
-                        <i class="fas fa-calculator"></i> Check Eligibility
-                    </button>
-                </div>
-                <div class="scholarship-container">
-                    <div class="eligibility-status" id="eligibilityStatus" style="display: none;">
-                        <!-- Eligibility status will be shown here -->
+                <!-- Blue Search Header -->
+                <div class="scholarship-search-wrapper" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 25px; border-radius: 12px; margin-bottom: 30px; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                    <div class="section-header" style="margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 10px;">
+                        <h2 style="color: white; font-size: 1.5rem;"><i class="fas fa-search"></i> Find Scholarships That Suit You</h2>
                     </div>
-                    <div class="scholarships-grid" id="eligibleScholarships">
-                        <!-- Eligible scholarships will be loaded here -->
+                    
+                    <div class="scholarship-filters" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; align-items: end;">
+                        <div class="filter-group">
+                            <label for="searchIncome" style="display: block; margin-bottom: 8px; font-weight: 500;">Annual Family Income (₹)</label>
+                            <input type="number" id="searchIncome" placeholder="Enter annual income" style="width: 100%; padding: 10px; border-radius: 6px; border: none; font-size: 1rem;">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="searchCategory" style="display: block; margin-bottom: 8px; font-weight: 500;">Category</label>
+                            <select id="searchCategory" style="width: 100%; padding: 10px; border-radius: 6px; border: none; font-size: 1rem; cursor: pointer;">
+                                <option value="">Select Category</option>
+                                <option value="general">General</option>
+                                <option value="obc">OBC</option>
+                                <option value="sc">SC</option>
+                                <option value="st">ST</option>
+                                <option value="ews">EWS</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="searchGender" style="display: block; margin-bottom: 8px; font-weight: 500;">Gender</label>
+                            <select id="searchGender" style="width: 100%; padding: 10px; border-radius: 6px; border: none; font-size: 1rem; cursor: pointer;">
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <button onclick="findScholarships()" style="width: 100%; padding: 10px; background: #0d47a1; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                <i class="fas fa-search-plus"></i> Find Matching Scholarships
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h3>All Available Scholarships</h3>
+                </div>
+                
+                <div class="scholarships-grid" id="scholarshipCards">
+                    <!-- Cards will be loaded here -->
+                    <div style="grid-column: 1/-1; text-align: center; color: #666; padding: 40px;">
+                        <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 20px; color: #ddd;"></i>
+                        <p>Enter your details above to find matching scholarships.</p>
                     </div>
                 </div>
             </section>
