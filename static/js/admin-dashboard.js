@@ -72,7 +72,8 @@ function showSection(sectionId) {
         'calendar': 'Academic Calendar',
         'notices': 'Publish Notices',
         'fees': 'Fee Management',
-        'reports': 'Reports & Analytics'
+        'reports': 'Reports & Analytics',
+        'exams': 'Examination Management'
     };
 
     document.getElementById('pageTitle').textContent = titles[sectionId] || 'Admin Dashboard';
@@ -1027,3 +1028,156 @@ document.addEventListener('DOMContentLoaded', function () {
         header.insertBefore(menuBtn, header.firstChild);
     }
 });
+// Examination Management Logic
+const EXAM_API = 'http://127.0.0.1:5001/api/admin/exams';
+
+function switchExamTab(tabName) {
+    // Buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.style.color = '#64748b';
+        btn.style.borderBottom = 'none';
+        btn.classList.remove('active');
+    });
+    const activeBtn = event.target;
+    activeBtn.style.color = '#2563eb';
+    activeBtn.style.borderBottom = '2px solid #2563eb';
+    activeBtn.classList.add('active');
+
+    // Content
+    document.querySelectorAll('.exam-tab-content').forEach(content => {
+        content.style.display = 'none';
+    });
+    document.getElementById(tabName).style.display = 'block';
+
+    // If Timetable tab, load subjects
+    if (tabName === 'timetable') {
+        loadSubjects();
+    }
+}
+
+// Load Subjects for Dropdown
+async function loadSubjects() {
+    const select = document.getElementById('timetableSubject');
+    if (select.options.length > 1) return; // Already loaded
+
+    try {
+        const res = await fetch(`${EXAM_API}/subjects`);
+        const subjects = await res.json();
+
+        subjects.forEach(sub => {
+            const option = document.createElement('option');
+            option.value = sub.id;
+            option.textContent = `${sub.name} (${sub.code})`;
+            select.appendChild(option);
+        });
+    } catch (err) {
+        console.error('Failed to load subjects', err);
+    }
+}
+
+// Create Schedule
+const createScheduleForm = document.getElementById('createScheduleForm');
+if (createScheduleForm) {
+    createScheduleForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+            const res = await fetch(`${EXAM_API}/schedule`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await res.json();
+            if (result.success) {
+                document.getElementById('scheduleResult').innerHTML = `<div style="color:green; margin-top:0.5rem; padding:0.5rem; background:#ecfdf5; border-radius:4px;">Success! Exam Schedule Created. ID: <strong>${result.id}</strong></div>`;
+                document.getElementById('timetableScheduleId').value = result.id;
+            } else {
+                alert('Error: ' + result.error);
+            }
+        } catch (err) {
+            alert('Failed to connect to Exam API. Make sure admin.py is running.');
+        }
+    });
+}
+
+// Timetable
+async function loadTimetable() {
+    const id = document.getElementById('timetableScheduleId').value;
+    if (!id) return alert('Enter Schedule ID');
+
+    try {
+        const res = await fetch(`${EXAM_API}/timetable/${id}`);
+        const data = await res.json();
+
+        document.getElementById('timetableWrapper').style.display = 'block';
+        const tbody = document.getElementById('timetableBody');
+        tbody.innerHTML = data.map(row => `
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 0.75rem;">${row.subject_name} <br><small style="color:#64748b">${row.subject_code}</small></td>
+                <td style="padding: 0.75rem;">${row.exam_date} <br><small>${row.start_time} - ${row.end_time}</small></td>
+                <td style="padding: 0.75rem;">${row.room_number}</td>
+                <td style="padding: 0.75rem;">${row.faculty_name}</td>
+            </tr>
+        `).join('');
+    } catch (err) { console.error(err); }
+}
+
+const timetableForm = document.getElementById('timetableForm');
+if (timetableForm) {
+    timetableForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+        data.exam_schedule_id = document.getElementById('timetableScheduleId').value;
+
+        const res = await fetch(`${EXAM_API}/timetable`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const result = await res.json();
+        if (result.success) {
+            loadTimetable(); // Refresh
+            e.target.reset();
+        } else {
+            alert(result.error);
+        }
+    });
+}
+
+async function publishSchedule() {
+    const id = document.getElementById('timetableScheduleId').value;
+    if (confirm('Publish schedule? This will notify all students and faculty.')) {
+        const res = await fetch(`${EXAM_API}/publish/${id}`, { method: 'POST' });
+        const result = await res.json();
+        alert(result.message || result.error);
+    }
+}
+
+// Re-candidates
+async function loadReCandidates() {
+    const res = await fetch(`${EXAM_API}/re-candidates`);
+    const data = await res.json();
+    document.getElementById('reCandidatesBody').innerHTML = data.map(row => `
+        <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 0.75rem;">${row.student_name}</td>
+            <td style="padding: 0.75rem;">${row.roll_number}</td>
+            <td style="padding: 0.75rem;">${row.subject_name}</td>
+            <td style="padding: 0.75rem;">${row.marks_obtained}/${row.max_marks}</td>
+            <td style="padding: 0.75rem; color: #ef4444; font-weight: 500;">${row.status}</td>
+        </tr>
+    `).join('');
+}
+
+// Export
+function exportResults(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const dept = formData.get('department');
+    const sem = formData.get('semester');
+    window.location.href = `${EXAM_API}/results/export?department=${dept}&semester=${sem}`;
+}
+
+
