@@ -712,7 +712,7 @@ def get_notices():
             'content': notice.content,
             'notice_type': notice.notice_type,
             'created_at': notice.created_at.isoformat(),
-            'expires_at': notice.expires_at.isoformat() if notice.expires_at else Noneat() if notice.expires_at else None
+            'expires_at': notice.expires_at.isoformat() if notice.expires_at else None
         })
     
     return jsonify(notices_data)
@@ -986,19 +986,41 @@ def init_db():
     with app.app_context():
         db.create_all()
         
-        # MIGRATION: Check if new columns exist in Faculty table, if not add them
         try:
             with db.engine.connect() as conn:
-                try:
-                    conn.execute(db.text("SELECT assigned_classes FROM faculty LIMIT 1"))
-                except:
-                    print("Migrating: Adding assigned_classes, assigned_semesters, assigned_subjects to faculty table")
-                    conn.execute(db.text("ALTER TABLE faculty ADD COLUMN assigned_classes VARCHAR(200)"))
-                    conn.execute(db.text("ALTER TABLE faculty ADD COLUMN assigned_semesters VARCHAR(100)"))
-                    conn.execute(db.text("ALTER TABLE faculty ADD COLUMN assigned_subjects VARCHAR(200)"))
-                    conn.commit()
+                def add_column_if_not_exists(table, column, definition):
+                    try:
+                        conn.execute(db.text(f"SELECT {column} FROM {table} LIMIT 1"))
+                    except:
+                        try:
+                            print(f"Migrating: Adding {column} to {table} table")
+                            conn.execute(db.text(f"ALTER TABLE {table} ADD COLUMN {column} {definition}"))
+                            conn.commit()
+                        except Exception as e:
+                            print(f"Failed to add {column}: {e}")
+
+                # Migration for Faculty table
+                add_column_if_not_exists('faculty', 'assigned_classes', 'VARCHAR(200)')
+                add_column_if_not_exists('faculty', 'assigned_semesters', 'VARCHAR(100)')
+                add_column_if_not_exists('faculty', 'assigned_subjects', 'VARCHAR(200)')
+                
+                # Migration for Student table
+                add_column_if_not_exists('student', 'photo_url', 'VARCHAR(500)')
+                add_column_if_not_exists('student', 'annual_income', 'FLOAT DEFAULT 0.0')
+                add_column_if_not_exists('student', 'category', 'VARCHAR(20)')
+                add_column_if_not_exists('student', 'gender', 'VARCHAR(10)')
+                add_column_if_not_exists('student', 'blood_group', 'VARCHAR(5)')
+                add_column_if_not_exists('student', 'emergency_contact', 'VARCHAR(15)')
+                add_column_if_not_exists('student', 'address', 'TEXT')
+
+                # Migration for Scholarship table
+                add_column_if_not_exists('scholarship', 'min_cgpa', 'FLOAT DEFAULT 0.0')
+                add_column_if_not_exists('scholarship', 'max_family_income', 'FLOAT DEFAULT 0.0')
+                add_column_if_not_exists('scholarship', 'eligible_categories', 'VARCHAR(200)')
+                add_column_if_not_exists('scholarship', 'eligible_genders', 'VARCHAR(50)')
+
         except Exception as e:
-             print(f"Migration warning: {e}")
+             print(f"Migration error: {e}")
         
         # Create sample data if tables are empty
         if User.query.count() == 0:
