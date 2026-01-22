@@ -46,7 +46,6 @@ function toggleSidebar() {
 
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', function () {
-<<<<<<< HEAD
     // Add event listener to close sidebar when a menu item is clicked on mobile
     const menuLinks = document.querySelectorAll('.sidebar-menu a');
     menuLinks.forEach(link => {
@@ -59,9 +58,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-
-=======
->>>>>>> 9b29b48c3aabeb646d18063d7e5dfc0794c9d7a0
     // Load user data from localStorage
     const userData = localStorage.getItem('userData');
     if (userData) {
@@ -1084,7 +1080,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 // Examination Management Logic
-const EXAM_API = 'http://127.0.0.1:5001/api/admin/exams';
+const EXAM_API = '/api/admin/exams';
 
 function switchExamTab(tabName) {
     // Buttons

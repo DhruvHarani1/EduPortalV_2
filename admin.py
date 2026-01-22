@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, make_response, send_file, render_template
-from app import db, User, Student, Faculty, Course, Subject, Marks, Notification, Notice
+from extensions import db
+from models import User, Student, Faculty, Course, Subject, Marks, Notification, Notice
 import csv
 import io
 from datetime import datetime
