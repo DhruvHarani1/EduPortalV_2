@@ -17,8 +17,10 @@ from models import (
     User, Student, Faculty, Course, Subject, SubjectAssignment, Attendance,
     Marks, Notice, StudyMaterial, FeeStructure, FeePayment, Event, Club,
     Timetable, StudentQuery, QueryResponse, Scholarship, ScholarshipApplication,
-    Notification, Mentorship, ClubRequest
+    Timetable, StudentQuery, QueryResponse, Scholarship, ScholarshipApplication,
+    Notification, Mentorship
 )
+from timetable_model import ClassSchedule
 
 # Routes
 @app.route('/')
@@ -96,6 +98,7 @@ def login():
                     'enrollment_number': student.enrollment_number,
                     'current_semester': student.current_semester,
                     'branch': student.branch,
+                    'batch': student.batch,
                     'cgpa': student.cgpa
                 })
         elif user.role == 'faculty':
@@ -339,57 +342,39 @@ def get_club_recommendations():
     
     return jsonify(recommendations)
 
-@app.route('/api/student/timetable/<int:student_id>')
-def get_student_timetable(student_id):
-    student = Student.query.get(student_id)
-    if not student:
-        return jsonify({'error': 'Student not found'}), 404
+@app.route('/api/student/timetable/<int:user_id>')
+def get_student_timetable(user_id):
+    student = Student.query.filter_by(user_id=user_id).first()
+    if not student or not student.batch:
+        return jsonify([])
     
-    # Get timetable for student's course and semester
-    # Get timetable for student's course and semester
-    # Filter by division and batch if applicable
-    # Filter by academic year
     current_academic_year = '2025-26'
     
-    query = Timetable.query.join(Course).filter(
-        (Course.course_name == student.branch) | (Course.course_code == student.branch),
-        Timetable.semester == student.current_semester,
+    # Query the Relational Timetable Model
+    schedule = Timetable.query.join(Subject).filter(
+        Timetable.batch == student.batch,
         Timetable.academic_year == current_academic_year
-    )
+    ).order_by(Timetable.id).all() # Sorting by ID or add custom day order
     
-    # Filter by division if student has one
-    if student.division:
-        query = query.filter(
-            (Timetable.division == student.division) | (Timetable.division == None)
-        )
-        
-    # Filter by batch if student has one (include full class lectures which have no batch)
-    if student.batch:
-         query = query.filter(
-            (Timetable.batch == student.batch) | (Timetable.batch == None)
-        )
-        
-    timetable_entries = query.all()
+    # Custom sort for days
+    day_order = {'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6}
     
-    # Organize by day and time
-    timetable = {}
-    days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
-    
-    for day in days:
-        timetable[day] = {}
-    
-    for entry in timetable_entries:
-        day = entry.day_of_week.lower()
-        time_slot = entry.time_slot
-        
-        timetable[day][time_slot] = {
-            'subject_name': entry.subject.subject_name,
-            'subject_code': entry.subject.subject_code,
-            'faculty_name': entry.faculty.faculty_id,
-            'room_number': entry.room_number
-        }
-    
-    return jsonify(timetable)
+    # Sort in python as 'day_order' might not be in Timetable model
+    schedule.sort(key=lambda x: day_order.get(x.day_of_week.capitalize(), 7))
+
+    result = []
+    for entry in schedule:
+        result.append({
+            'day': entry.day_of_week.capitalize(),
+            'time': entry.time_slot,
+            'subject': entry.subject.subject_name,
+            'faculty': entry.faculty.user.full_name if (entry.faculty and entry.faculty.user) else "Faculty",
+            'room': entry.room_number,
+            'type': "Lecture" # Default or add to model if needed
+        })
+    return jsonify(result)
+
+
 
 @app.route('/api/scholarships/eligible', methods=['POST'])
 def get_eligible_scholarships():
@@ -579,27 +564,26 @@ def get_faculty_timetable(user_id):
         Timetable.academic_year == current_academic_year
     ).all()
     
-    # Organize by day and time
-    timetable = {}
-    days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+    # Organize by day and time - Modified to return List for frontend compatibility
+    timetable = []
     
-    for day in days:
-        timetable[day] = {}
-        
     for entry in entries:
-        day = entry.day_of_week.lower()
-        time_slot = entry.time_slot
+        # Ensure day is Capitalized (Monday, Tuesday...) for frontend matching
+        day_str = entry.day_of_week.capitalize()
         
-        timetable[day][time_slot] = {
-            'original_id': entry.id,
-            'subject_name': entry.subject.subject_name,
+        timetable.append({
+            'day': day_str,
+            'time': entry.time_slot,
+            'subject': entry.subject.subject_name,
             'subject_code': entry.subject.subject_code,
-            'course_name': entry.course.course_name, # or course_code
+            'course': entry.course.course_name,
             'division': entry.division if entry.division else 'All',
             'batch': entry.batch,
-            'room_number': entry.room_number,
-            'semester': entry.semester
-        }
+            'room': entry.room_number,
+            'semester': entry.semester,
+            'id': entry.id,
+            'original_id': entry.id
+        })
         
     return jsonify(timetable)
 
@@ -1007,11 +991,11 @@ def init_db():
                 add_column_if_not_exists('scholarship', 'min_cgpa', 'FLOAT DEFAULT 0.0')
                 add_column_if_not_exists('scholarship', 'max_family_income', 'FLOAT DEFAULT 0.0')
                 add_column_if_not_exists('scholarship', 'eligible_categories', 'VARCHAR(200)')
+                add_column_if_not_exists('scholarship', 'eligible_categories', 'VARCHAR(200)')
                 add_column_if_not_exists('scholarship', 'eligible_genders', 'VARCHAR(50)')
 
-                # Migration for Timetable table
+                # Migration for Timetable
                 add_column_if_not_exists('timetable', 'division', 'VARCHAR(5)')
-                add_column_if_not_exists('timetable', 'batch', 'VARCHAR(10)')
 
         except Exception as e:
              print(f"Migration error: {e}")

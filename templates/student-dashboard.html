@@ -77,14 +77,13 @@
             <!-- Header -->
             <header class="header">
                 <div class="header-left" style="display: flex; align-items: center;">
-                    <i class="fas fa-bars menu-toggle" onclick="toggleSidebar()"
-                        style="font-size: 1.2rem; margin-right: 15px;"></i>
-                    <h1 id="pageTitle">Student Dashboard</h1>
+                    <i class="fas fa-bars menu-toggle" onclick="toggleSidebar()"></i>
+                    <h1 id="pageTitle">Dashboard</h1>
                 </div>
                 <div class="header-right">
                     <div class="notifications">
                         <i class="fas fa-bell"></i>
-                        <span class="badge">3</span>
+                        <span class="notification-count">3</span>
                     </div>
                     <div class="user-profile">
                         <img src="https://via.placeholder.com/40" alt="Profile" class="profile-img">
@@ -99,16 +98,16 @@
                     <h2>Student Information</h2>
                     <div class="info-grid">
                         <div class="info-item">
-                            <label>Enrollment No:</label>
-                            <span id="enrollmentNo">Loading...</span>
+                            <label>Roll Number:</label>
+                            <span id="rollNumber">2023001</span>
                         </div>
                         <div class="info-item">
-                            <label>Roll No:</label>
-                            <span id="rollNo">Loading...</span>
+                            <label>Enrollment Number:</label>
+                            <span id="enrollmentNumber">EN2023001</span>
                         </div>
                         <div class="info-item">
-                            <label>Semester:</label>
-                            <span id="currentSemester">Loading...</span>
+                            <label>Current Semester:</label>
+                            <span id="currentSemester">5th Semester</span>
                         </div>
                         <div class="info-item">
                             <label>Branch:</label>
@@ -123,23 +122,25 @@
                             <i class="fas fa-calendar-check"></i>
                         </div>
                         <div class="card-content">
-                            <h3>Attendance</h3>
+                            <h3>Overall Attendance</h3>
                             <p class="card-value">85%</p>
                             <p class="card-status good">Good Standing</p>
                         </div>
                     </div>
+
                     <div class="card">
                         <div class="card-icon marks-icon">
                             <i class="fas fa-chart-line"></i>
                         </div>
                         <div class="card-content">
-                            <h3>CGPA</h3>
+                            <h3>Current CGPA</h3>
                             <p class="card-value">8.5</p>
-                            <p class="card-status good">Excellent</p>
+                            <p class="card-status excellent">Excellent</p>
                         </div>
                     </div>
+
                     <div class="card">
-                        <div class="card-icon fees-icon">
+                        <div class="card-icon fee-icon">
                             <i class="fas fa-money-bill"></i>
                         </div>
                         <div class="card-content">
@@ -157,10 +158,10 @@
                             <i class="fas fa-clock"></i> View Timetable
                         </button>
                         <button onclick="showSection('marks')" class="action-btn">
-                            <i class="fas fa-file-alt"></i> View Results
+                            <i class="fas fa-chart-line"></i> Check Marks
                         </button>
-                        <button onclick="showSection('queries')" class="action-btn">
-                            <i class="fas fa-question-circle"></i> Ask Query
+                        <button onclick="showSection('notes')" class="action-btn">
+                            <i class="fas fa-book"></i> Download Notes
                         </button>
                         <button onclick="showSection('examination')" class="action-btn">
                             <i class="fas fa-clipboard-list"></i> Exam Schedule
@@ -179,41 +180,32 @@
                     </div>
                 </div>
 
-                <form class="attendance-form" style="display: none;">
-                    <div class="form-group">
-                        <label>Select Subject</label>
-                        <select id="attendanceSubject">
-                            <option value="all">All Subjects</option>
-                        </select>
+                <div class="attendance-cards">
+                    <div class="subject-attendance">
+                        <h3>Mathematics</h3>
+                        <div class="attendance-bar">
+                            <div class="attendance-fill" style="width: 90%"></div>
+                        </div>
+                        <span class="attendance-percent">90%</span>
+                        <p class="attendance-status good">Excellent</p>
                     </div>
-                    <div class="form-group">
-                        <label>Date Range</label>
-                        <input type="date" id="attendanceFrom">
-                        <input type="date" id="attendanceTo">
+
+                    <div class="subject-attendance">
+                        <h3>Physics</h3>
+                        <div class="attendance-bar">
+                            <div class="attendance-fill" style="width: 72%"></div>
+                        </div>
+                        <span class="attendance-percent">72%</span>
+                        <p class="attendance-status warning">Need 3 more classes</p>
                     </div>
-                    <button type="submit" class="apply-btn">Apply Filter</button>
-                </form>
 
-                <div class="attendance-grid" id="attendanceGrid">
-                    <!-- Attendance cards will be populated here -->
-                </div>
-
-                <!-- Low Attendance Modal -->
-                <div id="attendanceModal" class="modal">
-                    <div class="modal-content">
-                        <span class="close">&times;</span>
-                        <div class="modal-header warning">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <h3>Low Attendance Alert</h3>
+                    <div class="subject-attendance">
+                        <h3>Computer Science</h3>
+                        <div class="attendance-bar">
+                            <div class="attendance-fill" style="width: 88%"></div>
                         </div>
-                        <div class="modal-body">
-                            <p>Your attendance in <strong>Computer Networks</strong> is below 75%.</p>
-                            <p>Current: <span class="danger-text">68%</span></p>
-                            <p class="info-text">Please contact your faculty advisor.</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button class="modal-btn">I Understand</button>
-                        </div>
+                        <span class="attendance-percent">88%</span>
+                        <p class="attendance-status good">Good</p>
                     </div>
                 </div>
             </section>
@@ -221,307 +213,286 @@
             <!-- Marks Section -->
             <section id="marks" class="content-section">
                 <div class="section-header">
-                    <h2>Academic Results</h2>
-                    <div class="marks-actions">
-                        <select id="semesterSelect" onchange="loadMarks()">
-                            <option value="5">Semester 5</option>
-                            <option value="4">Semester 4</option>
-                            <option value="3">Semester 3</option>
-                            <option value="2">Semester 2</option>
-                            <option value="1">Semester 1</option>
-                        </select>
-                        <button onclick="downloadMarksheet()" class="download-btn">
-                            <i class="fas fa-download"></i> Download Marksheet
-                        </button>
-                    </div>
+                    <h2>Academic Performance</h2>
+                    <select id="semesterSelect" onchange="loadMarks()">
+                        <option value="current">Current Semester</option>
+                        <option value="4">4th Semester</option>
+                        <option value="3">3rd Semester</option>
+                        <option value="2">2nd Semester</option>
+                        <option value="1">1st Semester</option>
+                    </select>
                 </div>
 
                 <div class="marks-container">
-                    <div class="marks-summary">
-                        <div class="stat-card">
-                            <h4>SGPA</h4>
-                            <span class="stat-value">8.5</span>
-                        </div>
-                        <div class="stat-card">
-                            <h4>CGPA</h4>
-                            <span class="stat-value">8.2</span>
-                        </div>
-                        <div class="stat-card">
-                            <h4>Total Credits</h4>
-                            <span class="stat-value">22</span>
-                        </div>
+                    <div class="marks-chart">
+                        <canvas id="marksChart"></canvas>
                     </div>
 
-                    <div class="marks-table-container">
-                        <table class="marks-table" id="marksTable">
+                    <div class="marks-table">
+                        <table>
                             <thead>
                                 <tr>
-                                    <th>Subject Code</th>
-                                    <th>Subject Name</th>
+                                    <th>Subject</th>
                                     <th>Internal</th>
                                     <th>External</th>
                                     <th>Total</th>
                                     <th>Grade</th>
-                                    <th>Status</th>
                                 </tr>
                             </thead>
-                            <tbody id="marksBody">
-                                <!-- Marks will be populated here -->
+                            <tbody id="marksTableBody">
+                                <tr>
+                                    <td>Mathematics</td>
+                                    <td>85</td>
+                                    <td>78</td>
+                                    <td>163</td>
+                                    <td>A</td>
+                                </tr>
+                                <tr>
+                                    <td>Physics</td>
+                                    <td>80</td>
+                                    <td>82</td>
+                                    <td>162</td>
+                                    <td>A</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
+
+                <button class="download-btn" onclick="downloadMarksheet()">
+                    <i class="fas fa-download"></i> Download Marksheet
+                </button>
             </section>
 
             <!-- Notes Section -->
             <section id="notes" class="content-section">
                 <div class="section-header">
-                    <h2>Study Materials & Notes</h2>
-                    <div class="search-bar">
-                        <i class="fas fa-search"></i>
-                        <input type="text" placeholder="Search notes...">
+                    <h2>Study Materials</h2>
+                    <div class="filter-options">
+                        <select id="subjectFilter">
+                            <option value="all">All Subjects</option>
+                            <option value="math">Mathematics</option>
+                            <option value="physics">Physics</option>
+                            <option value="cs">Computer Science</option>
+                        </select>
+                        <select id="facultyFilter">
+                            <option value="all">All Faculty</option>
+                            <option value="prof1">Prof. Smith</option>
+                            <option value="prof2">Prof. Johnson</option>
+                        </select>
                     </div>
-                </div>
-
-                <div class="notes-categories">
-                    <button class="category-btn active">All</button>
-                    <button class="category-btn">Lecture Notes</button>
-                    <button class="category-btn">Assignments</button>
-                    <button class="category-btn">Lab Manuals</button>
-                    <button class="category-btn">Previous Papers</button>
                 </div>
 
                 <div class="notes-grid">
-                    <!-- Note cards -->
                     <div class="note-card">
-                        <div class="note-icon pdf">
+                        <div class="note-icon">
                             <i class="fas fa-file-pdf"></i>
                         </div>
-                        <div class="note-content">
-                            <h4>Computer Networks - Unit 1</h4>
-                            <p>Introduction to ISO/OSI Model</p>
-                            <div class="note-meta">
-                                <span><i class="fas fa-hdd"></i> 2.5 MB</span>
-                                <span><i class="fas fa-download"></i> 120</span>
-                            </div>
-                        </div>
-                        <button class="download-icon-btn"><i class="fas fa-download"></i></button>
+                        <h4>Calculus Chapter 5</h4>
+                        <p>Prof. Smith • Mathematics</p>
+                        <p class="upload-date">Uploaded: 2 days ago</p>
+                        <button class="download-note-btn">
+                            <i class="fas fa-download"></i> Download
+                        </button>
                     </div>
-                    <!-- More note cards... -->
+
+                    <div class="note-card">
+                        <div class="note-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <h4>Quantum Physics Notes</h4>
+                        <p>Prof. Johnson • Physics</p>
+                        <p class="upload-date">Uploaded: 1 week ago</p>
+                        <button class="download-note-btn">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
                 </div>
             </section>
 
             <!-- Events Section -->
             <section id="events" class="content-section">
                 <div class="section-header">
-                    <h2>Upcoming Events</h2>
-                    <div class="view-options">
-                        <button class="view-btn active"><i class="fas fa-list"></i></button>
-                        <button class="view-btn"><i class="fas fa-calendar"></i></button>
+                    <h2>College Events</h2>
+                    <div class="event-filters">
+                        <select id="eventTypeFilter" onchange="filterEvents()">
+                            <option value="all">All Events</option>
+                            <option value="technical">Technical</option>
+                            <option value="cultural">Cultural</option>
+                            <option value="sports">Sports</option>
+                            <option value="workshop">Workshop</option>
+                        </select>
                     </div>
                 </div>
-
-                <div class="events-container">
-                    <!-- Event cards -->
-                    <div class="event-card">
-                        <div class="event-date">
-                            <span class="day">15</span>
-                            <span class="month">MAR</span>
-                        </div>
-                        <div class="event-details">
-                            <h3>Tech Symposium 2025</h3>
-                            <p class="event-type">Technical Workshop</p>
-                            <div class="event-meta">
-                                <span><i class="fas fa-clock"></i> 10:00 AM</span>
-                                <span><i class="fas fa-map-marker-alt"></i> Auditorium</span>
-                            </div>
-                            <p class="event-desc">Annual technical symposium featuring workshops on AI, IoT, and
-                                Blockchain.</p>
-                            <button class="register-btn">Register Now</button>
-                        </div>
-                    </div>
-                    <!-- More event cards... -->
+                <div class="events-container" id="eventsContainer">
+                    <!-- Events will be loaded dynamically -->
                 </div>
             </section>
 
-            <!-- Notices Section -->
-            <section id="notices" class="content-section">
-                <div class="section-header">
-                    <h2>Circulars & Notices</h2>
-                </div>
-
-                <div class="notices-list" id="noticesList">
-                    <!-- Notices will be populated here -->
-                </div>
-            </section>
-
-            <!-- Fees Section -->
+            <!-- Enhanced Fees Section -->
             <section id="fees" class="content-section">
                 <div class="section-header">
-                    <h2>Fee Payment & Status</h2>
+                    <h2>Fee Management</h2>
+                    <div class="fee-tabs">
+                        <button class="tab-btn active" onclick="showFeeTab('current')">Current Semester</button>
+                        <button class="tab-btn" onclick="showFeeTab('history')">Payment History</button>
+                    </div>
                 </div>
 
-                <div class="fee-status-card">
-                    <div class="fee-header">
-                        <div>
-                            <h4>Current Semester Fee (Sem 5)</h4>
-                            <p class="due-date">Due Date: 15th July 2025</p>
-                        </div>
-                        <span class="status-badge paid">PAID</span>
+                <div id="currentFeeTab" class="fee-tab-content active">
+                    <div class="fee-status-card">
+                        <!-- Current fee details will be loaded here -->
                     </div>
-                    <div class="fee-amount">
-                        <span class="currency">₹</span>
-                        <span class="amount">45,000</span>
-                    </div>
-                    <div class="fee-breakdown">
-                        <div class="breakdown-item">
-                            <span>Tuition Fee</span>
-                            <span>₹ 35,000</span>
-                        </div>
-                        <div class="breakdown-item">
-                            <span>Development Fee</span>
-                            <span>₹ 5,000</span>
-                        </div>
-                        <div class="breakdown-item">
-                            <span>Exam Fee</span>
-                            <span>₹ 2,000</span>
-                        </div>
-                        <div class="breakdown-item">
-                            <span>Other Charges</span>
-                            <span>₹ 3,000</span>
-                        </div>
-                    </div>
-                    <div class="fee-actions">
-                        <button class="download-receipt-btn">
-                            <i class="fas fa-download"></i> Download Receipt
-                        </button>
-                        <button class="pay-history-btn">View History</button>
+                </div>
+
+                <div id="historyFeeTab" class="fee-tab-content">
+                    <div class="fee-history-container">
+                        <table class="fee-history-table">
+                            <thead>
+                                <tr>
+                                    <th>Semester</th>
+                                    <th>Academic Year</th>
+                                    <th>Amount Paid</th>
+                                    <th>Payment Date</th>
+                                    <th>Transaction ID</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="feeHistoryTableBody">
+                                <!-- Fee history will be loaded here -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </section>
 
-            <!-- Queries Section -->
+            <!-- Enhanced Queries Section -->
             <section id="queries" class="content-section">
                 <div class="section-header">
                     <h2>Academic Queries</h2>
-                    <button onclick="openQueryModal()" class="ask-query-btn">
-                        <i class="fas fa-plus"></i> Ask New Query
+                    <button onclick="openAcademicQueryModal()" class="add-btn">
+                        <i class="fas fa-plus"></i> Ask Faculty
+                    </button>
+                </div>
+                <div class="queries-container">
+                    <div class="query-stats">
+                        <div class="stat-item">
+                            <span class="stat-number" id="totalQueries">0</span>
+                            <span class="stat-label">Total Queries</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="pendingQueries">0</span>
+                            <span class="stat-label">Pending</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="answeredQueries">0</span>
+                            <span class="stat-label">Answered</span>
+                        </div>
+                    </div>
+                    <div class="queries-list" id="academicQueriesList">
+                        <!-- Academic queries will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- ID Card Section -->
+            <section id="idcard" class="content-section">
+                <div class="section-header">
+                    <h2>Student ID Card</h2>
+                    <button onclick="downloadIdCard()" class="download-btn">
+                        <i class="fas fa-download"></i> Download ID Card
+                    </button>
+                </div>
+                <div class="id-card-container">
+                    <div class="id-card" id="studentIdCard">
+                        <!-- ID card will be generated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Enhanced Clubs Section -->
+            <section id="clubs" class="content-section">
+                <div class="section-header">
+                    <h2>College Clubs</h2>
+                    <button onclick="openInterestSurvey()" class="add-btn">
+                        <i class="fas fa-search"></i> Find My Clubs
                     </button>
                 </div>
 
-                <div class="queries-filter">
-                    <button class="filter-btn active">All</button>
-                    <button class="filter-btn">Pending</button>
-                    <button class="filter-btn">To Faculty</button>
-                    <button class="filter-btn">To Admin</button>
+                <div class="clubs-tabs">
+                    <button class="tab-btn active" onclick="showClubTab('recommendations')">Recommendations</button>
+                    <button class="tab-btn" onclick="showClubTab('all')">All Clubs</button>
                 </div>
 
-                <div class="queries-container" id="queriesList">
-                    <!-- Query cards will be populated here -->
+                <div id="recommendationsTab" class="club-tab-content active">
+                    <div class="club-recommendations" id="clubRecommendations">
+                        <p class="no-recommendations">Take the interest survey to get personalized club recommendations!
+                        </p>
+                    </div>
                 </div>
 
-                <!-- Ask Query Modal -->
-                <div id="queryModal" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeQueryModal()">&times;</span>
-                        <h3>Submit New Query</h3>
-                        <form id="queryForm" onsubmit="submitQuery(event)">
-                            <div class="form-group">
-                                <label>Subject / Department</label>
-                                <select id="querySubject" required>
-                                    <option value="">Select Subject</option>
-                                    <!-- Subjects populated dynamically -->
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Query Title</label>
-                                <input type="text" id="queryTitle" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Description</label>
-                                <textarea id="queryDescription" rows="5" required></textarea>
-                            </div>
-                            <button type="submit" class="submit-btn">Submit Query</button>
-                        </form>
+                <div id="allClubsTab" class="club-tab-content">
+                    <div class="clubs-grid" id="allClubsGrid">
+                        <!-- All clubs will be loaded here -->
                     </div>
                 </div>
             </section>
 
-            <!-- Examination Section -->
-            <section id="examination" class="content-section">
+            <!-- Enhanced Timetable Section -->
+            <section id="timetable" class="content-section">
                 <div class="section-header">
-                    <h2>Examination Portal</h2>
-                </div>
-
-                <div class="exam-grid">
-                    <div class="exam-card">
-                        <div class="exam-icon">
-                            <i class="fas fa-clipboard-list"></i>
-                        </div>
-                        <h3>Exam Schedule</h3>
-                        <p>View upcoming examination time table and seating arrangement.</p>
-                        <button class="view-link">View Schedule</button>
-                    </div>
-                    <div class="exam-card">
-                        <div class="exam-icon">
-                            <i class="fas fa-file-alt"></i>
-                        </div>
-                        <h3>Hall Ticket</h3>
-                        <p>Download admit card for upcoming semester examinations.</p>
-                        <button class="view-link">Download</button>
-                    </div>
-                    <div class="exam-card">
-                        <div class="exam-icon">
-                            <i class="fas fa-poll"></i>
-                        </div>
-                        <h3>Re-evaluation</h3>
-                        <p>Apply for paper re-checking or re-evaluation process.</p>
-                        <button class="view-link">Apply Now</button>
+                    <h2>Class Timetable</h2>
+                    <div class="timetable-info">
+                        <span>Semester: <strong id="timetableSemester">5</strong></span>
+                        <span>Academic Year: <strong>2025-26</strong></span>
                     </div>
                 </div>
-            </section>
-
-            <!-- Clubs Section -->
-            <section id="clubs" class="content-section">
-                <div class="section-header">
-                    <h2>Student Clubs & Activities</h2>
-                </div>
-
-                <div class="club-tabs">
-                    <button class="tab-btn active" onclick="showClubTab('all')">All Clubs</button>
-                    <button class="tab-btn" onclick="showClubTab('my')">My Memberships</button>
-                    <button class="tab-btn" onclick="openInterestSurvey()">Interest Survey</button>
-                </div>
-
-                <div id="clubContent">
-                    <div class="club-tab-content active" id="allTab">
-                        <div class="clubs-grid" id="allClubsGrid">
-                            <!-- Club cards will be loaded here -->
-                            <p style="grid-column: 1/-1; text-align: center;">Loading clubs...</p>
+                <div class="timetable-container">
+                    <div class="row mb-3">
+                        <div class="col-md-12 text-end">
+                            <span class="badge bg-warning text-dark" id="current-day-badge">Today: Monday</span>
                         </div>
                     </div>
-                    <div class="club-tab-content" id="myTab">
-                        <div class="clubs-grid" id="myClubsGrid" style="display: none;">
-                            <!-- My clubs will be loaded here -->
-                        </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-center align-middle" id="timetable-grid">
+                            <thead class="table-dark">
+                                <tr>
+                                    <!-- Dynamic Headers -->
+                                </tr>
+                            </thead>
+                            <tbody id="timetable-body">
+                                <!-- Timetable rows will be populated here -->
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="club-tab-content" id="recommendationsTab"> <!-- Renamed for clarity -->
-                        <div class="clubs-grid" id="clubRecommendations" style="display: none;"></div>
-                    </div>
+                    <style>
+                        .current-day-row {
+                            background-color: #fff3cd !important;
+                            border: outline 2px solid #ffc107 !important;
+                        }
+
+                        .rescheduled-slot {
+                            background-color: #d1e7dd;
+                            border-left: 4px solid #198754;
+                        }
+
+                        .rescheduled-badge {
+                            font-size: 0.7em;
+                            vertical-align: top;
+                        }
+                    </style>
                 </div>
             </section>
 
-            <!-- Scholarships Section -->
+            <!-- Enhanced Scholarship Section -->
             <section id="scholarship" class="content-section">
-                <div class="section-header">
-                    <h2>Scholarship Portal</h2>
-                    <p class="section-subtitle">Find and apply for financial aid opportunities</p>
-                </div>
-
-                <div class="scholarship-finder-card">
-                    <div class="finder-header">
-                        <h3><i class="fas fa-search-dollar"></i> Check Your Eligibility</h3>
-                        <p>Enter your details below to see which scholarships you qualify for.</p>
+                <!-- Blue Search Header -->
+                <div class="scholarship-search-wrapper"
+                    style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 25px; border-radius: 12px; margin-bottom: 30px; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                    <div class="section-header"
+                        style="margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 10px;">
+                        <h2 style="color: white; font-size: 1.5rem;"><i class="fas fa-search"></i> Find Scholarships
+                            That Suit You</h2>
                     </div>
 
                     <div class="scholarship-filters">
@@ -574,79 +545,6 @@
                 </div>
             </section>
 
-            <!-- Student ID Card Section -->
-            <section id="idcard" class="content-section">
-                <div class="section-header">
-                    <h2>Student ID Card</h2>
-                </div>
-
-                <div class="id-card-wrapper">
-                    <div class="id-card-container" id="printableIdCard">
-                        <!-- Card Header -->
-                        <div class="id-card-header">
-                            <div class="college-logo-small">
-                                <i class="fas fa-university"></i>
-                            </div>
-                            <h3 class="college-name">EduPortal Institute of Technology</h3>
-                        </div>
-
-                        <!-- Profile Photo -->
-                        <div class="profile-photo-container">
-                            <img src="https://via.placeholder.com/150" alt="Student Photo" class="profile-photo"
-                                id="cardPhoto">
-                        </div>
-
-                        <!-- Student Details -->
-                        <div class="student-details">
-                            <h2 class="student-name" id="cardName">Loading...</h2>
-                            <p class="student-course" id="cardBranch">Loading...</p>
-
-                            <div class="details-grid">
-                                <div class="detail-item">
-                                    <span class="detail-label">Enrollment No</span>
-                                    <span class="detail-value" id="cardEnrollment">-</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Roll No</span>
-                                    <span class="detail-value" id="cardRoll">-</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Semester</span>
-                                    <span class="detail-value" id="cardSemester">-</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Admission Year</span>
-                                    <span class="detail-value" id="cardYear">-</span>
-                                </div>
-                                <div class="detail-item" style="grid-column: 1 / -1;">
-                                    <span class="detail-label">Emergency Contact</span>
-                                    <span class="detail-value" id="cardEmergency">-</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Card Footer -->
-                        <div class="id-card-footer">
-                            <div class="id-card-validity">
-                                <span class="validity-label">Valid Until</span>
-                                <span class="validity-date" id="cardValidity">Dec 2029</span>
-                            </div>
-                            <div class="qr-placeholder">
-                                <!-- QR Code Placeholder -->
-                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=EduPortal-Student-ID"
-                                    alt="QR Code">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="print-btn-container">
-                    <button onclick="printIdCard()" class="print-btn">
-                        <i class="fas fa-print"></i> Download / Print ID Card
-                    </button>
-                </div>
-            </section>
-
             <!-- Settings Section -->
             <section id="settings" class="content-section">
                 <div class="section-header">
@@ -696,58 +594,55 @@
                                 <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.85rem; color: #666;">
                                     <li id="req-length"
                                         style="margin-bottom: 6px; display: flex; align-items: center; gap: 8px;"><i
-                                            class="fas fa-circle" style="font-size: 6px; color: #ccc;"></i> At least 8
-                                        characters</li>
-                                    <li id="req-uppercase"
+                                            class="far fa-circle" style="color: #ccc;"></i> 8+ Characters</li>
+                                    <li id="req-special"
                                         style="margin-bottom: 6px; display: flex; align-items: center; gap: 8px;"><i
-                                            class="fas fa-circle" style="font-size: 6px; color: #ccc;"></i> One
-                                        uppercase letter</li>
+                                            class="far fa-circle" style="color: #ccc;"></i> Special Character (!@#$)
+                                    </li>
                                     <li id="req-number"
                                         style="margin-bottom: 6px; display: flex; align-items: center; gap: 8px;"><i
-                                            class="fas fa-circle" style="font-size: 6px; color: #ccc;"></i> One number
-                                    </li>
-                                    <li id="req-special" style="display: flex; align-items: center; gap: 8px;"><i
-                                            class="fas fa-circle" style="font-size: 6px; color: #ccc;"></i> One special
-                                        char (@$!%*?&)</li>
+                                            class="far fa-circle" style="color: #ccc;"></i> Number (0-9)</li>
+                                    <li id="req-upper"
+                                        style="margin-bottom: 6px; display: flex; align-items: center; gap: 8px;"><i
+                                            class="far fa-circle" style="color: #ccc;"></i> Uppercase Letter</li>
                                 </ul>
                             </div>
 
-                            <button type="submit" class="save-btn"
-                                style="width: 100%; padding: 12px; border: none; border-radius: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-weight: 600; cursor: pointer; transition: transform 0.2s;">
-                                <i class="fas fa-save" style="margin-right: 8px;"></i> Update Password
-                            </button>
+                            <div class="form-group" style="margin-bottom: 30px;">
+                                <input type="password" id="confirmPassword" placeholder="Confirm New Password" required
+                                    style="width: 100%; padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 8px; background: #f9f9f9; font-size: 0.95rem; transition: border-color 0.3s;">
+                            </div>
+
+                            <button type="submit" class="update-btn"
+                                style="width: 100%; padding: 12px; background: linear-gradient(135deg, #1e88e5, #1565c0); color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 10px rgba(21, 101, 192, 0.2);">Update
+                                Password</button>
                         </form>
                     </div>
 
-                    <!-- Appearance Settings -->
-                    <div class="settings-card premium-ui"
-                        style="background: white; border-radius: 16px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
-                        <div class="card-header" style="margin-bottom: 20px;">
-                            <h3 style="font-size: 1.2rem; font-weight: 700; color: #333; margin: 0;">Appearance</h3>
+                    <!-- Appearance Card (Small) -->
+                    <div class="settings-card appearance-card"
+                        style="background: white; border-radius: 12px; padding: 15px 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between;">
+                        <div class="appearance-label" style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-palette" style="color: #555;"></i>
+                            <span style="font-weight: 600; color: #333;">Appearance</span>
                         </div>
-                        <div class="setting-item"
-                            style="display: flex; justify-content: space-between; align-items: center;">
-                            <div class="setting-info">
-                                <label class="appearance-label"
-                                    style="display: flex; align-items: center; gap: 10px; font-weight: 500; color: #333;">
-                                    <i class="fas fa-moon" style="color: #667eea;"></i>
-                                    <span>Dark Mode</span>
-                                </label>
-                                <p style="margin: 5px 0 0 28px; font-size: 0.8rem; color: #666;">Switch between light
-                                    and
-                                    dark themes</p>
-                            </div>
-                            <div class="theme-toggle-group"
-                                style="background: #f0f0f0; padding: 4px; border-radius: 30px; display: flex; gap: 4px;">
-                                <button onclick="setTheme('light')" id="theme-light-btn" class="active"
-                                    style="border: none; background: white; padding: 8px 12px; border-radius: 20px; cursor: pointer; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.3s;">
-                                    <i class="fas fa-sun"></i>
-                                </button>
-                                <button onclick="setTheme('dark')" id="theme-dark-btn"
-                                    style="border: none; background: transparent; padding: 8px 12px; border-radius: 20px; cursor: pointer; color: #666; transition: all 0.3s;">
-                                    <i class="fas fa-moon"></i>
-                                </button>
-                            </div>
+
+                        <div class="theme-toggle-group"
+                            style="display: flex; gap: 5px; background: #e9ecef; padding: 4px; border-radius: 20px;">
+                            <label class="theme-btn-radio" style="margin: 0;">
+                                <input type="radio" name="theme" value="light" onclick="setTheme('light')" checked
+                                    style="display: none;">
+                                <span class="btn-content active" id="theme-light-btn"
+                                    style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 16px; font-size: 0.85rem; cursor: pointer; background: white; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.2s;"><i
+                                        class="fas fa-sun"></i> Light</span>
+                            </label>
+                            <label class="theme-btn-radio" style="margin: 0;">
+                                <input type="radio" name="theme" value="dark" onclick="setTheme('dark')"
+                                    style="display: none;">
+                                <span class="btn-content" id="theme-dark-btn"
+                                    style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 16px; font-size: 0.85rem; cursor: pointer; color: #666; transition: all 0.2s;"><i
+                                        class="fas fa-moon"></i> Dark</span>
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -755,518 +650,110 @@
         </main>
     </div>
 
-    <script src="{{ url_for('static', filename='js/student-dashboard.js') }}?v=2.2"></script>
-</body>
-
-</html>
-<div class="sidebar-header">
-    <div class="logo">
-        <i class="fas fa-graduation-cap"></i>
-        <span>EduPortal</span>
+    <!-- Academic Query Modal -->
+    <div id="academicQueryModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAcademicQueryModal()">&times;</span>
+            <h3>Ask Faculty - Academic Query</h3>
+            <form id="academicQueryForm">
+                <div class="form-group">
+                    <label for="querySubject">Subject:</label>
+                    <select id="querySubject" required>
+                        <option value="">Select Subject</option>
+                        <!-- Subjects will be loaded dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="queryFaculty">Faculty:</label>
+                    <select id="queryFaculty" required>
+                        <option value="">Select Faculty</option>
+                        <!-- Faculty will be loaded based on subject -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="queryTitle">Query Title:</label>
+                    <input type="text" id="queryTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="queryDescription">Describe your query:</label>
+                    <textarea id="queryDescription" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="queryAttachment">Attach Image (Optional):</label>
+                    <input type="file" id="queryAttachment" accept="image/*">
+                </div>
+                <button type="submit" class="submit-query-btn">Submit Query</button>
+            </form>
+        </div>
     </div>
-</div>
-<ul class="sidebar-menu">
-    <li><a href="#dashboard" class="menu-item active" onclick="showSection('dashboard')">
-            <i class="fas fa-tachometer-alt"></i> Dashboard
-        </a></li>
-    <li><a href="#attendance" class="menu-item" onclick="showSection('attendance')">
-            <i class="fas fa-calendar-check"></i> Attendance
-        </a></li>
-    <li><a href="#marks" class="menu-item" onclick="showSection('marks')">
-            <i class="fas fa-chart-line"></i> Marks
-        </a></li>
-    <li><a href="#notes" class="menu-item" onclick="showSection('notes')">
-            <i class="fas fa-book"></i> Notes
-        </a></li>
-    <li><a href="#events" class="menu-item" onclick="showSection('events')">
-            <i class="fas fa-calendar-alt"></i> Events
-        </a></li>
-    <li><a href="#notices" class="menu-item" onclick="showSection('notices')">
-            <i class="fas fa-bullhorn"></i> Notices
-        </a></li>
-    <li><a href="#fees" class="menu-item" onclick="showSection('fees')">
-            <i class="fas fa-money-bill"></i> Fee Status
-        </a></li>
-    <li><a href="#queries" class="menu-item" onclick="showSection('queries')">
-            <i class="fas fa-question-circle"></i> Queries
-        </a></li>
-    <li><a href="#examination" class="menu-item" onclick="showSection('examination')">
-            <i class="fas fa-clipboard-list"></i> Examination
-        </a></li>
-    <li><a href="#clubs" class="menu-item" onclick="showSection('clubs')">
-            <i class="fas fa-users"></i> Clubs
-        </a></li>
-    <li><a href="#idcard" class="menu-item" onclick="showSection('idcard')">
-            <i class="fas fa-id-card"></i> ID Card
-        </a></li>
-    <li><a href="#timetable" class="menu-item" onclick="showSection('timetable')">
-            <i class="fas fa-clock"></i> Timetable
-        </a></li>
-    <li><a href="#scholarship" class="menu-item" onclick="showSection('scholarship')">
-            <i class="fas fa-award"></i> Scholarships
-        </a></li>
-    <li><a href="#settings" class="menu-item" onclick="showSection('settings')">
-            <i class="fas fa-cog"></i> Settings
-        </a></li>
-</ul>
-<div class="sidebar-footer">
-    <button onclick="logout()" class="logout-btn">
-        <i class="fas fa-sign-out-alt"></i> Logout
-    </button>
-</div>
-</nav>
 
-<!-- Main Content -->
-<main class="main-content">
-    <!-- Header -->
-    <header class="header">
-        <div class="header-left" style="display: flex; align-items: center;">
-            <i class="fas fa-bars menu-toggle" onclick="toggleSidebar()"
-                style="font-size: 1.2rem; margin-right: 15px;"></i>
-            <h1>Student Dashboard</h1>
-        </div>
-        <div class="header-right">
-            <div class="notifications">
-                <i class="fas fa-bell"></i>
-                <span class="badge">3</span>
-            </div>
-            <div class="user-profile">
-                <img src="https://via.placeholder.com/40" alt="Profile" class="profile-img">
-                <span id="studentName">John Doe</span>
-            </div>
-        </div>
-    </header>
-
-    <!-- Dashboard Section -->
-    <section id="dashboard" class="content-section active">
-        <div class="student-info-card">
-            <h2>Student Information</h2>
-            <div class="info-grid">
-                <div class="info-item">
-                    <label>Enrollment No:</label>
-                    <span id="enrollmentNo">Loading...</span>
+    <!-- Interest Survey Modal -->
+    <div id="interestSurveyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeInterestSurvey()">&times;</span>
+            <h3>Find Your Perfect Club</h3>
+            <p>Select your interests to get personalized club recommendations:</p>
+            <form id="interestSurveyForm">
+                <div class="interests-grid">
+                    <label class="interest-item">
+                        <input type="checkbox" value="programming">
+                        <span>Programming</span>
+                    </label>
+                    <label class="interest-item">
+                        <input type="checkbox" value="robotics">
+                        <span>Robotics</span>
+                    </label>
+                    <label class="interest-item">
+                        <input type="checkbox" value="music">
+                        <span>Music</span>
+                    </label>
+                    <label class="interest-item">
+                        <input type="checkbox" value="photography">
+                        <span>Photography</span>
+                    </label>
+                    <label class="interest-item">
+                        <input type="checkbox" value="sports">
+                        <span>Sports</span>
+                    </label>
+                    <label class="interest-item">
+                        <input type="checkbox" value="dance">
+                        <span>Dance</span>
+                    </label>
+                    <label class="interest-item">
+                        <input type="checkbox" value="drama">
+                        <span>Drama</span>
+                    </label>
+                    <label class="interest-item">
+                        <input type="checkbox" value="debate">
+                        <span>Debate</span>
+                    </label>
+                    <label class="interest-item">
+                        <input type="checkbox" value="art">
+                        <span>Art & Craft</span>
+                    </label>
+                    <label class="interest-item">
+                        <input type="checkbox" value="literature">
+                        <span>Literature</span>
+                    </label>
                 </div>
-                <div class="info-item">
-                    <label>Roll No:</label>
-                    <span id="rollNo">Loading...</span>
-                </div>
-                <div class="info-item">
-                    <label>Semester:</label>
-                    <span id="currentSemester">Loading...</span>
-                </div>
-                <div class="info-item">
-                    <label>Branch:</label>
-                    <span id="branch">Computer Science</span>
-                </div>
-            </div>
+                <button type="submit" class="find-clubs-btn">Find My Clubs</button>
+            </form>
         </div>
+    </div>
 
-        <div class="dashboard-cards">
-            <div class="card">
-                <div class="card-icon attendance-icon">
-                    <i class="fas fa-calendar-check"></i>
+    <!-- Scholarship Eligibility Modal -->
+    <div id="scholarshipEligibilityModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeScholarshipEligibility()">&times;</span>
+            <h3>Scholarship Eligibility Check</h3>
+            <form id="scholarshipEligibilityForm">
+                <div class="form-group">
+                    <label for="familyIncome">Annual Family Income (₹):</label>
+                    <input type="number" id="familyIncome" required>
                 </div>
-                <div class="card-content">
-                    <h3>Attendance</h3>
-                    <p class="card-value">85%</p>
-                    <p class="card-status good">Good Standing</p>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-icon marks-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="card-content">
-                    <h3>CGPA</h3>
-                    <p class="card-value">8.5</p>
-                    <p class="card-status good">Excellent</p>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-icon fees-icon">
-                    <i class="fas fa-money-bill"></i>
-                </div>
-                <div class="card-content">
-                    <h3>Fee Status</h3>
-                    <p class="card-value">Paid</p>
-                    <p class="card-status good">Up to Date</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="quick-actions">
-            <h3>Quick Actions</h3>
-            <div class="action-buttons">
-                <button onclick="showSection('timetable')" class="action-btn">
-                    <i class="fas fa-clock"></i> View Timetable
-                </button>
-                <button onclick="showSection('marks')" class="action-btn">
-                    <i class="fas fa-file-alt"></i> View Results
-                </button>
-                <button onclick="showSection('queries')" class="action-btn">
-                    <i class="fas fa-question-circle"></i> Ask Query
-                </button>
-                <button onclick="showSection('examination')" class="action-btn">
-                    <i class="fas fa-clipboard-list"></i> Exam Schedule
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Attendance Section -->
-    <section id="attendance" class="content-section">
-        <div class="section-header">
-            <h2>Attendance Management</h2>
-            <div class="attendance-summary">
-                <span class="overall-attendance">Overall: 85%</span>
-                <span class="min-requirement">Minimum Required: 75%</span>
-            </div>
-        </div>
-
-        <form class="attendance-form" style="display: none;">
-            <div class="form-group">
-                <label>Select Subject</label>
-                <select id="attendanceSubject">
-                    <option value="all">All Subjects</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Date Range</label>
-                <input type="date" id="attendanceFrom">
-                <input type="date" id="attendanceTo">
-            </div>
-            <button type="submit" class="apply-btn">Apply Filter</button>
-        </form>
-
-        <div class="attendance-grid" id="attendanceGrid">
-            <!-- Attendance cards will be populated here -->
-        </div>
-
-        <!-- Low Attendance Modal -->
-        <div id="attendanceModal" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <div class="modal-header warning">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <h3>Low Attendance Alert</h3>
-                </div>
-                <div class="modal-body">
-                    <p>Your attendance in <strong>Computer Networks</strong> is below 75%.</p>
-                    <p>Current: <span class="danger-text">68%</span></p>
-                    <p class="info-text">Please contact your faculty advisor.</p>
-                </div>
-                <div class="modal-footer">
-                    <button class="modal-btn">I Understand</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Marks Section -->
-    <section id="marks" class="content-section">
-        <div class="section-header">
-            <h2>Academic Results</h2>
-            <div class="marks-actions">
-                <select id="semesterSelect" onchange="loadMarks()">
-                    <option value="5">Semester 5</option>
-                    <option value="4">Semester 4</option>
-                    <option value="3">Semester 3</option>
-                    <option value="2">Semester 2</option>
-                    <option value="1">Semester 1</option>
-                </select>
-                <button onclick="downloadMarksheet()" class="download-btn">
-                    <i class="fas fa-download"></i> Download Marksheet
-                </button>
-            </div>
-        </div>
-
-        <div class="marks-container">
-            <div class="marks-summary">
-                <div class="stat-card">
-                    <h4>SGPA</h4>
-                    <span class="stat-value">8.5</span>
-                </div>
-                <div class="stat-card">
-                    <h4>CGPA</h4>
-                    <span class="stat-value">8.2</span>
-                </div>
-                <div class="stat-card">
-                    <h4>Total Credits</h4>
-                    <span class="stat-value">22</span>
-                </div>
-            </div>
-
-            <div class="marks-table-container">
-                <table class="marks-table" id="marksTable">
-                    <thead>
-                        <tr>
-                            <th>Subject Code</th>
-                            <th>Subject Name</th>
-                            <th>Internal</th>
-                            <th>External</th>
-                            <th>Total</th>
-                            <th>Grade</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="marksBody">
-                        <!-- Marks will be populated here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </section>
-
-    <!-- Notes Section -->
-    <section id="notes" class="content-section">
-        <div class="section-header">
-            <h2>Study Materials & Notes</h2>
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search notes...">
-            </div>
-        </div>
-
-        <div class="notes-categories">
-            <button class="category-btn active">All</button>
-            <button class="category-btn">Lecture Notes</button>
-            <button class="category-btn">Assignments</button>
-            <button class="category-btn">Lab Manuals</button>
-            <button class="category-btn">Previous Papers</button>
-        </div>
-
-        <div class="notes-grid">
-            <!-- Note cards -->
-            <div class="note-card">
-                <div class="note-icon pdf">
-                    <i class="fas fa-file-pdf"></i>
-                </div>
-                <div class="note-content">
-                    <h4>Computer Networks - Unit 1</h4>
-                    <p>Introduction to ISO/OSI Model</p>
-                    <div class="note-meta">
-                        <span><i class="fas fa-hdd"></i> 2.5 MB</span>
-                        <span><i class="fas fa-download"></i> 120</span>
-                    </div>
-                </div>
-                <button class="download-icon-btn"><i class="fas fa-download"></i></button>
-            </div>
-            <!-- More note cards... -->
-        </div>
-    </section>
-
-    <!-- Events Section -->
-    <section id="events" class="content-section">
-        <div class="section-header">
-            <h2>Upcoming Events</h2>
-            <div class="view-options">
-                <button class="view-btn active"><i class="fas fa-list"></i></button>
-                <button class="view-btn"><i class="fas fa-calendar"></i></button>
-            </div>
-        </div>
-
-        <div class="events-container">
-            <!-- Event cards -->
-            <div class="event-card">
-                <div class="event-date">
-                    <span class="day">15</span>
-                    <span class="month">MAR</span>
-                </div>
-                <div class="event-details">
-                    <h3>Tech Symposium 2025</h3>
-                    <p class="event-type">Technical Workshop</p>
-                    <div class="event-meta">
-                        <span><i class="fas fa-clock"></i> 10:00 AM</span>
-                        <span><i class="fas fa-map-marker-alt"></i> Auditorium</span>
-                    </div>
-                    <p class="event-desc">Annual technical symposium featuring workshops on AI, IoT, and
-                        Blockchain.</p>
-                    <button class="register-btn">Register Now</button>
-                </div>
-            </div>
-            <!-- More event cards... -->
-        </div>
-    </section>
-
-    <!-- Notices Section -->
-    <section id="notices" class="content-section">
-        <div class="section-header">
-            <h2>Circulars & Notices</h2>
-        </div>
-
-        <div class="notices-list" id="noticesList">
-            <!-- Notices will be populated here -->
-        </div>
-    </section>
-
-    <!-- Fees Section -->
-    <section id="fees" class="content-section">
-        <div class="section-header">
-            <h2>Fee Payment & Status</h2>
-        </div>
-
-        <div class="fee-status-card">
-            <div class="fee-header">
-                <div>
-                    <h4>Current Semester Fee (Sem 5)</h4>
-                    <p class="due-date">Due Date: 15th July 2025</p>
-                </div>
-                <span class="status-badge paid">PAID</span>
-            </div>
-            <div class="fee-amount">
-                <span class="currency">₹</span>
-                <span class="amount">45,000</span>
-            </div>
-            <div class="fee-breakdown">
-                <div class="breakdown-item">
-                    <span>Tuition Fee</span>
-                    <span>₹ 35,000</span>
-                </div>
-                <div class="breakdown-item">
-                    <span>Development Fee</span>
-                    <span>₹ 5,000</span>
-                </div>
-                <div class="breakdown-item">
-                    <span>Exam Fee</span>
-                    <span>₹ 2,000</span>
-                </div>
-                <div class="breakdown-item">
-                    <span>Other Charges</span>
-                    <span>₹ 3,000</span>
-                </div>
-            </div>
-            <div class="fee-actions">
-                <button class="download-receipt-btn">
-                    <i class="fas fa-download"></i> Download Receipt
-                </button>
-                <button class="pay-history-btn">View History</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Queries Section -->
-    <section id="queries" class="content-section">
-        <div class="section-header">
-            <h2>Academic Queries</h2>
-            <button onclick="openQueryModal()" class="ask-query-btn">
-                <i class="fas fa-plus"></i> Ask New Query
-            </button>
-        </div>
-
-        <div class="queries-filter">
-            <button class="filter-btn active">All</button>
-            <button class="filter-btn">Pending</button>
-            <button class="filter-btn">To Faculty</button>
-            <button class="filter-btn">To Admin</button>
-        </div>
-
-        <div class="queries-container" id="queriesList">
-            <!-- Query cards will be populated here -->
-        </div>
-
-        <!-- Ask Query Modal -->
-        <div id="queryModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeQueryModal()">&times;</span>
-                <h3>Submit New Query</h3>
-                <form id="queryForm" onsubmit="submitQuery(event)">
-                    <div class="form-group">
-                        <label>Subject / Department</label>
-                        <select id="querySubject" required>
-                            <option value="">Select Subject</option>
-                            <!-- Subjects populated dynamically -->
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Query Title</label>
-                        <input type="text" id="queryTitle" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea id="queryDescription" rows="5" required></textarea>
-                    </div>
-                    <button type="submit" class="submit-btn">Submit Query</button>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <!-- Examination Section -->
-    <section id="examination" class="content-section">
-        <div class="section-header">
-            <h2>Examination Portal</h2>
-        </div>
-
-        <div class="exam-grid">
-            <div class="exam-card">
-                <div class="exam-icon">
-                    <i class="fas fa-clipboard-list"></i>
-                </div>
-                <h3>Exam Schedule</h3>
-                <p>View upcoming examination time table and seating arrangement.</p>
-                <button class="view-link">View Schedule</button>
-            </div>
-            <div class="exam-card">
-                <div class="exam-icon">
-                    <i class="fas fa-file-alt"></i>
-                </div>
-                <h3>Hall Ticket</h3>
-                <p>Download admit card for upcoming semester examinations.</p>
-                <button class="view-link">Download</button>
-            </div>
-            <div class="exam-card">
-                <div class="exam-icon">
-                    <i class="fas fa-poll"></i>
-                </div>
-                <h3>Re-evaluation</h3>
-                <p>Apply for paper re-checking or re-evaluation process.</p>
-                <button class="view-link">Apply Now</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Clubs Section -->
-    <section id="clubs" class="content-section">
-        <div class="section-header">
-            <h2>Student Clubs & Activities</h2>
-        </div>
-
-        <div class="club-tabs">
-            <button class="tab-btn active" onclick="showClubTab('all')">All Clubs</button>
-            <button class="tab-btn" onclick="showClubTab('my')">My Memberships</button>
-            <button class="tab-btn" onclick="openInterestSurvey()">Interest Survey</button>
-        </div>
-
-        <div id="clubContent">
-            <div class="clubs-grid" id="allClubsGrid">
-                <!-- Club cards will be loaded here -->
-                <p style="grid-column: 1/-1; text-align: center;">Loading clubs...</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Scholarships Section -->
-    <section id="scholarship" class="content-section">
-        <div class="section-header">
-            <h2>Scholarship Portal</h2>
-            <p class="section-subtitle">Find and apply for financial aid opportunities</p>
-        </div>
-
-        <div class="scholarship-finder-card">
-            <div class="finder-header">
-                <h3><i class="fas fa-search-dollar"></i> Check Your Eligibility</h3>
-                <p>Enter your details below to see which scholarships you qualify for.</p>
-            </div>
-
-            <div class="scholarship-filters">
-                <div class="filter-group">
-                    <label for="searchIncome">Annual Income (₹)</label>
-                    <input type="number" id="searchIncome" placeholder="Enter annual income" class="filter-control">
-                </div>
-
-                <div class="filter-group">
-                    <label for="searchCategory">Category</label>
-                    <select id="searchCategory" class="filter-control">
+                <div class="form-group">
+                    <label for="studentCategory">Category:</label>
+                    <select id="studentCategory" required>
                         <option value="">Select Category</option>
                         <option value="general">General</option>
                         <option value="obc">OBC</option>
@@ -1275,1095 +762,45 @@
                         <option value="ews">EWS</option>
                     </select>
                 </div>
-
-                <div class="filter-group">
-                    <label for="searchGender">Gender</label>
-                    <select id="searchGender" class="filter-control">
+                <div class="form-group">
+                    <label for="studentGender">Gender:</label>
+                    <select id="studentGender" required>
                         <option value="">Select Gender</option>
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                         <option value="other">Other</option>
                     </select>
                 </div>
-
-                <div class="filter-group">
-                    <button onclick="findScholarships()" class="search-btn">
-                        <i class="fas fa-search-plus"></i> Find Scholarships
-                    </button>
-                </div>
-            </div>
+                <button type="submit" class="check-eligibility-btn">Check Eligible Scholarships</button>
+            </form>
         </div>
-
-        <div class="section-header">
-            <h3>All Available Scholarships</h3>
-        </div>
-
-        <div class="scholarships-grid" id="scholarshipCards">
-            <!-- Cards will be loaded here -->
-            <div style="grid-column: 1/-1; text-align: center; color: #666; padding: 40px;">
-                <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 20px; color: #ddd;"></i>
-                <p>Enter your details above to find matching scholarships.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Student ID Card Section -->
-    <section id="idcard" class="content-section">
-        <div class="section-header">
-            <h2>Student ID Card</h2>
-        </div>
-
-        <div class="id-card-wrapper">
-            <div class="id-card-container" id="printableIdCard">
-                <!-- Card Header -->
-                <div class="id-card-header">
-                    <div class="college-logo-small">
-                        <i class="fas fa-university"></i>
-                    </div>
-                    <h3 class="college-name">EduPortal Institute of Technology</h3>
-                </div>
-
-                <!-- Profile Photo -->
-                <div class="profile-photo-container">
-                    <img src="https://via.placeholder.com/150" alt="Student Photo" class="profile-photo" id="cardPhoto">
-                </div>
-
-                <!-- Student Details -->
-                <div class="student-details">
-                    <h2 class="student-name" id="cardName">Loading...</h2>
-                    <p class="student-course" id="cardBranch">Loading...</p>
-
-                    <div class="details-grid">
-                        <div class="detail-item">
-                            <span class="detail-label">Enrollment No</span>
-                            <span class="detail-value" id="cardEnrollment">-</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Roll No</span>
-                            <span class="detail-value" id="cardRoll">-</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Semester</span>
-                            <span class="detail-value" id="cardSemester">-</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Admission Year</span>
-                            <span class="detail-value" id="cardYear">-</span>
-                        </div>
-                        <div class="detail-item" style="grid-column: 1 / -1;">
-                            <span class="detail-label">Emergency Contact</span>
-                            <span class="detail-value" id="cardEmergency">-</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card Footer -->
-                <div class="id-card-footer">
-                    <div class="id-card-validity">
-                        <span class="validity-label">Valid Until</span>
-                        <span class="validity-date" id="cardValidity">Dec 2029</span>
-                    </div>
-                    <div class="qr-placeholder">
-                        <!-- QR Code Placeholder -->
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=EduPortal-Student-ID"
-                            alt="QR Code">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="print-btn-container">
-            <button onclick="printIdCard()" class="print-btn">
-                <i class="fas fa-print"></i> Download / Print ID Card
-            </button>
-        </div>
-    </section>
-
-    <!-- Settings Section -->
-    <section id="settings" class="content-section">
-        <div class="section-header">
-            <h2>Settings</h2>
-        </div>
-
-        <div class="settings-container" style="max-width: 480px; margin: 0 auto; font-family: 'Poppins', sans-serif;">
-            <div class="settings-card premium-ui"
-                style="background: white; border-radius: 16px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px;">
-                <div class="card-header" style="margin-bottom: 25px;">
-                    <h3 style="font-size: 1.2rem; font-weight: 700; color: #333; margin: 0;">Change Password
-                    </h3>
-                </div>
-
-                <form id="changePasswordForm" onsubmit="event.preventDefault(); changePassword();">
-                    <div class="form-group" style="margin-bottom: 20px;">
-                        <input type="password" id="oldPassword" placeholder="Current Password" required
-                            style="width: 100%; padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 8px; background: #f9f9f9; font-size: 0.95rem; transition: border-color 0.3s;">
-                    </div>
-
-                    <div class="form-group" style="margin-bottom: 10px;">
-                        <input type="password" id="newPassword" placeholder="New Password"
-                            oninput="checkPasswordStrength()" required
-                            style="width: 100%; padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 8px; background: #f9f9f9; font-size: 0.95rem; transition: border-color 0.3s;">
-                    </div>
-
-                    <!-- Password Strength -->
-                    <div class="password-strength-meter" style="margin-bottom: 20px;">
-                        <div class="strength-text"
-                            style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; color: #666;">
-                            <span>Password Strength</span>
-                            <span id="strengthLabel" style="font-weight: 600;">Weak</span>
-                        </div>
-                        <div class="strength-bar-bg"
-                            style="height: 6px; background: #eee; border-radius: 3px; overflow: hidden;">
-                            <div id="strengthBar"
-                                style="width: 0%; height: 100%; background: #dc3545; transition: width 0.3s, background-color 0.3s;">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Requirements List -->
-                    <div class="password-requirements" style="margin-bottom: 25px;">
-                        <p style="font-size: 0.9rem; font-weight: 600; color: #333; margin-bottom: 10px;">Must
-                            Have</p>
-                        <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.85rem; color: #666;">
-                            <li id="req-length"
-                                style="margin-bottom: 6px; display: flex; align-items: center; gap: 8px;"><i
-                                    class="fas fa-circle" style="font-size: 6px; color: #ccc;"></i> At least 8
-                                characters</li>
-                            <li id="req-uppercase"
-                                style="margin-bottom: 6px; display: flex; align-items: center; gap: 8px;"><i
-                                    class="fas fa-circle" style="font-size: 6px; color: #ccc;"></i> One
-                                uppercase letter</li>
-                            <li id="req-number"
-                                style="margin-bottom: 6px; display: flex; align-items: center; gap: 8px;"><i
-                                    class="fas fa-circle" style="font-size: 6px; color: #ccc;"></i> One number
-                            </li>
-                            <li id="req-special" style="display: flex; align-items: center; gap: 8px;"><i
-                                    class="fas fa-circle" style="font-size: 6px; color: #ccc;"></i> One special
-                                char (@$!%*?&)</li>
-                        </ul>
-                    </div>
-
-                    <button type="submit" class="save-btn"
-                        style="width: 100%; padding: 12px; border: none; border-radius: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-weight: 600; cursor: pointer; transition: transform 0.2s;">
-                        <i class="fas fa-save" style="margin-right: 8px;"></i> Update Password
-                    </button>
-                </form>
-            </div>
-
-            <!-- Appearance Settings -->
-            <div class="settings-card premium-ui"
-                style="background: white; border-radius: 16px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
-                <div class="card-header" style="margin-bottom: 20px;">
-                    <h3 style="font-size: 1.2rem; font-weight: 700; color: #333; margin: 0;">Appearance</h3>
-                </div>
-                <div class="setting-item" style="display: flex; justify-content: space-between; align-items: center;">
-                    <div class="setting-info">
-                        <label class="appearance-label"
-                            style="display: flex; align-items: center; gap: 10px; font-weight: 500; color: #333;">
-                            <i class="fas fa-moon" style="color: #667eea;"></i>
-                            <span>Dark Mode</span>
-                        </label>
-                        <p style="margin: 5px 0 0 28px; font-size: 0.8rem; color: #666;">Switch between light
-                            and
-                            dark themes</p>
-                    </div>
-                    <div class="theme-toggle-group"
-                        style="background: #f0f0f0; padding: 4px; border-radius: 30px; display: flex; gap: 4px;">
-                        <button onclick="setTheme('light')" id="theme-light-btn" class="active"
-                            style="border: none; background: white; padding: 8px 12px; border-radius: 20px; cursor: pointer; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.3s;">
-                            <i class="fas fa-sun"></i>
-                        </button>
-                        <button onclick="setTheme('dark')" id="theme-dark-btn"
-                            style="border: none; background: transparent; padding: 8px 12px; border-radius: 20px; cursor: pointer; color: #666; transition: all 0.3s;">
-                            <i class="fas fa-moon"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-</main>
-</div>
-
-<script src="{{ url_for('static', filename='js/student-dashboard.js') }}?v=2.1"></script>
-</body>
-
-</html>
-<div class="sidebar-header">
-    <div class="logo">
-        <i class="fas fa-graduation-cap"></i>
-        <span>EduPortal</span>
     </div>
-</div>
-<ul class="sidebar-menu">
-    <li><a href="#dashboard" class="menu-item active" onclick="showSection('dashboard')">
-            <i class="fas fa-tachometer-alt"></i> Dashboard
-        </a></li>
-    <li><a href="#attendance" class="menu-item" onclick="showSection('attendance')">
-            <i class="fas fa-calendar-check"></i> Attendance
-        </a></li>
-    <li><a href="#marks" class="menu-item" onclick="showSection('marks')">
-            <i class="fas fa-chart-line"></i> Marks
-        </a></li>
-    <li><a href="#notes" class="menu-item" onclick="showSection('notes')">
-            <i class="fas fa-book"></i> Notes
-        </a></li>
-    <li><a href="#events" class="menu-item" onclick="showSection('events')">
-            <i class="fas fa-calendar-alt"></i> Events
-        </a></li>
-    <li><a href="#notices" class="menu-item" onclick="showSection('notices')">
-            <i class="fas fa-bullhorn"></i> Notices
-        </a></li>
-    <li><a href="#fees" class="menu-item" onclick="showSection('fees')">
-            <i class="fas fa-money-bill"></i> Fee Status
-        </a></li>
-    <li><a href="#queries" class="menu-item" onclick="showSection('queries')">
-            <i class="fas fa-question-circle"></i> Queries
-        </a></li>
-    <li><a href="#examination" class="menu-item" onclick="showSection('examination')">
-            <i class="fas fa-clipboard-list"></i> Examination
-        </a></li>
-    <li><a href="#clubs" class="menu-item" onclick="showSection('clubs')">
-            <i class="fas fa-users"></i> Clubs
-        </a></li>
-    <li><a href="#idcard" class="menu-item" onclick="showSection('idcard')">
-            <i class="fas fa-id-card"></i> ID Card
-        </a></li>
-    <li><a href="#timetable" class="menu-item" onclick="showSection('timetable')">
-            <i class="fas fa-clock"></i> Timetable
-        </a></li>
-    <li><a href="#scholarship" class="menu-item" onclick="showSection('scholarship')">
-            <i class="fas fa-award"></i> Scholarships
-        </a></li>
-    <li><a href="#settings" class="menu-item" onclick="showSection('settings')">
-            <i class="fas fa-cog"></i> Settings
-        </a></li>
-</ul>
-<div class="sidebar-footer">
-    <button onclick="logout()" class="logout-btn">
-        <i class="fas fa-sign-out-alt"></i> Logout
-    </button>
-</div>
-</nav>
 
-<!-- Main Content -->
-<main class="main-content">
-    <!-- Header -->
-    <header class="header">
-        <div class="header-left" style="display: flex; align-items: center;">
-            <i class="fas fa-bars menu-toggle" onclick="toggleSidebar()"></i>
-            <h1 id="pageTitle">Dashboard</h1>
+    <!-- Fee Receipt Modal -->
+    <div id="feeReceiptModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeFeeReceiptModal()">&times;</span>
+            <h3>Fee Receipt</h3>
+            <div id="receiptDetails">
+                <!-- Receipt details will be loaded here -->
+            </div>
+            <button onclick="downloadReceipt()" class="download-btn">Download PDF</button>
         </div>
-        <div class="header-right">
-            <div class="notifications">
-                <i class="fas fa-bell"></i>
-                <span class="notification-count">3</span>
-            </div>
-            <div class="user-profile">
-                <img src="https://via.placeholder.com/40" alt="Profile" class="profile-img">
-                <span id="studentName">John Doe</span>
-            </div>
-        </div>
-    </header>
-
-    <!-- Dashboard Section -->
-    <section id="dashboard" class="content-section active">
-        <div class="student-info-card">
-            <h2>Student Information</h2>
-            <div class="info-grid">
-                <div class="info-item">
-                    <label>Roll Number:</label>
-                    <span id="rollNumber">2023001</span>
-                </div>
-                <div class="info-item">
-                    <label>Enrollment Number:</label>
-                    <span id="enrollmentNumber">EN2023001</span>
-                </div>
-                <div class="info-item">
-                    <label>Current Semester:</label>
-                    <span id="currentSemester">5th Semester</span>
-                </div>
-                <div class="info-item">
-                    <label>Branch:</label>
-                    <span id="branch">Computer Science</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="dashboard-cards">
-            <div class="card">
-                <div class="card-icon attendance-icon">
-                    <i class="fas fa-calendar-check"></i>
-                </div>
-                <div class="card-content">
-                    <h3>Overall Attendance</h3>
-                    <p class="card-value">85%</p>
-                    <p class="card-status good">Good Standing</p>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-icon marks-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="card-content">
-                    <h3>Current CGPA</h3>
-                    <p class="card-value">8.5</p>
-                    <p class="card-status excellent">Excellent</p>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-icon fee-icon">
-                    <i class="fas fa-money-bill"></i>
-                </div>
-                <div class="card-content">
-                    <h3>Fee Status</h3>
-                    <p class="card-value">Paid</p>
-                    <p class="card-status good">Up to Date</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="quick-actions">
-            <h3>Quick Actions</h3>
-            <div class="action-buttons">
-                <button onclick="showSection('timetable')" class="action-btn">
-                    <i class="fas fa-clock"></i> View Timetable
-                </button>
-                <button onclick="showSection('marks')" class="action-btn">
-                    <i class="fas fa-chart-line"></i> Check Marks
-                </button>
-                <button onclick="showSection('notes')" class="action-btn">
-                    <i class="fas fa-book"></i> Download Notes
-                </button>
-                <button onclick="showSection('examination')" class="action-btn">
-                    <i class="fas fa-clipboard-list"></i> Exam Schedule
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Attendance Section -->
-    <section id="attendance" class="content-section">
-        <div class="section-header">
-            <h2>Attendance Management</h2>
-            <div class="attendance-summary">
-                <span class="overall-attendance">Overall: 85%</span>
-                <span class="min-requirement">Minimum Required: 75%</span>
-            </div>
-        </div>
-
-        <div class="attendance-cards">
-            <div class="subject-attendance">
-                <h3>Mathematics</h3>
-                <div class="attendance-bar">
-                    <div class="attendance-fill" style="width: 90%"></div>
-                </div>
-                <span class="attendance-percent">90%</span>
-                <p class="attendance-status good">Excellent</p>
-            </div>
-
-            <div class="subject-attendance">
-                <h3>Physics</h3>
-                <div class="attendance-bar">
-                    <div class="attendance-fill" style="width: 72%"></div>
-                </div>
-                <span class="attendance-percent">72%</span>
-                <p class="attendance-status warning">Need 3 more classes</p>
-            </div>
-
-            <div class="subject-attendance">
-                <h3>Computer Science</h3>
-                <div class="attendance-bar">
-                    <div class="attendance-fill" style="width: 88%"></div>
-                </div>
-                <span class="attendance-percent">88%</span>
-                <p class="attendance-status good">Good</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Marks Section -->
-    <section id="marks" class="content-section">
-        <div class="section-header">
-            <h2>Academic Performance</h2>
-            <select id="semesterSelect" onchange="loadMarks()">
-                <option value="current">Current Semester</option>
-                <option value="4">4th Semester</option>
-                <option value="3">3rd Semester</option>
-                <option value="2">2nd Semester</option>
-                <option value="1">1st Semester</option>
-            </select>
-        </div>
-
-        <div class="marks-container">
-            <div class="marks-chart">
-                <canvas id="marksChart"></canvas>
-            </div>
-
-            <div class="marks-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Subject</th>
-                            <th>Internal</th>
-                            <th>External</th>
-                            <th>Total</th>
-                            <th>Grade</th>
-                        </tr>
-                    </thead>
-                    <tbody id="marksTableBody">
-                        <tr>
-                            <td>Mathematics</td>
-                            <td>85</td>
-                            <td>78</td>
-                            <td>163</td>
-                            <td>A</td>
-                        </tr>
-                        <tr>
-                            <td>Physics</td>
-                            <td>80</td>
-                            <td>82</td>
-                            <td>162</td>
-                            <td>A</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <button class="download-btn" onclick="downloadMarksheet()">
-            <i class="fas fa-download"></i> Download Marksheet
-        </button>
-    </section>
-
-    <!-- Notes Section -->
-    <section id="notes" class="content-section">
-        <div class="section-header">
-            <h2>Study Materials</h2>
-            <div class="filter-options">
-                <select id="subjectFilter">
-                    <option value="all">All Subjects</option>
-                    <option value="math">Mathematics</option>
-                    <option value="physics">Physics</option>
-                    <option value="cs">Computer Science</option>
-                </select>
-                <select id="facultyFilter">
-                    <option value="all">All Faculty</option>
-                    <option value="prof1">Prof. Smith</option>
-                    <option value="prof2">Prof. Johnson</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="notes-grid">
-            <div class="note-card">
-                <div class="note-icon">
-                    <i class="fas fa-file-pdf"></i>
-                </div>
-                <h4>Calculus Chapter 5</h4>
-                <p>Prof. Smith • Mathematics</p>
-                <p class="upload-date">Uploaded: 2 days ago</p>
-                <button class="download-note-btn">
-                    <i class="fas fa-download"></i> Download
-                </button>
-            </div>
-
-            <div class="note-card">
-                <div class="note-icon">
-                    <i class="fas fa-file-pdf"></i>
-                </div>
-                <h4>Quantum Physics Notes</h4>
-                <p>Prof. Johnson • Physics</p>
-                <p class="upload-date">Uploaded: 1 week ago</p>
-                <button class="download-note-btn">
-                    <i class="fas fa-download"></i> Download
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Events Section -->
-    <section id="events" class="content-section">
-        <div class="section-header">
-            <h2>College Events</h2>
-            <div class="event-filters">
-                <select id="eventTypeFilter" onchange="filterEvents()">
-                    <option value="all">All Events</option>
-                    <option value="technical">Technical</option>
-                    <option value="cultural">Cultural</option>
-                    <option value="sports">Sports</option>
-                    <option value="workshop">Workshop</option>
-                </select>
-            </div>
-        </div>
-        <div class="events-container" id="eventsContainer">
-            <!-- Events will be loaded dynamically -->
-        </div>
-    </section>
-
-    <!-- Enhanced Fees Section -->
-    <section id="fees" class="content-section">
-        <div class="section-header">
-            <h2>Fee Management</h2>
-            <div class="fee-tabs">
-                <button class="tab-btn active" onclick="showFeeTab('current')">Current Semester</button>
-                <button class="tab-btn" onclick="showFeeTab('history')">Payment History</button>
-            </div>
-        </div>
-
-        <div id="currentFeeTab" class="fee-tab-content active">
-            <div class="fee-status-card">
-                <!-- Current fee details will be loaded here -->
-            </div>
-        </div>
-
-        <div id="historyFeeTab" class="fee-tab-content">
-            <div class="fee-history-container">
-                <table class="fee-history-table">
-                    <thead>
-                        <tr>
-                            <th>Semester</th>
-                            <th>Academic Year</th>
-                            <th>Amount Paid</th>
-                            <th>Payment Date</th>
-                            <th>Transaction ID</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="feeHistoryTableBody">
-                        <!-- Fee history will be loaded here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </section>
-
-    <!-- Enhanced Queries Section -->
-    <section id="queries" class="content-section">
-        <div class="section-header">
-            <h2>Academic Queries</h2>
-            <button onclick="openAcademicQueryModal()" class="add-btn">
-                <i class="fas fa-plus"></i> Ask Faculty
-            </button>
-        </div>
-        <div class="queries-container">
-            <div class="query-stats">
-                <div class="stat-item">
-                    <span class="stat-number" id="totalQueries">0</span>
-                    <span class="stat-label">Total Queries</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number" id="pendingQueries">0</span>
-                    <span class="stat-label">Pending</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number" id="answeredQueries">0</span>
-                    <span class="stat-label">Answered</span>
-                </div>
-            </div>
-            <div class="queries-list" id="academicQueriesList">
-                <!-- Academic queries will be loaded here -->
-            </div>
-        </div>
-    </section>
-
-    <!-- ID Card Section -->
-    <section id="idcard" class="content-section">
-        <div class="section-header">
-            <h2>Student ID Card</h2>
-            <button onclick="downloadIdCard()" class="download-btn">
-                <i class="fas fa-download"></i> Download ID Card
-            </button>
-        </div>
-        <div class="id-card-container">
-            <div class="id-card" id="studentIdCard">
-                <!-- ID card will be generated here -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Enhanced Clubs Section -->
-    <section id="clubs" class="content-section">
-        <div class="section-header">
-            <h2>College Clubs</h2>
-            <button onclick="openInterestSurvey()" class="add-btn">
-                <i class="fas fa-search"></i> Find My Clubs
-            </button>
-        </div>
-
-        <div class="clubs-tabs">
-            <button class="tab-btn active" onclick="showClubTab('recommendations')">Recommendations</button>
-            <button class="tab-btn" onclick="showClubTab('all')">All Clubs</button>
-        </div>
-
-        <div id="recommendationsTab" class="club-tab-content active">
-            <div class="club-recommendations" id="clubRecommendations">
-                <p class="no-recommendations">Take the interest survey to get personalized club recommendations!
-                </p>
-            </div>
-        </div>
-
-        <div id="allClubsTab" class="club-tab-content">
-            <div class="clubs-grid" id="allClubsGrid">
-                <!-- All clubs will be loaded here -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Enhanced Timetable Section -->
-    <section id="timetable" class="content-section">
-        <div class="section-header">
-            <h2>Class Timetable</h2>
-            <div class="timetable-info">
-                <span>Semester: <strong id="timetableSemester">5</strong></span>
-                <span>Academic Year: <strong>2025-26</strong></span>
-            </div>
-        </div>
-        <div class="timetable-container">
-            <div class="row mb-3">
-                <div class="col-md-12 text-end">
-                    <span class="badge bg-warning text-dark" id="current-day-badge">Today: Monday</span>
-                </div>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-bordered text-center align-middle" id="timetable-grid">
-                    <thead class="table-dark">
-                        <tr>
-                            <th style="width: 10%">Day / Time</th>
-                            <th>08:45 AM - 09:45 AM</th>
-                            <th>09:45 AM - 10:45 AM</th>
-                            <th>11:30 AM - 12:30 PM</th>
-                            <th>12:30 PM - 01:30 PM</th>
-                        </tr>
-                    </thead>
-                    <tbody id="timetable-body">
-                        <!-- Timetable rows will be populated here -->
-                    </tbody>
-                </table>
-            </div>
-            <style>
-                .current-day-row {
-                    background-color: #fff3cd !important;
-                    border: outline 2px solid #ffc107 !important;
-                }
-
-                .rescheduled-slot {
-                    background-color: #d1e7dd;
-                    border-left: 4px solid #198754;
-                }
-
-                .rescheduled-badge {
-                    font-size: 0.7em;
-                    vertical-align: top;
-                }
-            </style>
-        </div>
-    </section>
-
-    <!-- Enhanced Scholarship Section -->
-    <section id="scholarship" class="content-section">
-        <!-- Blue Search Header -->
-        <div class="scholarship-search-wrapper"
-            style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 25px; border-radius: 12px; margin-bottom: 30px; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-            <div class="section-header"
-                style="margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 10px;">
-                <h2 style="color: white; font-size: 1.5rem;"><i class="fas fa-search"></i> Find Scholarships
-                    That Suit You</h2>
-            </div>
-
-            <div class="scholarship-filters">
-                <div class="filter-group">
-                    <label for="searchIncome">Annual Income (₹)</label>
-                    <input type="number" id="searchIncome" placeholder="Enter annual income" class="filter-control">
-                </div>
-
-                <div class="filter-group">
-                    <label for="searchCategory">Category</label>
-                    <select id="searchCategory" class="filter-control">
-                        <option value="">Select Category</option>
-                        <option value="general">General</option>
-                        <option value="obc">OBC</option>
-                        <option value="sc">SC</option>
-                        <option value="st">ST</option>
-                        <option value="ews">EWS</option>
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label for="searchGender">Gender</label>
-                    <select id="searchGender" class="filter-control">
-                        <option value="">Select Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <button onclick="findScholarships()" class="search-btn">
-                        <i class="fas fa-search-plus"></i> Find Scholarships
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="section-header">
-            <h3>All Available Scholarships</h3>
-        </div>
-
-        <div class="scholarships-grid" id="scholarshipCards">
-            <!-- Cards will be loaded here -->
-            <div style="grid-column: 1/-1; text-align: center; color: #666; padding: 40px;">
-                <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 20px; color: #ddd;"></i>
-                <p>Enter your details above to find matching scholarships.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Student ID Card Section -->
-    <section id="idcard" class="content-section">
-        <div class="section-header">
-            <h2>Student ID Card</h2>
-        </div>
-
-        <div class="id-card-wrapper">
-            <div class="id-card-container" id="printableIdCard">
-                <!-- Card Header -->
-                <div class="id-card-header">
-                    <div class="college-logo-small">
-                        <i class="fas fa-university"></i>
-                    </div>
-                    <h3 class="college-name">EduPortal Institute of Technology</h3>
-                </div>
-
-                <!-- Profile Photo -->
-                <div class="profile-photo-container">
-                    <img src="https://via.placeholder.com/150" alt="Student Photo" class="profile-photo" id="cardPhoto">
-                </div>
-
-                <!-- Student Details -->
-                <div class="student-details">
-                    <h2 class="student-name" id="cardName">Loading...</h2>
-                    <p class="student-course" id="cardBranch">Loading...</p>
-
-                    <div class="details-grid">
-                        <div class="detail-item">
-                            <span class="detail-label">Enrollment No</span>
-                            <span class="detail-value" id="cardEnrollment">-</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Roll No</span>
-                            <span class="detail-value" id="cardRoll">-</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Semester</span>
-                            <span class="detail-value" id="cardSemester">-</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Admission Year</span>
-                            <span class="detail-value" id="cardYear">-</span>
-                        </div>
-                        <div class="detail-item" style="grid-column: 1 / -1;">
-                            <span class="detail-label">Emergency Contact</span>
-                            <span class="detail-value" id="cardEmergency">-</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card Footer -->
-                <div class="id-card-footer">
-                    <div class="id-card-validity">
-                        <span class="validity-label">Valid Until</span>
-                        <span class="validity-date" id="cardValidity">Dec 2029</span>
-                    </div>
-                    <div class="qr-placeholder">
-                        <!-- QR Code Placeholder -->
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=EduPortal-Student-ID"
-                            alt="QR Code">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="print-btn-container">
-            <button onclick="printIdCard()" class="print-btn">
-                <i class="fas fa-print"></i> Download / Print ID Card
-            </button>
-        </div>
-    </section>
-
-    <!-- Settings Section -->
-    <section id="settings" class="content-section">
-        <div class="section-header">
-            <h2>Settings</h2>
-        </div>
-
-        <div class="settings-container" style="max-width: 480px; margin: 0 auto; font-family: 'Poppins', sans-serif;">
-            <div class="settings-card premium-ui"
-                style="background: white; border-radius: 16px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px;">
-                <div class="card-header" style="margin-bottom: 25px;">
-                    <h3 style="font-size: 1.2rem; font-weight: 700; color: #333; margin: 0;">Change Password
-                    </h3>
-                </div>
-
-                <form id="changePasswordForm" onsubmit="event.preventDefault(); changePassword();">
-                    <div class="form-group" style="margin-bottom: 20px;">
-                        <input type="password" id="oldPassword" placeholder="Current Password" required
-                            style="width: 100%; padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 8px; background: #f9f9f9; font-size: 0.95rem; transition: border-color 0.3s;">
-                    </div>
-
-                    <div class="form-group" style="margin-bottom: 10px;">
-                        <input type="password" id="newPassword" placeholder="New Password"
-                            oninput="checkPasswordStrength()" required
-                            style="width: 100%; padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 8px; background: #f9f9f9; font-size: 0.95rem; transition: border-color 0.3s;">
-                    </div>
-
-                    <!-- Password Strength -->
-                    <div class="password-strength-meter" style="margin-bottom: 20px;">
-                        <div class="strength-text"
-                            style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; color: #666;">
-                            <span>Password Strength</span>
-                            <span id="strengthLabel" style="font-weight: 600;">Weak</span>
-                        </div>
-                        <div class="strength-bar-bg"
-                            style="height: 6px; background: #eee; border-radius: 3px; overflow: hidden;">
-                            <div id="strengthBar"
-                                style="width: 0%; height: 100%; background: #dc3545; transition: width 0.3s, background-color 0.3s;">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Requirements List -->
-                    <div class="password-requirements" style="margin-bottom: 25px;">
-                        <p style="font-size: 0.9rem; font-weight: 600; color: #333; margin-bottom: 10px;">Must
-                            Have</p>
-                        <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.85rem; color: #666;">
-                            <li id="req-length"
-                                style="margin-bottom: 6px; display: flex; align-items: center; gap: 8px;"><i
-                                    class="far fa-circle" style="color: #ccc;"></i> 8+ Characters</li>
-                            <li id="req-special"
-                                style="margin-bottom: 6px; display: flex; align-items: center; gap: 8px;"><i
-                                    class="far fa-circle" style="color: #ccc;"></i> Special Character (!@#$)
-                            </li>
-                            <li id="req-number"
-                                style="margin-bottom: 6px; display: flex; align-items: center; gap: 8px;"><i
-                                    class="far fa-circle" style="color: #ccc;"></i> Number (0-9)</li>
-                            <li id="req-upper"
-                                style="margin-bottom: 6px; display: flex; align-items: center; gap: 8px;"><i
-                                    class="far fa-circle" style="color: #ccc;"></i> Uppercase Letter</li>
-                        </ul>
-                    </div>
-
-                    <div class="form-group" style="margin-bottom: 30px;">
-                        <input type="password" id="confirmPassword" placeholder="Confirm New Password" required
-                            style="width: 100%; padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 8px; background: #f9f9f9; font-size: 0.95rem; transition: border-color 0.3s;">
-                    </div>
-
-                    <button type="submit" class="update-btn"
-                        style="width: 100%; padding: 12px; background: linear-gradient(135deg, #1e88e5, #1565c0); color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 10px rgba(21, 101, 192, 0.2);">Update
-                        Password</button>
-                </form>
-            </div>
-
-            <!-- Appearance Card (Small) -->
-            <div class="settings-card appearance-card"
-                style="background: white; border-radius: 12px; padding: 15px 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between;">
-                <div class="appearance-label" style="display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-palette" style="color: #555;"></i>
-                    <span style="font-weight: 600; color: #333;">Appearance</span>
-                </div>
-
-                <div class="theme-toggle-group"
-                    style="display: flex; gap: 5px; background: #e9ecef; padding: 4px; border-radius: 20px;">
-                    <label class="theme-btn-radio" style="margin: 0;">
-                        <input type="radio" name="theme" value="light" onclick="setTheme('light')" checked
-                            style="display: none;">
-                        <span class="btn-content active" id="theme-light-btn"
-                            style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 16px; font-size: 0.85rem; cursor: pointer; background: white; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.2s;"><i
-                                class="fas fa-sun"></i> Light</span>
-                    </label>
-                    <label class="theme-btn-radio" style="margin: 0;">
-                        <input type="radio" name="theme" value="dark" onclick="setTheme('dark')" style="display: none;">
-                        <span class="btn-content" id="theme-dark-btn"
-                            style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 16px; font-size: 0.85rem; cursor: pointer; color: #666; transition: all 0.2s;"><i
-                                class="fas fa-moon"></i> Dark</span>
-                    </label>
-                </div>
-            </div>
-        </div>
-    </section>
-</main>
-</div>
-
-<!-- Academic Query Modal -->
-<div id="academicQueryModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeAcademicQueryModal()">&times;</span>
-        <h3>Ask Faculty - Academic Query</h3>
-        <form id="academicQueryForm">
-            <div class="form-group">
-                <label for="querySubject">Subject:</label>
-                <select id="querySubject" required>
-                    <option value="">Select Subject</option>
-                    <!-- Subjects will be loaded dynamically -->
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="queryFaculty">Faculty:</label>
-                <select id="queryFaculty" required>
-                    <option value="">Select Faculty</option>
-                    <!-- Faculty will be loaded based on subject -->
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="queryTitle">Query Title:</label>
-                <input type="text" id="queryTitle" required>
-            </div>
-            <div class="form-group">
-                <label for="queryDescription">Describe your query:</label>
-                <textarea id="queryDescription" rows="4" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="queryAttachment">Attach Image (Optional):</label>
-                <input type="file" id="queryAttachment" accept="image/*">
-            </div>
-            <button type="submit" class="submit-query-btn">Submit Query</button>
-        </form>
     </div>
-</div>
 
-<!-- Interest Survey Modal -->
-<div id="interestSurveyModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeInterestSurvey()">&times;</span>
-        <h3>Find Your Perfect Club</h3>
-        <p>Select your interests to get personalized club recommendations:</p>
-        <form id="interestSurveyForm">
-            <div class="interests-grid">
-                <label class="interest-item">
-                    <input type="checkbox" name="interests" value="tech">
-                    <span>Tech</span>
-                </label>
-                <label class="interest-item">
-                    <input type="checkbox" name="interests" value="coding">
-                    <span>Coding</span>
-                </label>
-                <label class="interest-item">
-                    <input type="checkbox" name="interests" value="music">
-                    <span>Music</span>
-                </label>
-                <label class="interest-item">
-                    <input type="checkbox" name="interests" value="songs">
-                    <span>Songs</span>
-                </label>
-                <label class="interest-item">
-                    <input type="checkbox" name="interests" value="content_writing">
-                    <span>Content Writing</span>
-                </label>
-                <label class="interest-item">
-                    <input type="checkbox" name="interests" value="marketing">
-                    <span>Marketing</span>
-                </label>
-                <label class="interest-item">
-                    <input type="checkbox" name="interests" value="social_media">
-                    <span>Social Media Handling</span>
-                </label>
-                <label class="interest-item">
-                    <input type="checkbox" name="interests" value="event_management">
-                    <span>Organizing Events</span>
-                </label>
-                <label class="interest-item">
-                    <input type="checkbox" name="interests" value="cultural">
-                    <span>Cultural Activities</span>
-                </label>
-                <label class="interest-item">
-                    <input type="checkbox" name="interests" value="photography">
-                    <span>Photography</span>
-                </label>
-                <label class="interest-item">
-                    <input type="checkbox" name="interests" value="sports">
-                    <span>Sports</span>
-                </label>
-                <label class="interest-item">
-                    <input type="checkbox" name="interests" value="dance">
-                    <span>Dance</span>
-                </label>
-                <label class="interest-item">
-                    <input type="checkbox" name="interests" value="drama">
-                    <span>Drama</span>
-                </label>
-                <label class="interest-item">
-                    <input type="checkbox" name="interests" value="literature">
-                    <span>Literature</span>
-                </label>
-            </div>
-            <button type="submit" class="find-clubs-btn">Find My Clubs</button>
-        </form>
-    </div>
-</div>
-
-<!-- Scholarship Eligibility Modal -->
-<div id="scholarshipEligibilityModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeScholarshipEligibility()">&times;</span>
-        <h3>Scholarship Eligibility Check</h3>
-        <form id="scholarshipEligibilityForm">
-            <div class="form-group">
-                <label for="familyIncome">Annual Family Income (₹):</label>
-                <input type="number" id="familyIncome" required>
-            </div>
-            <div class="form-group">
-                <label for="studentCategory">Category:</label>
-                <select id="studentCategory" required>
-                    <option value="">Select Category</option>
-                    <option value="general">General</option>
-                    <option value="obc">OBC</option>
-                    <option value="sc">SC</option>
-                    <option value="st">ST</option>
-                    <option value="ews">EWS</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="studentGender">Gender:</label>
-                <select id="studentGender" required>
-                    <option value="">Select Gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                </select>
-            </div>
-            <button type="submit" class="check-eligibility-btn">Check Eligible Scholarships</button>
-        </form>
-    </div>
-</div>
-
-<!-- Fee Receipt Modal -->
-<div id="feeReceiptModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeFeeReceiptModal()">&times;</span>
-        <h3>Fee Receipt</h3>
-        <div id="receiptDetails">
-            <!-- Receipt details will be loaded here -->
+    <!-- Low Attendance Modal -->
+    <div id="attendanceModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>⚠️ Low Attendance Alert</h3>
+            <p>Your attendance in Physics is below the minimum requirement (75%).</p>
+            <p><strong>Current:</strong> 72%</p>
+            <p><strong>Required:</strong> Attend next 3 consecutive classes to meet minimum criteria.</p>
+            <button class="modal-btn">Understood</button>
         </div>
-        <button onclick="downloadReceipt()" class="download-btn">Download PDF</button>
     </div>
-</div>
 
-<!-- Low Attendance Modal -->
-<div id="attendanceModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h3>⚠️ Low Attendance Alert</h3>
-        <p>Your attendance in Physics is below the minimum requirement (75%).</p>
-        <p><strong>Current:</strong> 72%</p>
-        <p><strong>Required:</strong> Attend next 3 consecutive classes to meet minimum criteria.</p>
-        <button class="modal-btn">Understood</button>
-    </div>
-</div>
-
-<script src="{{ url_for('static', filename='js/student-dashboard.js') }}?v=1.0.1"></script>
+    <script src="{{ url_for('static', filename='js/student-dashboard.js') }}"></script>
 </body>
 
 </html>
