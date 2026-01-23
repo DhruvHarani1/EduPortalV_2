@@ -543,6 +543,24 @@ def get_notices():
     
     return jsonify(notices_data)
 
+@app.route('/api/student/memberships/<int:student_id>')
+def get_student_memberships(student_id):
+    # Fetch approved club requests
+    memberships = ClubRequest.query.filter_by(student_id=student_id, status='approved').all()
+    result = []
+    for m in memberships:
+        club = Club.query.get(m.club_id)
+        if club:
+            result.append({
+                'id': club.id,
+                'name': club.name,
+                'category': club.category,
+                'description': club.description,
+                'role': 'Member',
+                'joined_at': m.updated_at.strftime('%B %Y') if m.updated_at else 'N/A'
+            })
+    return jsonify(result)
+
 @app.route('/api/faculty/timetable/<int:user_id>')
 def get_faculty_timetable(user_id):
     # If user_id is the User ID (login ID), we need to find the Faculty ID
@@ -655,6 +673,65 @@ def get_faculty_classes(faculty_id):
         })
     
     return jsonify(classes_data)
+
+    # Sort by match score descending
+    recommendations.sort(key=lambda x: x['match_score'], reverse=True)
+    
+    return jsonify(recommendations)
+
+@app.route('/api/student/club-recommendations', methods=['POST'])
+def recommend_clubs():
+    try:
+        data = request.get_json()
+        print(f"DEBUG: Received recommendation request: {data}")
+        user_interests = data.get('interests', [])
+        
+        if not user_interests:
+            return jsonify([])
+
+        all_clubs = Club.query.all()
+        recommendations = []
+        
+        for club in all_clubs:
+            if not club.interests:
+                continue
+                
+            club_tags = [tag.strip().lower() for tag in club.interests.split(',')]
+            match_count = 0
+            matching_tags = []
+            
+            for interest in user_interests:
+                # Check for direct match or substring match
+                interest_lower = interest.lower()
+                for tag in club_tags:
+                    if interest_lower == tag or interest_lower in tag or tag in interest_lower:
+                        if tag not in matching_tags:
+                            match_count += 1
+                            matching_tags.append(tag)
+            
+            if match_count > 0:
+                recommendations.append({
+                    'club': {
+                        'id': club.id,
+                        'name': club.name,
+                        'description': club.description,
+                        'category': club.category,
+                        'faculty_coordinator': 'Faculty Coordinator', # Simplified
+                        'contact_email': club.contact_email
+                    },
+                    'match_score': match_count,
+                    'matching_interests': matching_tags
+                })
+        
+        # Sort by match score descending
+        recommendations.sort(key=lambda x: x['match_score'], reverse=True)
+        print(f"DEBUG: Found {len(recommendations)} recommendations")
+        return jsonify(recommendations)
+    except Exception as e:
+        print(f"ERROR in recommend_clubs: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/admin/stats')
 def get_admin_stats():

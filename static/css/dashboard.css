@@ -2354,22 +2354,25 @@ button {
     font-size: 1.5rem;
     /* Reduced from 2rem */
 }
+
 /* Timetable Enhancements */
 .current-day-header {
-    background-color: #ffd700 !important; /* Gold highlight */
+    background-color: #ffd700 !important;
+    /* Gold highlight */
     color: #333 !important;
     border-bottom: 3px solid #e6c200;
 }
 
 .current-day-column {
-    background-color: #fff9c4 !important; /* Light yellow background */
+    background-color: #fff9c4 !important;
+    /* Light yellow background */
 }
 
 .class-card {
     background: white;
     padding: 8px;
     border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-left: 4px solid #667eea;
     height: 100%;
     display: flex;
@@ -2379,13 +2382,14 @@ button {
 
 .class-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .class-cell {
     padding: 8px;
     vertical-align: top;
-    height: 120px; /* Fixed height for uniformity */
+    height: 120px;
+    /* Fixed height for uniformity */
     min-width: 140px;
 }
 
@@ -2397,7 +2401,7 @@ button {
     line-height: 1.2;
 }
 
-.class-card .room-number, 
+.class-card .room-number,
 .class-card .faculty-name {
     font-size: 0.85em;
     color: #4a5568;
@@ -2437,6 +2441,7 @@ button {
     width: 100px;
     font-size: 0.85em;
 }
+
 /* --- ID Card Section Styles --- */
 .id-card-wrapper {
     display: flex;
@@ -2451,7 +2456,8 @@ button {
 
 .id-card-container {
     width: 350px;
-    height: 540px;
+    height: auto;
+    min-height: 450px;
     background: #fff;
     border-radius: 20px;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
@@ -2460,6 +2466,8 @@ button {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     transform-style: preserve-3d;
     transition: transform 0.6s;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Card Header with Wave Design */
@@ -2530,29 +2538,33 @@ button {
     text-align: center;
     padding: 0 20px;
     color: #333;
+    flex: 1;
+    /* Pushes footer down */
+    display: flex;
+    flex-direction: column;
 }
 
 .student-name {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     font-weight: 700;
     color: #1a237e;
     margin: 5px 0 2px;
 }
 
 .student-course {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: #546e7a;
     font-weight: 600;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
 }
 
 .details-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 15px 10px;
+    gap: 8px 10px;
     text-align: left;
-    margin-top: 20px;
-    padding: 15px;
+    margin-top: 10px;
+    padding: 10px;
     background: #f5f7fa;
     border-radius: 12px;
 }
@@ -2578,8 +2590,10 @@ button {
 
 /* QR Code & Footer */
 .id-card-footer {
-    position: absolute;
-    bottom: 0;
+    position: relative;
+    /* Static positioning in flex container */
+    margin-top: auto;
+    /* Ensure it sits at bottom */
     width: 100%;
     padding: 15px;
     background: #1a237e;
@@ -2655,6 +2669,10 @@ body.dark-mode .id-card-container {
     color: #fff;
 }
 
+body.dark-mode .club-bg-icon {
+    color: rgba(255, 255, 255, 0.05);
+}
+
 body.dark-mode .id-card-header::after {
     background-color: #1e1e1e;
 }
@@ -2677,4 +2695,58 @@ body.dark-mode .details-grid {
 
 body.dark-mode .detail-value {
     color: #e0e0e0;
+}
+
+@media print {
+    .id-card-container {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        box-shadow: none !important;
+        border: 1px solid #ccc;
+    }
+}
+
+/* Explicit Modal Centering Fix */
+.modal {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Flex alignment properties (applied when display becomes flex) */
+    align-items: center;
+    justify-content: center;
+}
+
+.modal[style*='display: block'] {
+    display: flex !important;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    padding: 2.5rem;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+    animation: modalSlideIn 0.3s ease-out;
+    margin: 0;
+    /* Remove auto margin */
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

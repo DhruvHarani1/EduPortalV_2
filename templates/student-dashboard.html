@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard - EduPortal</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}?v=2.2">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}?v=2.91">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -494,9 +494,19 @@
                 </div>
 
                 <div id="clubContent">
-                    <div class="clubs-grid" id="allClubsGrid">
-                        <!-- Club cards will be loaded here -->
-                        <p style="grid-column: 1/-1; text-align: center;">Loading clubs...</p>
+                    <div class="club-tab-content active" id="allTab">
+                        <div class="clubs-grid" id="allClubsGrid">
+                            <!-- Club cards will be loaded here -->
+                            <p style="grid-column: 1/-1; text-align: center;">Loading clubs...</p>
+                        </div>
+                    </div>
+                    <div class="club-tab-content" id="myTab">
+                        <div class="clubs-grid" id="myClubsGrid" style="display: none;">
+                            <!-- My clubs will be loaded here -->
+                        </div>
+                    </div>
+                    <div class="club-tab-content" id="recommendationsTab"> <!-- Renamed for clarity -->
+                        <div class="clubs-grid" id="clubRecommendations" style="display: none;"></div>
                     </div>
                 </div>
             </section>
@@ -2233,43 +2243,59 @@
         <form id="interestSurveyForm">
             <div class="interests-grid">
                 <label class="interest-item">
-                    <input type="checkbox" value="programming">
-                    <span>Programming</span>
+                    <input type="checkbox" name="interests" value="tech">
+                    <span>Tech</span>
                 </label>
                 <label class="interest-item">
-                    <input type="checkbox" value="robotics">
-                    <span>Robotics</span>
+                    <input type="checkbox" name="interests" value="coding">
+                    <span>Coding</span>
                 </label>
                 <label class="interest-item">
-                    <input type="checkbox" value="music">
+                    <input type="checkbox" name="interests" value="music">
                     <span>Music</span>
                 </label>
                 <label class="interest-item">
-                    <input type="checkbox" value="photography">
+                    <input type="checkbox" name="interests" value="songs">
+                    <span>Songs</span>
+                </label>
+                <label class="interest-item">
+                    <input type="checkbox" name="interests" value="content_writing">
+                    <span>Content Writing</span>
+                </label>
+                <label class="interest-item">
+                    <input type="checkbox" name="interests" value="marketing">
+                    <span>Marketing</span>
+                </label>
+                <label class="interest-item">
+                    <input type="checkbox" name="interests" value="social_media">
+                    <span>Social Media Handling</span>
+                </label>
+                <label class="interest-item">
+                    <input type="checkbox" name="interests" value="event_management">
+                    <span>Organizing Events</span>
+                </label>
+                <label class="interest-item">
+                    <input type="checkbox" name="interests" value="cultural">
+                    <span>Cultural Activities</span>
+                </label>
+                <label class="interest-item">
+                    <input type="checkbox" name="interests" value="photography">
                     <span>Photography</span>
                 </label>
                 <label class="interest-item">
-                    <input type="checkbox" value="sports">
+                    <input type="checkbox" name="interests" value="sports">
                     <span>Sports</span>
                 </label>
                 <label class="interest-item">
-                    <input type="checkbox" value="dance">
+                    <input type="checkbox" name="interests" value="dance">
                     <span>Dance</span>
                 </label>
                 <label class="interest-item">
-                    <input type="checkbox" value="drama">
+                    <input type="checkbox" name="interests" value="drama">
                     <span>Drama</span>
                 </label>
                 <label class="interest-item">
-                    <input type="checkbox" value="debate">
-                    <span>Debate</span>
-                </label>
-                <label class="interest-item">
-                    <input type="checkbox" value="art">
-                    <span>Art & Craft</span>
-                </label>
-                <label class="interest-item">
-                    <input type="checkbox" value="literature">
+                    <input type="checkbox" name="interests" value="literature">
                     <span>Literature</span>
                 </label>
             </div>

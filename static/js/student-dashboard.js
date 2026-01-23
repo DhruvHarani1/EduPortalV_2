@@ -94,6 +94,13 @@ document.addEventListener('DOMContentLoaded', function () {
     loadQueries();
     loadNotifications();
 
+    // FORCE HIDE ALL MODALS ON LOAD
+    document.querySelectorAll('.modal').forEach(m => {
+        m.style.display = 'none';
+        m.style.opacity = '1'; // Reset opacity if changed
+        m.style.visibility = 'visible'; // Reset visibility if changed
+    });
+
     // Setup scholarship category filter
     const scholarshipCategory = document.getElementById('scholarshipCategory');
     if (scholarshipCategory) {
@@ -1302,18 +1309,10 @@ function downloadIdCard() {
 }
 
 // Check for low attendance and show modal
+// Check for low attendance and show modal
 function checkLowAttendance() {
-    // Mock check - in real implementation, this would check actual attendance data
-    const hasLowAttendance = Math.random() > 0.7; // 30% chance for demo
-
-    if (hasLowAttendance) {
-        setTimeout(() => {
-            const modal = document.getElementById('attendanceModal');
-            if (modal) {
-                modal.style.display = 'block';
-            }
-        }, 2000);
-    }
+    // Disabled random popup
+    console.log("Low attendance check skipped.");
 }
 
 // Setup modal functionality
@@ -1391,9 +1390,22 @@ function loadStudentClubs() {
             }
 
             clubs.forEach(club => {
+                // Determine icon based on category
+                let iconClass = 'fa-star';
+                const cat = club.category.toLowerCase();
+                const name = club.name.toLowerCase();
+
+                if (name.includes('lfa') || cat.includes('lit')) iconClass = 'fa-pen-nib';
+                else if (cat.includes('tech')) iconClass = 'fa-laptop-code';
+                else if (cat.includes('cult')) iconClass = 'fa-music';
+                else if (cat.includes('sport')) iconClass = 'fa-futbol';
+                else if (cat.includes('social') || cat.includes('service')) iconClass = 'fa-hands-helping';
+                else if (cat.includes('lit')) iconClass = 'fa-book-open';
+
                 const card = document.createElement('div');
                 card.className = 'club-card';
                 card.innerHTML = `
+                    <div class="club-bg-icon"><i class="fas ${iconClass}"></i></div>
                     <div class="club-header">
                         <h3>${club.name}</h3>
                         <span class="club-category tag-${club.category}">${club.category}</span>
@@ -1441,10 +1453,22 @@ function showClubTab(tabName) {
     });
 
     document.getElementById(`${tabName}Tab`).classList.add('active');
-    event.target.classList.add('active');
+    event.currentTarget.classList.add('active'); // Use currentTarget to handle button clicks safely
 
     if (tabName === 'all') {
         loadStudentClubs();
+        document.getElementById('allClubsGrid').style.display = 'grid';
+        if (document.getElementById('myClubsGrid')) document.getElementById('myClubsGrid').style.display = 'none';
+        if (document.getElementById('clubRecommendations')) document.getElementById('clubRecommendations').style.display = 'none';
+    } else if (tabName === 'my') {
+        loadMyClubMemberships();
+        if (document.getElementById('allClubsGrid')) document.getElementById('allClubsGrid').style.display = 'none';
+        if (document.getElementById('myClubsGrid')) document.getElementById('myClubsGrid').style.display = 'grid';
+        if (document.getElementById('clubRecommendations')) document.getElementById('clubRecommendations').style.display = 'none';
+    } else if (tabName === 'recommendations') { // Handle recommendations tab
+        if (document.getElementById('allClubsGrid')) document.getElementById('allClubsGrid').style.display = 'none';
+        if (document.getElementById('myClubsGrid')) document.getElementById('myClubsGrid').style.display = 'none';
+        if (document.getElementById('clubRecommendations')) document.getElementById('clubRecommendations').style.display = 'grid';
     }
 }
 
@@ -1973,7 +1997,7 @@ function printIdCard() {
     win.document.write('<html><head><title>Student ID Card</title>');
     // Include styles for printing
     win.document.write('<link rel="stylesheet" href="/static/css/dashboard.css">');
-    win.document.write('<style>body { display: flex; justify-content: center; align-items: center; height: 100vh; background: #fff; } .id-card-container { box-shadow: none; border: 1px solid #ddd; }</style>');
+    win.document.write('<style>body { display: flex; justify-content: center; align-items: center; height: 100vh; background: #fff; } .id-card-container { box-shadow: none; border: 1px solid #ddd; } * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }</style>');
     win.document.write('</head><body>');
     win.document.write(printContent);
     win.document.write('</body></html>');
