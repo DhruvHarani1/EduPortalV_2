@@ -225,6 +225,10 @@ def handle_student_queries():
 def get_student_id_card(student_id):
     student = Student.query.get(student_id)
     if not student:
+        # Fallback: Try finding by user_id
+        student = Student.query.filter_by(user_id=student_id).first()
+        
+    if not student:
         return jsonify({'error': 'Student not found'}), 404
     
     id_card_data = {
@@ -238,6 +242,7 @@ def get_student_id_card(student_id):
         'blood_group': student.blood_group,
         'emergency_contact': student.emergency_contact,
         'address': student.address,
+        'gender': student.gender,
         'valid_until': f"{student.admission_year + 4}-12-31"
     }
     

@@ -1,4 +1,5 @@
 // Global variables
+console.log("Student Dashboard JS v3.06 Loaded");
 let currentUser = null;
 let marksChart = null;
 
@@ -346,7 +347,23 @@ function showSection(sectionId) {
             loadStudentIdCard();
             break;
         case 'clubs':
+            // Default to 'All Clubs' to ensure content is visible
             loadStudentClubs();
+            // Manually set active state for 'All Clubs' tab
+            document.querySelectorAll('.club-tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.clubs-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById('allClubsTab').classList.add('active');
+            // Find the "All Clubs" button. Since we can't easily select by text content without ID, 
+            // let's assume it's the second one or add IDs in HTML. 
+            // Better focus: Just load the data. The HTML has "Recommendations" active by default.
+            // Let's switch it.
+            const allClubsBtn = document.querySelector('.clubs-tabs .tab-btn:nth-child(2)');
+            if (allClubsBtn) allClubsBtn.classList.add('active');
+            else document.querySelector('.clubs-tabs .tab-btn').classList.add('active'); // Fallback
+
+            document.getElementById('allClubsTab').classList.add('active');
+            document.getElementById('recommendationsTab').classList.remove('active');
             break;
         case 'timetable':
             loadStudentTimetable();
@@ -1231,13 +1248,41 @@ function loadFacultyForSubject(subjectId) {
 function loadStudentIdCard() {
     if (!currentUser) return;
 
-    fetch(`/api/student/id-card/${currentUser.id}`)
-        .then(response => response.json())
+    // Clear existing content and show loading
+    const container = document.getElementById('studentIdCard');
+    if (container) {
+        container.innerHTML = '<div style="text-align:center; padding:30px;"><i class="fas fa-spinner fa-spin fa-2x" style="color:#667eea;"></i><p style="margin-top:10px; color:#555;">Loading ID Card Details...</p></div>';
+    }
+
+    // Use student_id explicitly
+    const idToFetch = currentUser.student_id ? currentUser.student_id : (currentUser.id ? currentUser.id : null);
+
+    if (!idToFetch) {
+        if (container) container.innerHTML = '<div style="color:red; padding:20px;">Error: User ID missing. Please re-login.</div>';
+        return;
+    }
+
+    fetch(`/api/student/id-card/${idToFetch}`)
+        .then(response => {
+            if (response.status === 404) throw new Error("Student record not found.");
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
         .then(data => {
+            if (data.error) throw new Error(data.error);
             generateIdCard(data);
         })
         .catch(error => {
             console.error('Error loading ID card:', error);
+            if (container) {
+                container.innerHTML = `
+                    <div class="error-message" style="text-align: center; padding: 20px; color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 10px;"></i>
+                        <p style="margin: 0; font-weight: 600;">Failed to load ID Card</p>
+                        <p style="margin: 5px 0 0 0; font-size: 0.9rem;">${error.message}</p>
+                        <button onclick="loadStudentIdCard()" style="margin-top: 15px; padding: 5px 15px; background: #fff; border: 1px solid #721c24; color: #721c24; border-radius: 4px; cursor: pointer;">Try Again</button>
+                    </div>`;
+            }
         });
 }
 
@@ -1246,58 +1291,94 @@ function generateIdCard(data) {
     const idCardContainer = document.getElementById('studentIdCard');
     if (!idCardContainer) return;
 
+    // Use inline styles to guarantee visibility and layout
+    // This bypasses potential CSS conflicts
     idCardContainer.innerHTML = `
-        <div class="id-card-front">
-            <div class="id-card-header">
-                <div class="college-logo">
-                    <i class="fas fa-graduation-cap"></i>
+        <div class="id-card-front" style="
+            width: 100%;
+            max-width: 400px;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 1px solid #e1e4e8;
+            margin: 0 auto;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        ">
+            <!-- Header -->
+            <div style="
+                background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+                color: white;
+                padding: 15px 20px;
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            ">
+                <div style="
+                    font-size: 28px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                ">
+                    <i class="fas fa-university"></i>
                 </div>
-                <div class="college-info">
-                    <h3>ABC Engineering College</h3>
-                    <p>Student Identity Card</p>
-                </div>
-            </div>
-            <div class="id-card-body">
-                <div class="student-photo">
-                    <img src="${data.photo_url}" alt="Student Photo">
-                </div>
-                <div class="student-details">
-                    <div class="detail-row">
-                        <span class="label">Name:</span>
-                        <span class="value">${data.full_name}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">Roll No:</span>
-                        <span class="value">${data.roll_number}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">Enrollment:</span>
-                        <span class="value">${data.enrollment_number}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">Branch:</span>
-                        <span class="value">${data.branch}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">Semester:</span>
-                        <span class="value">${data.semester}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">Blood Group:</span>
-                        <span class="value">${data.blood_group}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="label">Emergency:</span>
-                        <span class="value">${data.emergency_contact}</span>
-                    </div>
+                <div>
+                    <h3 style="margin: 0; font-size: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">ABC Engineering College</h3>
+                    <p style="margin: 2px 0 0 0; font-size: 12px; opacity: 0.9;">Student Identity Card</p>
                 </div>
             </div>
-            <div class="id-card-footer">
-                <p>Valid Until: ${data.valid_until}</p>
-                <div class="signature-section">
-                    <div class="signature">
-                        <p>Principal's Signature</p>
-                    </div>
+
+            <!-- Body -->
+            <div style="padding: 20px; display: flex; gap: 20px; flex-wrap: wrap;">
+                <!-- Photo -->
+                <div style="flex-shrink: 0; margin: 0 auto;">
+                    <img src="${data.photo_url || (data.gender && data.gender.toLowerCase() === 'female' ? 'https://cdn-icons-png.flaticon.com/512/4140/4140047.png' : 'https://cdn-icons-png.flaticon.com/512/4140/4140037.png')}" 
+                        alt="Student Photo" 
+                        style="
+                            width: 100px; 
+                            height: 125px; 
+                            object-fit: cover; 
+                            border-radius: 6px; 
+                            border: 3px solid #f0f2f5;
+                            display: block;
+                            background: #fff; 
+                        "
+                        onerror="this.src='https://cdn-icons-png.flaticon.com/512/847/847969.png'"
+                    >
+                </div>
+
+                <!-- Details -->
+                <div style="flex: 1; min-width: 180px;">
+                    <style>
+                        .id-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; border-bottom: 1px dashed #eee; padding-bottom: 4px; }
+                        .id-label { font-weight: 600; color: #555; }
+                        .id-val { color: #333; font-weight: 500; text-align: right; }
+                    </style>
+                    
+                    <div class="id-row"><span class="id-label">Name</span> <span class="id-val">${data.full_name}</span></div>
+                    <div class="id-row"><span class="id-label">Roll No</span> <span class="id-val">${data.roll_number}</span></div>
+                    <div class="id-row"><span class="id-label">Branch</span> <span class="id-val">${data.branch}</span></div>
+                    <div class="id-row"><span class="id-label">Semester</span> <span class="id-val">${data.semester}</span></div>
+                    <div class="id-row"><span class="id-label">Emergency</span> <span class="id-val">${data.emergency_contact || 'N/A'}</span></div>
+                    <div class="id-row" style="border:none;"><span class="id-label">Blood Group</span> <span class="id-val">${data.blood_group || '-'}</span></div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div style="
+                background: #f8f9fa; 
+                padding: 10px 20px; 
+                border-top: 1px solid #eee;
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
+            ">
+                <div style="font-size: 11px; color: #666;">
+                    Valid Until: <strong>${data.valid_until || 'Dec 2025'}</strong>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-family: 'Cursive', serif; font-size: 14px; color: #1a237e; font-weight: bold;">Principal</div>
+                    <div style="font-size: 10px; color: #888; border-top: 1px solid #ccc; padding-top: 2px; margin-top: 2px;">Authority Signature</div>
                 </div>
             </div>
         </div>
@@ -1306,7 +1387,42 @@ function generateIdCard(data) {
 
 // Download ID card
 function downloadIdCard() {
-    alert('ID Card download functionality would generate a PDF version of the ID card.');
+    const idCardElement = document.querySelector('.id-card');
+    const downloadBtn = document.getElementById('downloadIdBtn');
+
+    if (!idCardElement) {
+        alert('ID Card not generated yet.');
+        return;
+    }
+
+    // Show loading state
+    const originalText = downloadBtn.innerHTML;
+    downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+    downloadBtn.disabled = true;
+
+    html2canvas(idCardElement, {
+        scale: 2, // Higher resolution
+        useCORS: true, // Allow cross-origin images (like simple placeholder)
+        backgroundColor: '#ffffff', // Ensure white background
+        logging: false
+    }).then(canvas => {
+        // Create download link
+        const link = document.createElement('a');
+        link.download = `${currentUser.full_name.replace(/\s+/g, '_')}_ID_Card.png`;
+        link.href = canvas.toDataURL('image/png');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Reset button
+        downloadBtn.innerHTML = originalText;
+        downloadBtn.disabled = false;
+    }).catch(err => {
+        console.error('ID Card generation failed:', err);
+        alert('Failed to generate ID Card image.');
+        downloadBtn.innerHTML = originalText;
+        downloadBtn.disabled = false;
+    });
 }
 
 // Check for low attendance and show modal
@@ -1396,12 +1512,14 @@ function loadStudentClubs() {
                 const cat = club.category.toLowerCase();
                 const name = club.name.toLowerCase();
 
-                if (name.includes('lfa') || cat.includes('lit')) iconClass = 'fa-pen-nib';
+                // Specific check for LFA or Literature first
+                if (name.includes('lfa') || name.includes('literary') || cat.includes('lit')) {
+                    iconClass = 'fa-pen-nib';
+                }
                 else if (cat.includes('tech')) iconClass = 'fa-laptop-code';
-                else if (cat.includes('cult')) iconClass = 'fa-music';
+                else if (cat.includes('cult') || name.includes('music') || name.includes('saaz')) iconClass = 'fa-music';
                 else if (cat.includes('sport')) iconClass = 'fa-futbol';
                 else if (cat.includes('social') || cat.includes('service')) iconClass = 'fa-hands-helping';
-                else if (cat.includes('lit')) iconClass = 'fa-book-open';
 
                 const card = document.createElement('div');
                 card.className = 'club-card';
@@ -2002,40 +2120,8 @@ function updateRequirement(element, isValid) {
     }
 }
 
-// Load student ID card
-function loadStudentIdCard() {
-    if (!currentUser) return;
-
-    fetch(`/api/student/id-card/${currentUser.student_id || currentUser.id}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                console.error(data.error);
-                return;
-            }
-
-            // Populate ID Card Fields
-            document.getElementById('cardName').textContent = data.full_name;
-            document.getElementById('cardBranch').textContent = data.branch;
-            document.getElementById('cardEnrollment').textContent = data.enrollment_number;
-            document.getElementById('cardRoll').textContent = data.roll_number;
-            document.getElementById('cardSemester').textContent = "Sem " + data.semester;
-            document.getElementById('cardYear').textContent = data.admission_year;
-            document.getElementById('cardEmergency').textContent = data.emergency_contact || 'N/A';
-            document.getElementById('cardValidity').textContent = data.valid_until;
-
-            if (data.photo_url) {
-                document.getElementById('cardPhoto').src = data.photo_url;
-            }
-
-            // Generate QR Code with Student Info
-            const qrData = `ID:${data.enrollment_number}|Name:${data.full_name}`;
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrData)}`;
-            const qrImg = document.querySelector('.qr-placeholder img');
-            if (qrImg) qrImg.src = qrUrl;
-        })
-        .catch(error => console.error('Error loading ID card:', error));
-}
+// Duplicate loadStudentIdCard removed.
+// The robust version is defined earlier in the file around line 1247.
 
 // Print ID Card
 function printIdCard() {

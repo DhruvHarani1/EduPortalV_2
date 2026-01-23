@@ -44,9 +44,9 @@ def update_club_data():
             "Literature, arts, and creative expression community."
         )
 
-        # 3. Saazroom
+        # 3. Saaz Room
         update_or_create_club(
-            "Saazroom", 
+            "Saaz Room", 
             "cultural", 
             "music,songs,artist",
             "The ultimate music community for artists and enthusiasts."
