@@ -58,8 +58,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-    // Load user data from localStorage
-    const userData = localStorage.getItem('userData');
+    // Load user data from sessionStorage
+    const userData = sessionStorage.getItem('userData');
     if (userData) {
         currentUser = JSON.parse(userData);
         loadUserData();
@@ -499,12 +499,33 @@ function setupFormHandlers() {
         noticeForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
+            // Map form data to new API structure
+            const noticeType = document.getElementById('noticeType').value;
+            const targetAudience = document.getElementById('targetAudience').value;
+            const department = document.getElementById('noticeDepartment').value;
+
+            let visibleTo = 'both';
+            let targetBranch = null;
+
+            if (targetAudience === 'students') visibleTo = 'student';
+            else if (targetAudience === 'faculty') visibleTo = 'faculty';
+            else if (targetAudience === 'department') {
+                visibleTo = 'student'; // Assuming department notices are for students mostly, or 'both'? 
+                // Let's stick to 'student' for department specific for now, or 'both' if broader.
+                // Given the fields, let's say 'both' but filtered by branch.
+                visibleTo = 'both';
+                targetBranch = department;
+            }
+
             const noticeData = {
                 title: document.getElementById('noticeTitle').value,
-                notice_type: document.getElementById('noticeType').value,
-                target_audience: document.getElementById('targetAudience').value,
-                department: document.getElementById('noticeDepartment').value,
                 content: document.getElementById('noticeContent').value,
+                visible_to: visibleTo,
+                target_branch: targetBranch,
+                // notice_type in form is used as urgency in API?
+                // The form options are: general, exam, holiday, event, urgent.
+                // map to: low, moderate, urgent
+                urgency: noticeType === 'urgent' ? 'urgent' : (noticeType === 'exam' ? 'moderate' : 'low'),
                 expiry_date: document.getElementById('expiryDate').value
             };
 
@@ -572,14 +593,19 @@ function updatePublishedNoticesDisplay(notices) {
 
         const createdDate = new Date(notice.created_at).toLocaleDateString();
 
+        // Map urgency to CSS class
+        const urgencyClass = notice.notice_type || 'low'; // API returns urgency as notice_type for compat or we change it?
+        // In app.py get_notices: 'notice_type': n.urgency
+
         noticeItem.innerHTML = `
             <div class="notice-header">
                 <h4>${notice.title}</h4>
-                <span class="notice-type ${notice.notice_type}">${notice.notice_type}</span>
+                <span class="notice-type ${urgencyClass}">${urgencyClass.toUpperCase()}</span>
             </div>
             <p>${notice.content}</p>
             <div class="notice-meta">
-                <span>Published ${createdDate}</span>
+                <span>Published ${createdDate} by ${notice.author}</span>
+                <span class="target-badge" style="font-size: 0.8em; background: #eee; padding: 2px 6px; border-radius: 4px; margin-left: 10px;">To: ${notice.visible_to}</span>
                 <div class="notice-actions">
                     <button onclick="editNotice(${notice.id})">Edit</button>
                     <button onclick="deleteNotice(${notice.id})">Delete</button>

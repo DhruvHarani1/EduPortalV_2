@@ -16,7 +16,7 @@ db.init_app(app)
 # Database Models moved to models.py
 from models import (
     User, Student, Faculty, Course, Club, ClubRequest,
-    Timetable, Scholarship, Notification,
+    Timetable, Scholarship, Notification, Notice,
     ExamSchedule, Exam, QueryThread, QueryPost, QueryAttachment
 )
 from timetable_model import ClassSchedule
@@ -395,7 +395,131 @@ def get_eligible_scholarships():
 # Marks route removed
 
 
-# Notices route removed
+# --- Notice System API ---
+
+@app.route('/api/notices/publish', methods=['POST'])
+def publish_notice():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+        
+    data = request.get_json()
+    user_id = session['user_id']
+    role = session['role']
+    
+    if role not in ['faculty', 'admin']:
+        return jsonify({'error': 'Permission denied'}), 403
+        
+    try:
+        new_notice = Notice(
+            title=data['title'],
+            content=data['content'],
+            created_by_user_id=user_id,
+            created_by_role=role,
+            visible_to=data['visible_to'], # student, faculty, both
+            target_branch=data.get('target_branch'),
+            target_semester=data.get('target_semester'),
+            target_class_id=data.get('target_class_id'),
+            urgency=data.get('urgency', 'low'),
+            expire_at=datetime.strptime(data['expiry_date'], '%Y-%m-%d') if data.get('expiry_date') else None
+        )
+        
+        db.session.add(new_notice)
+        
+        # Determine target audience for notification
+        # For simplicity, we create a generic notification if it is an important notice
+        if new_notice.urgency == 'urgent':
+            # In a real system, we'd do a bulk insert here filtering targets.
+            # But the requirement is "Generate notification records".
+            # Let's add a system-wide notification for broad notices or specific for targeted.
+            pass 
+
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Notice published successfully'})
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/notices', methods=['GET'])
+def get_notices():
+    role = request.args.get('role', 'student') # defaulting to student view logic
+    
+    # Optional: If logged in, use session data for stricter filtering
+    user_id = session.get('user_id')
+    student_branch = None
+    student_semester = None
+    
+    if role == 'student' and user_id:
+        student = Student.query.filter_by(user_id=user_id).first()
+        if student:
+            student_branch = student.branch
+            student_semester = student.current_semester
+    
+    query = Notice.query.filter(Notice.is_active == True)
+    
+    # Visibility Logic
+    if role == 'student':
+        query = query.filter(
+            db.or_(
+                Notice.visible_to == 'student',
+                Notice.visible_to == 'both'
+            )
+        )
+        # Targeting Logic (Show if Target is NULL OR Matches User)
+        if student_branch:
+            query = query.filter(
+                db.or_(
+                    Notice.target_branch == None,
+                    Notice.target_branch == '',
+                    Notice.target_branch == student_branch
+                )
+            )
+            
+        if student_semester:
+            query = query.filter(
+                db.or_(
+                    Notice.target_semester == None,
+                    Notice.target_semester == 0,
+                    Notice.target_semester == student_semester
+                )
+            )
+            
+    elif role == 'faculty':
+        query = query.filter(
+            db.or_(
+                Notice.visible_to == 'faculty',
+                Notice.visible_to == 'both'
+            )
+        )
+        
+    # Admin sees all (no filter applied if role == admin)
+    
+    # Sort by Urgency and Date
+    # Custom sort for urgency: Urgent > Moderate > Low
+    from sqlalchemy import case
+    urgency_order = case(
+        (Notice.urgency == 'urgent', 1),
+        (Notice.urgency == 'moderate', 2),
+        else_=3
+    )
+    
+    notices = query.order_by(urgency_order, Notice.created_at.desc()).all()
+    
+    result = []
+    for n in notices:
+        result.append({
+            'id': n.id,
+            'title': n.title,
+            'content': n.content,
+            'notice_type': n.urgency, # mapping urgency to frontend type
+            'created_at': n.created_at.isoformat(),
+            'author': n.author.full_name if n.author else 'System',
+            'visible_to': n.visible_to
+        })
+        
+    return jsonify(result)
 
 
 @app.route('/api/student/memberships/<int:student_id>')

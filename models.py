@@ -143,6 +143,29 @@ class Scholarship(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+class Notice(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    created_by_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_by_role = db.Column(db.String(20), nullable=False) # faculty, admin
+    visible_to = db.Column(db.String(20), nullable=False) # student, faculty, both
+    
+    # Targeting (Nullable = All)
+    target_branch = db.Column(db.String(50)) # branch name or id
+    target_semester = db.Column(db.Integer)
+    target_class_id = db.Column(db.String(20)) # e.g., 'CS-A'
+    
+    urgency = db.Column(db.String(20), default='low') # urgent, moderate, low
+    is_active = db.Column(db.Boolean, default=True)
+    publish_at = db.Column(db.DateTime, default=datetime.utcnow)
+    expire_at = db.Column(db.DateTime)
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    author = db.relationship('User')
+
 # ScholarshipApplication model removed
 
 

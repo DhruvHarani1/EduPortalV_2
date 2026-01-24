@@ -1530,17 +1530,13 @@ function downloadMarksheet() {
 }
 
 // Check for login
-currentUser = JSON.parse(localStorage.getItem('userData'));
-if (!currentUser) {
-    console.error("No user data found in localStorage. Redirecting to login.");
-    // alert("Session expired or invalid. Please login again."); 
-    window.location.href = '/';
-} else {
-    console.log("Logged in as:", currentUser.full_name);
-}
+// Global check removed to prevent redirection loop. Auth is handled in DOMContentLoaded.
+// currentUser = JSON.parse(localStorage.getItem('userData')); 
+
 
 // Logout function
 function logout() {
+    sessionStorage.removeItem('userData');
     localStorage.removeItem('userData');
     window.location.href = '/';
 }

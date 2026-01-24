@@ -43,6 +43,9 @@
                 <li><a href="#queries" class="menu-item" onclick="showSection('queries')">
                         <i class="fas fa-question-circle"></i> Student Queries
                     </a></li>
+                <li><a href="#notices" class="menu-item" onclick="showSection('notices')">
+                        <i class="fas fa-bullhorn"></i> Notices
+                    </a></li>
                 <li><a href="#schedule" class="menu-item" onclick="showSection('schedule')">
                         <i class="fas fa-clock"></i> Today's Schedule
                     </a></li>
@@ -504,6 +507,69 @@
                                 <!-- Timetable rows will be populated here -->
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Notices Section -->
+            <section id="notices" class="content-section">
+                <div class="section-header">
+                    <h2>Notices & Announcements</h2>
+                    <button class="add-btn"
+                        onclick="document.getElementById('noticeFormContainer').style.display = 'block'">
+                        <i class="fas fa-plus"></i> Create Notice
+                    </button>
+                </div>
+
+                <div id="noticeFormContainer"
+                    style="display: none; background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h3>Publish New Notice</h3>
+                    <form id="facultyNoticeForm">
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label>Title</label>
+                            <input type="text" id="noticeTitle" required
+                                style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                        <div class="form-row" style="display: flex; gap: 15px; margin-bottom: 15px;">
+                            <div class="form-group" style="flex: 1;">
+                                <label>Target Audience</label>
+                                <select id="targetAudience" required
+                                    style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                    <option value="both">All Students & Faculty</option>
+                                    <option value="student">Students Only</option>
+                                    <option value="faculty">Faculty Only</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label>Urgency</label>
+                                <select id="noticeUrgency"
+                                    style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                    <option value="low">Low</option>
+                                    <option value="moderate">Moderate</option>
+                                    <option value="urgent">Urgent</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label>Content</label>
+                            <textarea id="noticeContent" rows="4" required
+                                style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"></textarea>
+                        </div>
+                        <div class="form-actions" style="display: flex; gap: 10px;">
+                            <button type="submit" class="submit-btn"
+                                style="background: #2563eb; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer;">Publish
+                                Notice</button>
+                            <button type="button"
+                                onclick="document.getElementById('noticeFormContainer').style.display = 'none'"
+                                style="padding: 8px 16px; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer;">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="notices-list">
+                    <!-- Notices loaded here -->
+                    <div style="text-align: center; padding: 20px; color: #666;">
+                        <i class="fas fa-spinner fa-spin"></i> Loading notices...
                     </div>
                 </div>
             </section>

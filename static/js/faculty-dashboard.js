@@ -98,7 +98,116 @@ document.addEventListener('DOMContentLoaded', function () {
     // Load initial data
     // loadFacultyClasses(); // Removed (SubjectAssignment deleted)
     loadTodaySchedule();
+
+    // Setup Notice Form
+    setupFacultyNoticeForm();
 });
+
+// Setup Faculty Notice Form
+function setupFacultyNoticeForm() {
+    const form = document.getElementById('facultyNoticeForm');
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const title = document.getElementById('noticeTitle').value;
+            const content = document.getElementById('noticeContent').value;
+            const urgency = document.getElementById('noticeUrgency').value;
+            const audience = document.getElementById('targetAudience').value;
+
+            // Map audience to visible_to
+            // Faculty form has: both, student, faculty
+            // API expects: visible_to (student, faculty, both)
+
+            const noticeData = {
+                title: title,
+                content: content,
+                urgency: urgency,
+                visible_to: audience, // Direct mapping works: 'student', 'faculty', 'both'
+                expiry_date: null // Not in form yet
+            };
+
+            fetch('/api/notices/publish', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(noticeData)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Notice published successfully!");
+                        form.reset();
+                        document.getElementById('noticeFormContainer').style.display = 'none';
+                        loadFacultyNotices();
+                    } else {
+                        alert("Error: " + data.error);
+                    }
+                })
+                .catch(err => console.error("Error publishing notice:", err));
+        });
+    }
+}
+
+// Load Faculty Notices
+function loadFacultyNotices() {
+    const container = document.querySelector('.notices-list');
+    if (!container) return;
+
+    // Fetch notices visible to faculty (role=faculty)
+    fetch('/api/notices?role=faculty')
+        .then(res => res.json())
+        .then(data => {
+            if (data.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:20px; color:#666;">No notices found.</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            data.forEach(notice => {
+                const card = document.createElement('div');
+                card.className = 'notice-card';
+                // Inline styles for simplicity matching Student/Admin themes
+                card.style.background = 'white';
+                card.style.padding = '15px';
+                card.style.borderRadius = '8px';
+                card.style.marginBottom = '15px';
+                card.style.borderLeft = `4px solid ${getUrgencyColor(notice.notice_type)}`;
+                card.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+
+                const dateStr = new Date(notice.created_at).toLocaleDateString();
+
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <h4 style="margin:0; color:#333;">${notice.title}</h4>
+                        <span style="font-size:0.8em; color:#666;">${dateStr}</span>
+                    </div>
+                    <p style="color:#555; font-size:0.95em; line-height:1.5;">${notice.content}</p>
+                    <div style="margin-top:10px; font-size:0.85em; display:flex; gap:10px;">
+                        <span style="background:#f0f2f5; padding:2px 8px; border-radius:4px;">By: ${notice.author}</span>
+                        <span style="background:${getUrgencyColor(notice.notice_type, true)}; color:${getUrgencyColor(notice.notice_type)}; padding:2px 8px; border-radius:4px; font-weight:600;">${notice.notice_type.toUpperCase()}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        })
+        .catch(err => {
+            console.error("Error loading notices:", err);
+            container.innerHTML = '<div style="color:red; text-align:center;">Failed to load notices.</div>';
+        });
+}
+
+function getUrgencyColor(type, bg = false) {
+    if (bg) {
+        if (type === 'urgent') return '#fee2e2';
+        if (type === 'moderate') return '#e0f2fe';
+        return '#dcfce7'; // low
+    }
+    if (type === 'urgent') return '#ef4444';
+    if (type === 'moderate') return '#3b82f6';
+    return '#10b981'; // low
+}
 
 // Load user data into the interface
 function loadUserData() {
@@ -140,7 +249,9 @@ function showSection(sectionId) {
         'materials': 'Upload Materials',
         'marks': 'Manage Marks',
         'mentorship': 'Mentorship',
-        'schedule': 'Today\'s Schedule'
+        'schedule': 'Today\'s Schedule',
+        'notices': 'Notices & Announcements',
+        'queries': 'Student Queries'
     };
 
     document.getElementById('pageTitle').textContent = titles[sectionId] || 'Faculty Dashboard';
