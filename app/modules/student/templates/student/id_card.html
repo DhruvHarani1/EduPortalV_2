@@ -1,0 +1,256 @@
+{% extends "base_student.html" %}
+
+{% block title %}Digital ID Card | EduPortal{% endblock %}
+{% block header_title %}Digital Identity{% endblock %}
+
+{% block student_content %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;500;600;700&display=swap');
+
+    .font-logo { font-family: 'Orbitron', sans-serif; }
+    .font-body { font-family: 'Inter', sans-serif; }
+
+    /* 3D Flip Mechanics */
+    .perspective-1000 { perspective: 1000px; }
+    .transform-style-3d { transform-style: preserve-3d; }
+    .backface-hidden { backface-visibility: hidden; }
+    .rotate-y-180 { transform: rotateY(180deg); }
+
+    /* Flip on Group Hover */
+    .group:hover .card-inner {
+        transform: rotateY(180deg);
+    }
+
+    /* Card Design */
+    .card-front {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+    .card-back {
+        background: #111827;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Print Optimization */
+    @media print {
+        @page { margin: 0.5cm; }
+        body * { visibility: hidden; }
+        #id-card-wrapper, #id-card-wrapper * { visibility: visible; }
+        
+        #id-card-wrapper {
+            position: absolute; 
+            left: 0; 
+            top: 0;
+            width: 100% !important;
+            height: auto !important;
+            transform: none !important;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Disable 3D transforms for print and show both sides */
+        .perspective-1000 { perspective: none !important; }
+        .transform-style-3d { transform-style: flat !important; }
+        .card-inner { 
+            transform: none !important; 
+            position: static !important; /* Allow flow */
+            width: 100% !important;
+            height: auto !important;
+            display: block !important;
+        }
+        
+        /* Un-stack the faces */
+        .card-front, .card-back {
+            position: relative !important; /* Stack vertically */
+            inset: auto !important;
+            transform: none !important; /* Remove rotateY(180) from back */
+            backface-visibility: visible !important;
+            margin-bottom: 20px;
+            border: 1px solid #ddd; /* Light border for contrast on paper */
+            page-break-inside: avoid;
+            width: 350px; /* Fixed print width */
+            height: 220px; /* Fixed print height */
+            
+            /* FORCE BACKGROUND PRINTING */
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            background-color: #1e293b !important; /* Fallback */
+            box-shadow: none !important; /* Remove shadow for cleaner print */
+        }
+        
+        /* Hide controls */
+        #controls { display: none !important; }
+    }
+</style>
+
+<div class="min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center p-4">
+    
+    <!-- Card Container -->
+    <div id="id-card-wrapper" class="perspective-1000 w-full max-w-[450px] group cursor-pointer h-[280px]"> <!-- Increased Width & Height -->
+        
+        <div class="card-inner relative w-full h-full duration-700 transform-style-3d transition-transform">
+            
+            <!-- ====== FRONT ====== -->
+            <div class="absolute inset-0 w-full h-full backface-hidden rounded-xl overflow-hidden card-front shadow-2xl">
+                <!-- Decorative Top Bar -->
+                <div class="h-2 bg-indigo-500 w-full"></div>
+                
+                <div class="p-6 h-full flex flex-col font-body text-white">
+                    <!-- Header -->
+                    <div class="flex justify-between items-center mb-6">
+                        <div class="flex items-center gap-3">
+                            <!-- Logo Icon -->
+                            <div class="w-8 h-8 rounded bg-indigo-600 flex items-center justify-center text-white">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            </div>
+                            <div>
+                                <h1 class="text-xs font-logo font-bold tracking-widest leading-none">UNIVERSE <span class="text-indigo-400">UNIV</span></h1>
+                                <p class="text-[10px] text-gray-400 uppercase tracking-widest mt-0.5">Student Identity</p>
+                            </div>
+                        </div>
+                        <!-- Chip -->
+                        <div class="w-9 h-7 rounded bg-gradient-to-br from-yellow-200 to-yellow-600 opacity-90 border border-yellow-700"></div>
+                    </div>
+
+                    <!-- Main Content -->
+                    <div class="flex gap-5 items-start">
+                        <!-- Photo -->
+                        <div class="w-24 h-24 rounded-lg bg-gray-800 border-2 border-indigo-500/50 overflow-hidden flex-shrink-0">
+                            <img src="https://ui-avatars.com/api/?name={{ student.display_name }}&background=0f172a&color=fff&size=200&font-size=0.33" class="w-full h-full object-cover">
+                        </div>
+                        
+                        <!-- Details -->
+                        <div class="flex-1 space-y-3 min-w-0"> <!-- min-w-0 for truncating -->
+                            <div>
+                                <h2 class="text-lg font-bold text-white truncate leading-tight">{{ student.display_name }}</h2>
+                                <p class="text-xs text-indigo-300 font-medium">Student</p>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 gap-1">
+                                <div>
+                                    <p class="text-[9px] text-gray-500 uppercase font-bold">Enrollment ID</p>
+                                    <p class="text-sm font-semibold text-white tracking-wide">{{ student.enrollment_number }}</p>
+                                </div>
+                                <div class="mt-1">
+                                    <p class="text-[9px] text-gray-500 uppercase font-bold">Course / Batch</p>
+                                    <p class="text-xs text-gray-200">{{ student.course_name }} ({{ student.batch_year or '2025' }})</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="mt-auto pt-2 flex justify-between items-end">
+                        <div></div> <!-- Spacer -->
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ student.enrollment_number }}&bgcolor=255-255-255&color=0-0-0&margin=0" class="w-10 h-10 rounded bg-white p-0.5">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====== BACK ====== -->
+            <div class="absolute inset-0 w-full h-full backface-hidden rotate-y-180 rounded-xl overflow-hidden card-back shadow-2xl">
+                 <div class="h-10 bg-black mt-6 w-full relative"></div>
+                 
+                 <div class="p-6 font-body">
+                     <div class="flex justify-between text-xs text-gray-400 mb-6 border-b border-gray-700 pb-2">
+                         <div>
+                             <span class="block text-[8px] uppercase font-bold text-gray-600">Date of Birth</span>
+                             <span class="text-white">{{ student.date_of_birth.strftime('%d %b %Y') if student.date_of_birth else 'N/A' }}</span>
+                         </div>
+                         <div class="text-right">
+                             <span class="block text-[8px] uppercase font-bold text-gray-600">Blood Group</span>
+                             <span class="text-white">O+</span>
+                         </div>
+                     </div>
+                     
+                     <div class="text-[10px] text-gray-500 leading-relaxed text-justify mb-4">
+                         This card is non-transferable and must be presented upon request. Report loss immediately to the Registrar.
+                         <br>
+                         <strong>University Address:</strong> Campus Rd, Education City.
+                     </div>
+                     
+                     <div class="text-center pt-2">
+                         <div class="h-8 mb-1 flex items-end justify-center">
+                             <span class="font-serif italic text-gray-400 text-xs">RegistrarSign</span>
+                         </div>
+                         <p class="text-[8px] text-gray-600 uppercase tracking-widest border-t border-gray-700 pt-1 inline-block px-4">Authorized Signature</p>
+                     </div>
+                 </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div id="controls" class="mt-8 text-center space-x-4">
+        <button onclick="window.print()" class="px-6 py-2.5 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium shadow-lg transition-all transform hover:scale-105 flex inline-flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+            Download / Print
+        </button>
+    </div>
+
+    <!-- Additional Identity Info -->
+    <div class="mt-12 w-full max-w-2xl grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+        
+        <!-- Status Card -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </div>
+            <div>
+                <h3 class="text-sm font-bold text-gray-900">Active Student</h3>
+                <p class="text-xs text-gray-500">Verified for Academic Year 2025-26</p>
+                <p class="text-[10px] text-green-600 font-medium mt-1">Valid until May 2026</p>
+            </div>
+        </div>
+
+        <!-- Emergency Contact -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+            </div>
+            <div>
+                <h3 class="text-sm font-bold text-gray-900">Emergency Contact</h3>
+                <p class="text-xs text-gray-500">Guardian: {{ student.guardian_name or 'Not Set' }}</p>
+                <p class="text-[10px] text-gray-600 font-medium mt-1">Ph: {{ student.guardian_contact or 'N/A' }}</p>
+            </div>
+        </div>
+
+        <!-- Faculty Mentor -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center gap-4">
+             <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+            </div>
+             <div>
+                <h3 class="text-sm font-bold text-gray-900">Faculty Mentor</h3>
+                <p class="text-xs text-gray-500">{{ student.mentor.display_name if student.mentor else 'Not Assigned' }}</p>
+                <p class="text-[10px] text-purple-600 font-medium mt-1">{{ student.mentor.department if student.mentor else 'Academic Dept' }}</p>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center gap-4">
+             <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            </div>
+             <div>
+                <h3 class="text-sm font-bold text-gray-900">Lost Card?</h3>
+                {% if student.id_card_status == 'Lost' %}
+                    <p class="text-xs text-red-500 font-bold">Status: Reported Lost</p>
+                    <p class="text-[10px] text-gray-400 mt-1">Processing Replacement...</p>
+                {% else %}
+                    <p class="text-xs text-gray-500">Immediately report to admin.</p>
+                    <form action="{{ url_for('student.report_lost_card') }}" method="POST" onsubmit="return confirm('Are you sure you want to report your ID card as lost? This action cannot be undone.');">
+                        <button type="submit" class="text-[10px] text-red-600 font-bold mt-1 uppercase hover:underline bg-transparent border-none p-0 cursor-pointer">Report Issue ></button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

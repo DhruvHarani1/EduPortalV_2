@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block layout %}
+<div class="min-h-screen bg-zinc-950 relative overflow-hidden font-sans flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    
+    <!-- Background Grid -->
+    <div class="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]"></div>
+
+    <div class="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
+        <!-- Logo/Home Link -->
+        <div class="text-center mb-10">
+            <a href="{{ url_for('main.index') }}" class="inline-block group">
+                <h2 class="text-4xl font-black tracking-tighter text-white group-hover:text-lime-400 transition-colors duration-300">
+                    EDU<span class="text-zinc-600 group-hover:text-lime-600 transition-colors">PORTAL</span>
+                </h2>
+                <div class="h-1 w-0 group-hover:w-full bg-lime-500 transition-all duration-500 mx-auto mt-2"></div>
+            </a>
+            <p class="mt-4 text-xs font-mono text-lime-500/80 uppercase tracking-widest">:: ACCESS_CONTROL_TERMINAL ::</p>
+        </div>
+    </div>
+
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
+        <div class="bg-zinc-900/50 backdrop-blur-xl border border-zinc-800 py-10 px-6 shadow-2xl rounded-2xl relative overflow-hidden sm:px-12">
+            
+            <!-- Scan Line Animation -->
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-lime-500 to-transparent opacity-20 animate-scan"></div>
+
+            <!-- Flash Messages (System Alerts) -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="mb-6 space-y-2">
+                        {% for category, message in messages %}
+                            <div class="p-4 rounded-lg border text-sm font-mono {{ 'bg-lime-900/10 border-lime-500/30 text-lime-400' if category == 'success' else 'bg-red-900/10 border-red-500/30 text-red-400' }}">
+                                <span class="font-bold">[{{ 'SUCCESS' if category == 'success' else 'ERROR' }}]:</span> {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <div class="mb-8 text-center">
+                <h3 class="text-xl font-bold text-white mb-1">Identity Verification</h3>
+                <p class="text-zinc-500 text-sm">Role: <span class="text-lime-400 font-mono font-bold">{{ role|upper }}</span></p>
+            </div>
+
+            <form class="space-y-6" action="{{ url_for('auth.login', role=role) }}" method="POST">
+                <input type="hidden" name="role" value="{{ role }}">
+                
+                <div>
+                    <label for="email" class="block text-xs font-medium text-zinc-400 uppercase tracking-wider mb-2">User ID / Email</label>
+                    <div class="mt-1 relative">
+                        <input id="email" name="email" type="email" autocomplete="email" required 
+                            class="appearance-none block w-full px-4 py-3 bg-zinc-950/50 border border-zinc-700 rounded-lg shadow-sm placeholder-zinc-600 text-white focus:outline-none focus:ring-1 focus:ring-lime-500 focus:border-lime-500 sm:text-sm transition-colors"
+                            placeholder="user@eduportal.os">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-xs font-medium text-zinc-400 uppercase tracking-wider mb-2">Access Key</label>
+                    <div class="mt-1 relative">
+                        <input id="password" name="password" type="password" autocomplete="current-password" required 
+                            class="appearance-none block w-full px-4 py-3 bg-zinc-950/50 border border-zinc-700 rounded-lg shadow-sm placeholder-zinc-600 text-white focus:outline-none focus:ring-1 focus:ring-lime-500 focus:border-lime-500 sm:text-sm transition-colors"
+                            placeholder="••••••••">
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" class="w-full flex justify-center py-4 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-black bg-white hover:bg-lime-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime-500 transition-all duration-300 transform hover:scale-[1.02] uppercase tracking-wide">
+                        Initialize Session
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-8">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-zinc-800"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-zinc-900 text-zinc-500 text-xs">SYSTEM OPTIONS</span>
+                    </div>
+                </div>
+
+                <div class="mt-6 grid grid-cols-1 gap-3">
+                    <a href="{{ url_for('auth.login') }}" class="w-full inline-flex justify-center py-2 px-4 border border-zinc-700 rounded-md shadow-sm bg-zinc-800/50 text-xs font-medium text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors">
+                        Change Role
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <p class="text-center text-zinc-600 text-xs mt-8 font-mono">
+            SECURE CONNECTION ESTABLISHED<br>
+            SHA-256 ENCRYPTION ACTIVE
+        </p>
+    </div>
+</div>
+{% endblock %}

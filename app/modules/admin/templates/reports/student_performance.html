@@ -1,0 +1,375 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Student Intelligence{% endblock %}
+
+{% block admin_content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-6 space-y-8">
+    
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Student Performance Intelligence</h1>
+            <p class="text-sm text-gray-500 mt-1">Deep-dive analysis of academic consistency, growth trends, and risk factors.</p>
+        </div>
+        <a href="{{ url_for('admin.reports.dashboard') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200">
+            <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+            Back to Deck
+        </a>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- 1. The Stability Chart (Consistency) -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900">Performance vs. Stability Matrix</h3>
+                    <p class="text-xs text-gray-500 mt-1">
+                        Map of Student Grades vs. Consistency. <span class="text-indigo-600 font-medium">Goal: Top Right.</span>
+                    </p>
+                </div>
+                <!-- Filters -->
+                <div class="flex space-x-2">
+                    <button onclick="filterChart('all', this)" class="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 ring-2 ring-indigo-500">All</button>
+                    <button onclick="filterChart('top', this)" class="px-3 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full hover:bg-green-200">Top 10%</button>
+                    <button onclick="filterChart('risk', this)" class="px-3 py-1 text-xs font-medium bg-red-100 text-red-700 rounded-full hover:bg-red-200">At Risk</button>
+                </div>
+            </div>
+            <div class="flex-grow relative min-h-[400px]">
+                <canvas id="consistencyChart"></canvas>
+            </div>
+        </div>
+
+        <!-- 2. The Subject Mastery Radar -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col">
+            <div class="mb-4">
+                <h3 class="text-lg font-bold text-gray-900">Class Academic DNA</h3>
+                <p class="text-xs text-gray-500 mt-1">
+                    Visual footprint of the class's strengths. Spiky shapes indicate imbalance.
+                </p>
+            </div>
+            <div class="flex-grow relative min-h-[400px]">
+                <canvas id="radarChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. The Danger Zone (Redesigned) -->
+    <div class="bg-white rounded-2xl shadow-sm border border-red-100 overflow-hidden">
+        <div class="px-6 py-5 border-b border-gray-100 bg-red-50 flex items-center justify-between">
+            <div class="flex items-center">
+                <div class="p-2 bg-red-100 rounded-lg text-red-600 mr-3">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-red-900">Critical Attention Required</h3>
+                    <p class="text-xs text-red-700">Students in the "Danger Zone" (Avg < 40%)</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student Profile</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Avg</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Risk Assessment</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Recommended Action</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200" id="riskTableBody">
+                    <!-- JS Populated -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 4. AI Executive Review -->
+    <div class="bg-indigo-900 rounded-2xl shadow-xl p-8 text-white relative overflow-hidden">
+        <!-- Decorative bg -->
+        <div class="absolute top-0 right-0 -m-8 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl"></div>
+        
+        <div class="relative z-10 flex flex-col md:flex-row gap-8">
+            <div class="flex-1">
+                 <div class="flex items-center mb-4">
+                    <span class="p-2 bg-indigo-800 rounded-lg mr-3 shadow-inner">
+                        <svg class="w-6 h-6 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </span>
+                    <h3 class="text-2xl font-bold tracking-tight">AI Insights & Strategy</h3>
+                 </div>
+                 <p class="text-indigo-200 text-lg mb-6 leading-relaxed" id="aiStatus">Analyzing Cohort...</p>
+                 
+                 <div class="bg-indigo-800/50 rounded-xl p-4 border border-indigo-700/50">
+                    <h4 class="text-xs font-bold text-indigo-300 uppercase tracking-widest mb-2">Strategic Directive</h4>
+                    <p class="text-white italic text-lg" id="aiSuggestion">...</p>
+                 </div>
+            </div>
+            
+            <div class="md:w-1/3 border-l border-indigo-800 md:pl-8 flex flex-col justify-center">
+                <h4 class="text-sm font-semibold text-indigo-300 uppercase tracking-wider mb-4">Recommended Actions</h4>
+                <ul class="space-y-4" id="aiTips">
+                    <!-- JS Populates -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+let consistencyChartInstance = null;
+let allStudentData = [];
+
+// Custom Plugin to draw quadrants AND TEXT
+const quadrantPlugin = {
+    id: 'quadrants',
+    beforeDraw: (chart, args, options) => {
+        const {ctx, chartArea: {left, top, right, bottom}, scales: {x, y}} = chart;
+        const midX = x.getPixelForValue(50);
+        const midY = y.getPixelForValue(12); // Threshold for "Stable"
+
+        ctx.save();
+        
+        // Colors
+        const colorSafe = 'rgba(16, 185, 129, 0.03)';
+        const colorRisk = 'rgba(239, 68, 68, 0.03)';
+        const colorVolatile = 'rgba(245, 158, 11, 0.03)';
+        const colorMeh = 'rgba(107, 114, 128, 0.03)';
+
+        // 1. Top Right (High Avg, Low StdDev) -> STARS
+        ctx.fillStyle = colorSafe;
+        ctx.fillRect(midX, top, right - midX, midY - top);
+        
+        // 2. Top Left (Low Avg, Low StdDev) -> CONSISTENTLY LOW
+        ctx.fillStyle = colorRisk;
+        ctx.fillRect(left, top, midX - left, midY - top);
+
+        // 3. Bottom Right (High Avg, High StdDev) -> VOLATILE
+        ctx.fillStyle = colorVolatile;
+        ctx.fillRect(midX, midY, right - midX, bottom - midY);
+
+        // 4. Bottom Left (Low Avg, High StdDev) -> CHAOTIC
+        ctx.fillStyle = colorRisk;
+        ctx.fillRect(left, midY, midX - left, bottom - midY);
+        
+        // Text Labels
+        ctx.font = 'bold 11px sans-serif'; // Slightly smaller
+        ctx.textAlign = 'center'; // Center alignment
+        ctx.textBaseline = 'middle';
+        
+        // Calculate centers of each quadrant
+        const q1x = (midX + right) / 2;
+        const q1y = (top + midY) / 2;
+        
+        const q2x = (left + midX) / 2;
+        const q2y = (top + midY) / 2;
+        
+        const q3x = (midX + right) / 2;
+        const q3y = (midY + bottom) / 2;
+        
+        const q4x = (left + midX) / 2;
+        const q4y = (midY + bottom) / 2;
+
+        // Draw Labels in Centers
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.2)';
+        ctx.fillText('🏆 TOP PERFOMERS', q1x, top + 15); // Keep near top for visibility
+        
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.2)';
+        ctx.fillText('⚠️ STRUGGLING', q2x, top + 15);
+        
+        ctx.fillStyle = 'rgba(245, 158, 11, 0.3)';
+        ctx.fillText('⚡ VOLATILE', q3x, bottom - 15); // Keep near bottom
+        
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.3)';
+        ctx.fillText('📉 CRITICAL', q4x, bottom - 15);
+
+        ctx.restore();
+    }
+};
+
+function filterChart(mode, buttonElement) {
+    if (!consistencyChartInstance) return;
+    
+    let filtered = [];
+    if (mode === 'all') {
+        filtered = allStudentData;
+    } else if (mode === 'top') {
+        filtered = allStudentData.filter(d => d.x >= 75);
+    } else if (mode === 'risk') {
+        filtered = allStudentData.filter(d => d.x < 40);
+    }
+    
+    // Update active button state
+    document.querySelectorAll('.flex.space-x-2 button').forEach(b => b.classList.remove('ring-2', 'ring-indigo-500'));
+    buttonElement.classList.add('ring-2', 'ring-indigo-500');
+
+    consistencyChartInstance.data.datasets[0].data = filtered.map(d => ({x: d.x, y: d.y, raw: d}));
+    consistencyChartInstance.update();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    fetch("{{ url_for('admin.reports.student_performance_data') }}")
+        .then(r => r.json())
+        .then(data => {
+            
+            allStudentData = data.consistency; // Store for filtering
+
+            // 1. Consistency Chart
+            // Chart.register(quadrantPlugin); // REMOVED GLOBAL REGISTRATION
+            const ctxCons = document.getElementById('consistencyChart').getContext('2d');
+            consistencyChartInstance = new Chart(ctxCons, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Students',
+                        data: allStudentData.map(d => ({x: d.x, y: d.y, raw: d})),
+                        backgroundColor: function(context) {
+                            const d = context.raw?.raw;
+                            if (!d) return '#ccc';
+                            // Logic: 
+                            // High Avg (>60) + High Stability (Low Score < 15) = Green (Star)
+                            // Low Avg (<40) = Red (Critical)
+                            // High Avg but Low Stability (>20) = Purple (Volatile)
+                            
+                            if (d.x >= 60 && d.y <= 15) return 'rgba(16, 185, 129, 0.9)'; // Emerald Green
+                            if (d.x < 40) return 'rgba(239, 68, 68, 0.9)'; // Red
+                            if (d.y > 20) return 'rgba(249, 115, 22, 0.9)'; // Orange (Volatile)
+                            
+                            return 'rgba(99, 102, 241, 0.7)'; // Indigo (Average)
+                        },
+                        pointRadius: 6,
+                        pointHoverRadius: 10,
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 1.5,
+                        borderColor: '#fff' 
+                    }]
+                },
+                plugins: [quadrantPlugin], // LOCAL REGISTRATION
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { 
+                            title: {display: true, text: 'Average Grade (%)', font: {weight: 'bold'}},
+                            min: 0, max: 100,
+                            grid: { display: true, color: '#f3f4f6' }
+                        },
+                        y: { 
+                            title: {display: true, text: 'Unpredictability Score (Lower is Better)', font: {weight: 'bold'}},
+                            reverse: true, // 0 is top
+                            min: 0, max: 40,
+                            grid: { display: true, color: '#f3f4f6' }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            titleColor: '#1f2937',
+                            bodyColor: '#4b5563',
+                            borderColor: '#e5e7eb',
+                            borderWidth: 1,
+                            padding: 12,
+                             callbacks: {
+                                label: function(c) {
+                                    const d = c.raw.raw;
+                                    let status = "Stable";
+                                    if (d.y > 20) status = "Volatile";
+                                    return `${d.name}: ${d.x}% (${status})`;
+                                }
+                            }
+                        },
+                        legend: { display: false },
+                        quadrants: {  }
+                    }
+                }
+            });
+
+            // 2. Radar Chart
+            try {
+                if (data.radar.labels.length > 0) {
+                    const ctxRadar = document.getElementById('radarChart').getContext('2d');
+                    new Chart(ctxRadar, {
+                        type: 'radar',
+                        data: {
+                            labels: data.radar.labels,
+                            datasets: [{
+                                label: 'Class Average',
+                                data: data.radar.data,
+                                backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                                borderColor: 'rgba(99, 102, 241, 1)',
+                                pointBackgroundColor: 'rgba(99, 102, 241, 1)',
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                r: {
+                                    angleLines: { color: '#E5E7EB' },
+                                    grid: { color: '#E5E7EB' },
+                                    pointLabels: {
+                                        font: { size: 11, weight: '700' },
+                                        color: '#374151'
+                                    },
+                                    suggestedMin: 0,
+                                    suggestedMax: 100
+                                }
+                            },
+                             plugins: { legend: {display: false} }
+                        }
+                    });
+                }
+            } catch (err) { console.error("Radar Chart Error:", err); }
+
+            // 3. Populate AI Review
+            if (data.insights) {
+                document.getElementById('aiStatus').innerText = data.insights.review;
+                document.getElementById('aiSuggestion').innerText = `"${data.insights.suggestion}"`;
+                
+                const tipsList = document.getElementById('aiTips');
+                tipsList.innerHTML = '';
+                data.insights.tips.forEach(tip => {
+                    const li = document.createElement('li');
+                    li.className = "flex items-start text-indigo-100";
+                    li.innerHTML = `<span class="mr-2 text-green-400">✓</span> <span>${tip}</span>`;
+                    tipsList.appendChild(li);
+                });
+            }
+            
+             // 4. Danger List logic (Keep existing)
+             const tbody = document.getElementById('riskTableBody');
+             if (data.danger_zone.length === 0) {
+                 tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">No students currently in the danger zone. Good work!</td></tr>`;
+            } else {
+                data.danger_zone.slice(0, 10).forEach(s => {
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-gray-50 transition-colors";
+                    tr.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold text-xs">
+                                    ${s.name.charAt(0)}
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">${s.name}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap"><span class="text-sm font-bold text-gray-900">${s.avg}%</span></td>
+                        <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Critical</span></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-indigo-600 font-medium cursor-pointer hover:underline">Plan →</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+        });
+});
+</script>
+{% endblock %}

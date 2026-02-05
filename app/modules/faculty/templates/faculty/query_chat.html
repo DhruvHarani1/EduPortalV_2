@@ -1,0 +1,152 @@
+{% extends "base_faculty.html" %}
+
+{% block title %}Chat | Faculty Portal{% endblock %}
+{% block header_title %}Query Discussion{% endblock %}
+
+{% block faculty_content %}
+<div class="px-4 sm:px-0 max-w-4xl mx-auto h-[calc(100vh-8rem)] flex flex-col">
+
+    <!-- Header -->
+    <div class="bg-white border-b border-gray-200 p-4 flex justify-between items-center rounded-t-xl shadow-sm z-10">
+        <div class="flex items-center">
+            <a href="{{ url_for('faculty.queries') }}" class="mr-3 text-gray-500 hover:text-gray-700 transition-colors">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+            </a>
+            <div>
+                <h2 class="text-lg font-bold text-gray-900">{{ query.title }}</h2>
+                <p class="text-sm text-gray-500">
+                    Student: <span class="font-medium text-gray-700">{{ query.student.display_name }}</span> 
+                </p>
+            </div>
+        </div>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+            {% if query.status == 'Pending' %}bg-yellow-100 text-yellow-800
+            {% elif query.status == 'Answered' %}bg-blue-100 text-blue-800
+            {% else %}bg-green-100 text-green-800{% endif %}">
+            {{ query.status }}
+        </span>
+    </div>
+
+    <!-- Chat Area -->
+    <div class="flex-1 bg-gray-50 p-4 overflow-y-auto space-y-4" id="chat-container">
+        {% for msg in query.messages %}
+        <div class="flex w-full {% if msg.sender_type == 'faculty' %}justify-end{% else %}justify-start{% endif %}">
+            <div class="flex flex-col max-w-[75%] {% if msg.sender_type == 'faculty' %}items-end{% else %}items-start{% endif %}">
+                
+                <div class="px-4 py-2 rounded-lg shadow-sm text-sm break-words
+                    {% if msg.sender_type == 'faculty' %}
+                        bg-indigo-600 text-white rounded-tr-none
+                    {% else %}
+                        bg-white text-gray-900 border border-gray-200 rounded-tl-none
+                    {% endif %}
+                ">
+                    {% if msg.image_data %}
+                    <img onclick="openImageModal(this.src)" src="data:{{ msg.image_mimetype or 'image/jpeg' }};base64,{{ msg.image_data | b64encode }}" class="rounded-lg mb-2 max-w-full sm:max-w-xs border border-white/20 cursor-pointer hover:opacity-90 transition-opacity">
+                    {% endif %}
+                    
+                    {% if msg.content %}
+                    <p>{{ msg.content }}</p>
+                    {% endif %}
+                </div>
+                
+                <span class="text-xs text-gray-400 mt-1">
+                    {{ msg.timestamp.strftime('%H:%M') }}
+                </span>
+            </div>
+        </div>
+        {% endfor %}
+        
+        {% if query.status == 'Resolved' %}
+        <div class="flex justify-center my-4">
+            <span class="px-3 py-1 bg-gray-200 text-gray-600 text-xs rounded-full">
+                Finalized
+            </span>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Input Area -->
+    <div class="bg-white border-t border-gray-200 p-4 rounded-b-xl">
+        {% if query.status != 'Resolved' %}
+        <form method="POST" enctype="multipart/form-data" class="flex items-end space-x-2">
+            <!-- File Input -->
+            <div class="flex-shrink-0">
+                <input type="file" name="image" id="file-input" class="hidden" accept="image/*" onchange="previewImage(this)">
+                <button type="button" onclick="document.getElementById('file-input').click()" class="inline-flex items-center p-2 border border-gray-300 rounded-full shadow-sm text-gray-500 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="flex-1">
+                <!-- Preview Area -->
+                <div id="image-preview-container" class="hidden mb-2 relative inline-block">
+                     <img id="image-preview" src="" alt="Preview" class="max-h-32 rounded-lg border border-gray-300">
+                     <button type="button" onclick="clearImage()" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 shadow-sm">
+                        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                     </button>
+                </div>
+                <textarea name="content" rows="1" class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm resize-none py-3" placeholder="Type your reply..."></textarea>
+            </div>
+            
+            <button type="submit" class="inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <svg class="h-5 w-5 transform rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+            </button>
+        </form>
+        
+        <script>
+            function previewImage(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('image-preview').src = e.target.result;
+                        document.getElementById('image-preview-container').classList.remove('hidden');
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+            
+            function clearImage() {
+                var input = document.getElementById('file-input');
+                input.value = "";
+                document.getElementById('image-preview').src = "";
+                document.getElementById('image-preview-container').classList.add('hidden');
+            }
+        </script>
+        {% else %}
+        <div class="text-center text-sm text-gray-500 py-4 bg-gray-50 rounded-lg">
+            This query is marked as Resolved by the student.
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+
+<!-- Image Modal -->
+<div id="imageModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-90 flex items-center justify-center p-4" onclick="closeImageModal()">
+    <span class="absolute top-4 right-4 text-white text-3xl font-bold cursor-pointer hover:text-gray-300">&times;</span>
+    <img id="fullImage" class="max-w-full max-h-full rounded-lg shadow-2xl" src="" onclick="event.stopPropagation()">
+</div>
+
+<script>
+    const chatContainer = document.getElementById('chat-container');
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+
+    function openImageModal(src) {
+        document.getElementById('fullImage').src = src;
+        document.getElementById('imageModal').classList.remove('hidden');
+    }
+
+    function closeImageModal() {
+        document.getElementById('imageModal').classList.add('hidden');
+        document.getElementById('fullImage').src = '';
+    }
+</script>
+{% endblock %}

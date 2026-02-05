@@ -1,0 +1,81 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Manage Faculty - EduPortal{% endblock %}
+
+{% block admin_content %}
+<div class="space-y-6">
+    <div class="sm:flex sm:items-center sm:justify-between">
+        <div>
+            <h1 class="text-xl font-semibold text-gray-900">Faculty Members</h1>
+            <p class="mt-2 text-sm text-gray-700">Manage your institution's teaching staff.</p>
+        </div>
+        <div class="mt-4 sm:mt-0">
+            <a href="{{ url_for('admin.add_faculty') }}" class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto">
+                Add Faculty
+            </a>
+        </div>
+    </div>
+
+    <!-- Grid Layout -->
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {% for faculty in faculty_members %}
+        <div class="bg-white overflow-hidden shadow rounded-lg flex flex-col">
+            <div class="p-5 flex-1 flex flex-col items-center">
+                {% if faculty.photo_data %}
+                    <img class="h-32 w-32 rounded-full object-cover mb-4 shadow" src="{{ url_for('admin.serve_faculty_photo', id=faculty.id) }}" alt="{{ faculty.display_name }}">
+                {% else %}
+                    <div class="h-32 w-32 rounded-full bg-gray-200 flex items-center justify-center mb-4 shadow">
+                        <svg class="h-16 w-16 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                    </div>
+                {% endif %}
+                <h3 class="text-lg font-medium text-gray-900 text-center">{{ faculty.display_name }}</h3>
+                <p class="text-sm text-indigo-600 font-medium">{{ faculty.designation }}</p>
+                <p class="text-xs text-gray-500 mt-1">{{ faculty.department }}</p>
+                
+                <div class="mt-4 flex flex-col space-y-2 w-full">
+                   <div class="flex justify-between text-xs text-gray-500">
+                       <span>Experience:</span>
+                       <span class="font-medium text-gray-900">{{ faculty.experience }} Years</span>
+                   </div>
+                   <div class="flex justify-between text-xs text-gray-500">
+                       <span>Subjects:</span>
+                       <div class="flex flex-wrap justify-end gap-1 max-w-[180px]">
+                           {% if faculty.assigned_subject %}
+                               {% for subject in faculty.assigned_subject.split(',') %}
+                                   <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
+                                       {{ subject.strip() }}
+                                   </span>
+                               {% endfor %}
+                           {% else %}
+                               <span class="text-gray-500 italic">None</span>
+                           {% endif %}
+                       </div>
+                   </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-5 py-3 border-t border-gray-200">
+                <div class="flex justify-center space-x-3">
+                    <a href="{{ url_for('admin.view_faculty', id=faculty.id) }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-900">View Details</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="{{ url_for('admin.edit_faculty', id=faculty.id) }}" class="text-sm font-medium text-gray-600 hover:text-gray-900">Edit</a>
+                    <span class="text-gray-300">|</span>
+                    <form action="{{ url_for('admin.delete_faculty', id=faculty.id) }}" method="POST" onsubmit="return confirm('Delete this faculty member?');" class="inline">
+                        <button type="submit" class="text-sm font-medium text-red-600 hover:text-red-900">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-span-full text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">No faculty members</h3>
+            <p class="mt-1 text-sm text-gray-500">Get started by creating a new faculty profile.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

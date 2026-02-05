@@ -1,0 +1,142 @@
+{% extends "base_student.html" %}
+
+{% block title %}Academic Performance | EduPortal{% endblock %}
+{% block header_title %}Academic Performance{% endblock %}
+
+{% block student_content %}
+<div class="px-4 sm:px-0 max-w-7xl mx-auto">
+
+    <!-- CGPA / SPI Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <!-- CGPI Card -->
+        <div class="bg-indigo-600 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+            <div class="absolute right-0 top-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white opacity-10"></div>
+            <h3 class="text-indigo-100 font-medium mb-1">Cumulative Grade Point Average (CGPA)</h3>
+            <div class="flex items-end">
+                <span class="text-5xl font-bold">{{ cgpi }}</span>
+                <span class="text-indigo-200 text-lg mb-1 ml-2">/ 10.0</span>
+            </div>
+            <p class="mt-4 text-xs text-indigo-200">Calculated across all semesters.</p>
+        </div>
+
+        <!-- Latest SPI Card (Placeholder logic or logic from latest exam) -->
+        <!-- For now, we just show a generic 'Latest Performance' based on first item in list -->
+        {% set latest = exams[0] if exams else none %}
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+            <h3 class="text-gray-500 font-medium mb-1">Latest Semester SPI</h3>
+            {% if latest %}
+            <div class="flex items-end text-gray-900">
+                <span class="text-5xl font-bold">{{ latest.spi }}</span>
+                <span class="text-gray-400 text-lg mb-1 ml-2">/ 10.0</span>
+            </div>
+            <p class="mt-4 text-xs text-green-600 font-bold">
+                {{ latest.event.name }}
+            </p>
+            {% else %}
+            <p class="text-gray-400 mt-2">No exam data available yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Exam Results Selector -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+        <h3 class="text-lg font-bold text-gray-900 mb-4 md:mb-0 px-2">Exam History</h3>
+        
+        <div class="relative w-full md:w-64">
+            <select id="examSelector" onchange="showExam(this.value)" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm">
+                {% for exam in exams %}
+                <option value="exam-{{ exam.event.id }}">{{ exam.event.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    
+    {% for exam in exams %}
+    <div id="exam-{{ exam.event.id }}" class="exam-card bg-white rounded-xl shadow-sm border border-gray-200 mb-8 overflow-hidden {% if not loop.first %}hidden{% endif %}">
+        <!-- Exam Header -->
+        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex flex-col md:flex-row justify-between items-center">
+            <div>
+                <h4 class="text-lg font-bold text-gray-900">{{ exam.event.name }}</h4>
+                <p class="text-sm text-gray-500">{{ exam.event.academic_year }} • Sem {{ exam.event.semester }}</p>
+            </div>
+            <div class="mt-4 md:mt-0 flex items-center space-x-4">
+                <div class="text-right mr-4">
+                    <span class="block text-xs text-gray-500 text-right">Credits: {{ exam.total_credits }}</span>
+                    <span class="block text-sm font-bold text-gray-900">SPI: {{ exam.spi }}</span>
+                </div>
+                <a href="{{ url_for('student.download_marksheet', exam_id=exam.event.id) }}" 
+                   class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150">
+                    <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Download Marksheet
+                </a>
+            </div>
+        </div>
+
+        <!-- Results Table -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Credits</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Marks</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grade</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Points</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for res in exam.results %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ res.subject }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ res.credits }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ res.marks }} / {{ res.total }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                {% if res.grade == 'FF' %}bg-red-100 text-red-800{% else %}bg-green-100 text-green-800{% endif %}">
+                                {{ res.grade }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ res.points }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-12 bg-white rounded-lg border border-gray-200">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No results found</h3>
+        <p class="mt-1 text-sm text-gray-500">You haven't appeared for any exams yet.</p>
+    </div>
+    {% endfor %}
+
+</div>
+
+<script>
+    function showExam(examId) {
+        // Hide all exam cards
+        document.querySelectorAll('.exam-card').forEach(card => {
+            card.classList.add('hidden');
+        });
+        
+        // Show selected exam card
+        const selected = document.getElementById(examId);
+        if (selected) {
+            selected.classList.remove('hidden');
+        }
+    }
+</script>
+{% endblock %}

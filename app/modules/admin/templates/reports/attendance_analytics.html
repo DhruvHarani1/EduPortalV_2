@@ -1,0 +1,165 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Engagement Analytics{% endblock %}
+
+{% block admin_content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-6 space-y-8">
+    
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Focus & Engagement Metrics</h1>
+            <p class="text-sm text-gray-500 mt-1">Analyzing classroom presence, truancy risks, and weekly fatigue patterns.</p>
+        </div>
+        <a href="{{ url_for('admin.reports.dashboard') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200">
+            <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+            Back to Deck
+        </a>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- 1. Fatigue Index (Bar Chart) -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col">
+            <div class="mb-4">
+                <h3 class="text-lg font-bold text-gray-900">Weekly Engagement Pulse</h3>
+                <p class="text-xs text-gray-500 mt-1">
+                    Attendance Percentage by Day of Week. Identifies <span class="text-red-600 font-bold">"Burnout Days"</span>.
+                </p>
+            </div>
+            <div class="flex-grow relative min-h-[300px]">
+                <canvas id="fatigueChart"></canvas>
+            </div>
+        </div>
+
+        <!-- 2. Integration with AI (Text Card) -->
+        <div class="bg-gradient-to-br from-indigo-900 to-purple-900 rounded-2xl shadow-xl p-8 text-white flex flex-col justify-center relative overflow-hidden">
+             <!-- Decorative -->
+             <div class="absolute top-0 right-0 -mr-8 -mt-8 w-48 h-48 bg-white opacity-10 rounded-full blur-2xl"></div>
+
+             <h3 class="text-xl font-bold mb-2 flex items-center">
+                <svg class="w-6 h-6 mr-2 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                AI Pattern Recognition
+             </h3>
+             <h4 class="text-xs font-bold text-indigo-200 uppercase tracking-widest mb-4">Current Status: <span id="aiStatus" class="text-white">Analyzing...</span></h4>
+             
+             <p class="text-lg font-medium leading-relaxed mb-6" id="aiSummary">...</p>
+             
+             <div class="bg-white/10 rounded-lg p-4 border border-white/10">
+                 <h5 class="text-xs font-bold text-indigo-300 uppercase mb-1">Recommended Intervention</h5>
+                 <p class="text-sm text-gray-200 italic" id="aiTip">...</p>
+             </div>
+        </div>
+
+    </div>
+
+    <!-- 3. Truancy Risk List -->
+    <div class="bg-white rounded-2xl shadow-sm border border-red-100 overflow-hidden">
+        <div class="px-6 py-5 border-b border-gray-100 bg-red-50 flex items-center justify-between">
+            <div class="flex items-center">
+                <div class="p-2 bg-red-100 rounded-lg text-red-600 mr-3">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-red-900">Truancy Risk Registry</h3>
+                    <p class="text-xs text-red-700">Students approaching detachment (< 75% Attendance).</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student Name</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Attendance %</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dropout Probability</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200" id="truancyTable">
+                     <!-- JS Populated -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    fetch("{{ url_for('admin.reports.attendance_data') }}")
+        .then(r => r.json())
+        .then(data => {
+            // 1. Fatigue Chart (Bar)
+            const ctx = document.getElementById('fatigueChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                 data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+                    datasets: [{
+                        label: 'Attendance %',
+                        data: data.fatigue,
+                        backgroundColor: function(c) {
+                            const val = c.raw;
+                            if (val < 70) return 'rgba(239, 68, 68, 0.8)'; // Red for low
+                            return 'rgba(79, 70, 229, 0.8)'; // Indigo for good
+                        },
+                        borderRadius: 6,
+                        barThickness: 40
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                         y: { beginAtZero: true, max: 100, grid: { color: '#f3f4f6' } },
+                         x: { grid: { display: false } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // 2. AI Text
+            if (data.insights) {
+                document.getElementById('aiStatus').innerText = data.insights.status;
+                document.getElementById('aiSummary').innerText = data.insights.summary;
+                document.getElementById('aiTip').innerText = `"${data.insights.tip}"`;
+            }
+
+            // 3. Truancy List
+            const tbody = document.getElementById('truancyTable');
+            if (data.truancy_prob.length === 0) {
+                 tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">All students meeting attendance requirements.</td></tr>`;
+            } else {
+                data.truancy_prob.forEach(p => {
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-gray-50";
+                    tr.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${p.name}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-sm font-bold ${p.perc < 60 ? 'text-red-600' : 'text-orange-600'}">${p.perc}%</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                             <div class="flex items-center">
+                                <div class="w-24 bg-gray-200 rounded-full h-1.5 mr-2">
+                                    <div class="bg-indigo-900 h-1.5 rounded-full" style="width: ${p.prob}%"></div>
+                                </div>
+                                <span class="text-xs text-gray-500">${p.prob}%</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">At Risk</span>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        });
+});
+</script>
+{% endblock %}

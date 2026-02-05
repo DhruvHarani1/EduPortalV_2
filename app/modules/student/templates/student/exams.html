@@ -1,0 +1,163 @@
+{% extends "base_student.html" %}
+
+{% block title %}Examinations | EduPortal{% endblock %}
+{% block header_title %}Examinations{% endblock %}
+
+{% block student_content %}
+<div class="px-4 sm:px-0 max-w-6xl mx-auto" x-data="{ activeTab: 'schedule' }">
+
+    <!-- Tabs -->
+    <div class="border-b border-gray-200 mb-6">
+        <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+            <button @click="activeTab = 'schedule'" 
+               :class="{ 'border-indigo-500 text-indigo-600': activeTab === 'schedule', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'schedule' }"
+               class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm focus:outline-none">
+               Exam Schedule
+            </button>
+            <button @click="activeTab = 'results'" 
+               :class="{ 'border-indigo-500 text-indigo-600': activeTab === 'results', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'results' }"
+               class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm focus:outline-none">
+               Result History
+            </button>
+        </nav>
+    </div>
+
+    <!-- Schedule Tab -->
+    <div x-show="activeTab === 'schedule'" class="space-y-6">
+        {% if upcoming_events %}
+            {% for event in upcoming_events %}
+            <div class="bg-white shadow rounded-lg overflow-hidden border border-gray-200">
+                <div class="px-4 py-5 sm:px-6 bg-indigo-50 border-b border-indigo-100 flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg leading-6 font-bold text-indigo-900">{{ event.name }}</h3>
+                        <p class="mt-1 max-w-2xl text-sm text-indigo-700">
+                            {{ event.start_date.strftime('%d %b') }} - {{ event.end_date.strftime('%d %b %Y') }}
+                        </p>
+                    </div>
+                    <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+                        Upcoming
+                    </span>
+                </div>
+                <div class="px-4 py-5 sm:p-6">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead>
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Time</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Subject</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Duration</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                {% for paper in event.papers %}
+                                <tr>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        {{ paper.date.strftime('%d %b, %a') }}
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        {{ paper.start_time.strftime('%I:%M %p') }} - {{ paper.end_time.strftime('%I:%M %p') }}
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 font-semibold">
+                                        {{ paper.subject.name }}
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                        3 Hours
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="text-center py-12 bg-white rounded-lg border border-dashed border-gray-300">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No Exams Scheduled</h3>
+                <p class="mt-1 text-sm text-gray-500">There are no upcoming exams published for your semester yet.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Results Tab -->
+    <div x-show="activeTab === 'results'" class="space-y-6" style="display: none;">
+        {% if result_history %}
+            {% for event, data in result_history.items() %}
+            <div class="bg-white shadow rounded-lg overflow-hidden border border-gray-200">
+                <div class="px-4 py-5 sm:px-6 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg leading-6 font-bold text-gray-900">{{ event.name }}</h3>
+                        <p class="mt-1 max-w-2xl text-sm text-gray-500">Academic Year: {{ event.academic_year }}</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm text-gray-500">Total Score</div>
+                        <div class="text-xl font-bold text-indigo-600">
+                            {{ "{:.0f}".format(data.obtained_marks) }} / {{ data.total_marks }}
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t border-gray-200">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Marks Obtained</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Marks</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for res in data.papers %}
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    {{ res.paper.subject.name }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">
+                                    {{ res.marks_obtained|round(2) }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ res.paper.total_marks }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {% if res.is_fail %}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                        Fail
+                                    </span>
+                                    {% else %}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                        Pass
+                                    </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="bg-gray-50 px-4 py-4 sm:px-6 text-right">
+                    <a href="{{ url_for('student.download_marksheet', exam_id=event.id) }}" target="_blank" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                        <svg class="-ml-1 mr-2 h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Download Marksheet
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="text-center py-12 bg-white rounded-lg border border-dashed border-gray-300">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No Results Declared</h3>
+                <p class="mt-1 text-sm text-gray-500">Your results history will appear here once exams are concluded and graded.</p>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

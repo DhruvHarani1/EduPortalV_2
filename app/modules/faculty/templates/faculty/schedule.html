@@ -1,0 +1,75 @@
+{% extends "base_faculty.html" %}
+
+{% block title %}Today's Schedule | EduPortal{% endblock %}
+{% block header_title %}Today's Schedule{% endblock %}
+
+{% block faculty_content %}
+<div class="px-4 sm:px-6 md:px-8">
+    
+    <div class="mb-6 flex justify-between items-end">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900">{{ day_name }}, {{ 'February 2, 2026' }}</h2> 
+            <!-- Note: Date is hardcoded for Demo as per mock match, or use python date -->
+            <p class="text-sm text-gray-500">Your upcoming lectures for the day.</p>
+        </div>
+        <div class="text-right">
+             <!-- Placeholder for future date picker -->
+        </div>
+    </div>
+    
+    <!-- Timeline / Schedule List -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg border border-gray-200">
+        <ul role="list" class="divide-y divide-gray-200">
+            {% for slot in schedule %}
+            <li class="hover:bg-gray-50 transition-colors">
+                <div class="px-4 py-8 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                    
+                    <!-- Time Column -->
+                    <div class="sm:w-48 flex-shrink-0">
+                        <p class="text-lg font-bold text-indigo-600">{{ slot.time_str }}</p>
+                    </div>
+
+                    <!-- Details Column -->
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-lg font-bold text-gray-900 truncate">{{ slot.subject }}</h3>
+                        <div class="mt-1 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-gray-500">
+                            <span class="flex items-center">
+                                <svg class="mr-1.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                                {{ slot.course_detail }}
+                            </span>
+                            <span class="hidden sm:inline text-gray-300">&bull;</span>
+                            <span class="flex items-center">
+                                <svg class="mr-1.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                                {{ slot.room }}
+                            </span>
+                        </div>
+                        <p class="mt-1 text-xs text-gray-400 font-medium">
+                            {{ slot.student_count }} students enrolled
+                        </p>
+                    </div>
+
+                    <!-- Action Column -->
+                    <div class="sm:flex-shrink-0">
+                        <a href="{{ url_for('faculty.attendance') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Mark Attendance
+                        </a>
+                    </div>
+
+                </div>
+            </li>
+            {% endfor %}
+
+            {% if not schedule %}
+            <li class="px-4 py-12 sm:px-6 text-center">
+                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No lectures scheduled for today</h3>
+                <p class="mt-1 text-sm text-gray-500">Enjoy your free time!</p>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+
+</div>
+{% endblock %}

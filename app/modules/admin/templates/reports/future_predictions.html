@@ -1,0 +1,222 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Predictive Intelligence{% endblock %}
+
+{% block admin_content %}
+<div class="relative min-h-screen bg-gray-900 overflow-hidden text-gray-100 font-sans">
+    
+    <!-- Background FX -->
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+        <div class="absolute w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-blob top-0 left-0"></div>
+        <div class="absolute w-96 h-96 bg-cyan-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-blob animation-delay-2000 top-0 right-0"></div>
+        <div class="absolute w-96 h-96 bg-indigo-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-blob animation-delay-4000 bottom-0 left-20"></div>
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-8">
+        
+        <!-- Navbar -->
+        <div class="flex items-center justify-between mb-12">
+            <div>
+                <h1 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 tracking-tighter">
+                    FUTURE_SIGHT // AI
+                </h1>
+                <p class="text-sm text-cyan-200 uppercase tracking-[0.2em] mt-2">Predictive Career Modelling Engine</p>
+            </div>
+            <a href="{{ url_for('admin.reports.dashboard') }}" class="px-6 py-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 transition-all font-mono text-xs">
+                < RETURN TO DECK
+            </a>
+        </div>
+
+        <!-- Main Stats Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            
+            <!-- 1. Salary Simulator -->
+            <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Max Package -->
+                <div class="group relative bg-gray-800/50 backdrop-blur-xl rounded-3xl border border-gray-700/50 p-8 hover:border-purple-500/50 transition-all duration-500">
+                    <div class="absolute top-4 right-4 animate-pulse">
+                        <div class="h-2 w-2 bg-purple-400 rounded-full"></div>
+                    </div>
+                    <h3 class="text-purple-300 text-xs font-bold uppercase tracking-widest mb-4">Projected Ceiling</h3>
+                    <div class="text-6xl font-black text-white tracking-tighter flex items-baseline">
+                        <span id="highestPkg">--</span>
+                        <span class="text-2xl text-purple-400 ml-2 font-light">LPA</span>
+                    </div>
+                    <p class="mt-4 text-gray-400 text-sm leading-relaxed">
+                        Top 1% Trajectory. Based on current growth velocity, the batch alpha is on track to break previous records.
+                    </p>
+                    <div class="mt-6 h-1 w-full bg-gray-700 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-purple-600 to-pink-500 w-[85%] rounded-full shadow-[0_0_15px_rgba(168,85,247,0.5)]"></div>
+                    </div>
+                </div>
+
+                <!-- Avg Package -->
+                <div class="group relative bg-gray-800/50 backdrop-blur-xl rounded-3xl border border-gray-700/50 p-8 hover:border-cyan-500/50 transition-all duration-500">
+                    <h3 class="text-cyan-300 text-xs font-bold uppercase tracking-widest mb-4">Median Market Value</h3>
+                    <div class="text-6xl font-black text-white tracking-tighter flex items-baseline">
+                        <span id="avgPkg">--</span>
+                        <span class="text-2xl text-cyan-400 ml-2 font-light">LPA</span>
+                    </div>
+                    <p class="mt-4 text-gray-400 text-sm leading-relaxed">
+                        Batch Variance is low, indicating a strong baseline. This exceeds the industry standard by 14%.
+                    </p>
+                     <div class="mt-6 flex space-x-1">
+                        <div class="h-1 flex-1 bg-cyan-900 rounded-full"></div>
+                        <div class="h-1 flex-1 bg-cyan-800 rounded-full"></div>
+                        <div class="h-1 flex-1 bg-cyan-500 rounded-full shadow-[0_0_10px_rgba(6,182,212,0.5)]"></div>
+                        <div class="h-1 flex-1 bg-cyan-900 rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Placement Radar -->
+            <div class="bg-gray-800/50 backdrop-blur-xl rounded-3xl border border-gray-700/50 p-8 flex flex-col items-center justify-center relative">
+                <h3 class="absolute top-8 left-8 text-white text-xs font-bold uppercase tracking-widest">Placement Probability</h3>
+                <div class="relative w-64 h-64 mt-4">
+                    <canvas id="probChart"></canvas>
+                    <!-- Center Data -->
+                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                        <span class="text-3xl font-bold text-white">98%</span>
+                        <span class="text-[10px] text-gray-400 uppercase tracking-widest">Placed</span>
+                    </div>
+                </div>
+                <!-- Legend -->
+                <div class="w-full mt-8 space-y-3">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="flex items-center text-gray-300"><span class="w-2 h-2 rounded-full bg-emerald-500 mr-2 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>Tier 1 (>12 LPA)</span>
+                        <span class="font-bold text-emerald-400" id="tier1Val">--%</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="flex items-center text-gray-300"><span class="w-2 h-2 rounded-full bg-blue-500 mr-2 shadow-[0_0_8px_rgba(59,130,246,0.8)]"></span>Tier 2 (8-12 LPA)</span>
+                        <span class="font-bold text-blue-400" id="tier2Val">--%</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="flex items-center text-gray-300"><span class="w-2 h-2 rounded-full bg-gray-600 mr-2"></span>Tier 3 (<8 LPA)</span>
+                        <span class="font-bold text-gray-400" id="tier3Val">--%</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 3. Career Constellation (Grid) -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                <svg class="w-6 h-6 mr-3 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                Projected Career Constellations
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="careerGrid">
+                <!-- JS Injected -->
+            </div>
+        </div>
+
+        <!-- 4. Skill Gap Actuator (Bottom Bar) -->
+        <div class="bg-gradient-to-r from-red-900/40 to-orange-900/40 border border-red-500/30 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between">
+            <div class="flex items-center mb-4 md:mb-0">
+                <div class="p-3 bg-red-500/10 rounded-lg mr-4 border border-red-500/50">
+                    <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <div>
+                   <h4 class="text-red-400 font-bold text-xs uppercase tracking-widest mb-1">Critical Skill Gap Detected</h4>
+                   <p class="text-lg font-medium text-white">Subject: <span class="text-white font-bold border-b border-red-500">Data Structures</span> is lagging by <span class="text-red-400 font-bold">15%</span>.</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="text-sm text-gray-300 md:w-96">"Simulations show that closing this specific gap would migrate <strong class="text-white">40 Students</strong> from Tier 3 to Tier 2 placement bands."</p>
+                <button class="mt-3 px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-lg uppercase tracking-wider transition-colors">
+                    Deploy Intervention Plan
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Custom Animation Config for Chart.js
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = '#334155';
+
+document.addEventListener('DOMContentLoaded', function() {
+    fetch("{{ url_for('admin.reports.future_data') }}")
+        .then(r => r.json())
+        .then(data => {
+            // Stats
+            document.getElementById('highestPkg').textContent = data.highest_package.split(' ')[0];
+            document.getElementById('avgPkg').textContent = data.avg_package.split(' ')[0];
+            
+            // Legend
+            document.getElementById('tier1Val').textContent = data.placement_prob.tier1 + '%';
+            document.getElementById('tier2Val').textContent = data.placement_prob.tier2 + '%';
+            document.getElementById('tier3Val').textContent = data.placement_prob.tier3 + '%';
+
+            // Chart
+            new Chart(document.getElementById('probChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Tier 1', 'Tier 2', 'Tier 3'],
+                    datasets: [{
+                        data: [data.placement_prob.tier1, data.placement_prob.tier2, data.placement_prob.tier3],
+                        backgroundColor: ['#10b981', '#3b82f6', '#475569'],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    cutout: '85%', // Thin ring
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // Career Grid
+            const careers = data.careers;
+            const grid = document.getElementById('careerGrid');
+            const icons = {
+                'Data Scientist': 'path d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"',
+                'Full Stack Dev': 'path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"',
+                'Product Manager': 'path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"',
+                'Research / PhD': 'path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"'
+            };
+
+            for (const [role, info] of Object.entries(careers)) {
+                if (info.count === 0) continue;
+                
+                const card = document.createElement('div');
+                card.className = "bg-gray-800/30 border border-gray-700 p-6 rounded-2xl hover:bg-gray-800 transition-colors";
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-2 bg-gray-700 rounded-lg text-cyan-400">
+                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><${icons[role] || icons['Research / PhD']}/></svg>
+                        </div>
+                        <span class="text-2xl font-bold text-white">${info.count}</span>
+                    </div>
+                    <h4 class="text-sm font-bold text-gray-300 uppercase tracking-wider mb-1">${role}</h4>
+                    <p class="text-xs text-gray-500">Candidate Pool</p>
+                    <div class="mt-4 w-full bg-gray-700 h-1 rounded-full overflow-hidden">
+                        <div class="bg-cyan-500 h-full" style="width: ${Math.min(info.count * 2, 100)}%"></div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            }
+        });
+});
+</script>
+<style>
+    @keyframes blob {
+        0% { transform: translate(0px, 0px) scale(1); }
+        33% { transform: translate(30px, -50px) scale(1.1); }
+        66% { transform: translate(-20px, 20px) scale(0.9); }
+        100% { transform: translate(0px, 0px) scale(1); }
+    }
+    .animate-blob {
+        animation: blob 7s infinite;
+    }
+    .animation-delay-2000 {
+        animation-delay: 2s;
+    }
+    .animation-delay-4000 {
+        animation-delay: 4s;
+    }
+</style>
+{% endblock %}
