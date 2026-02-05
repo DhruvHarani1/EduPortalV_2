@@ -1,0 +1,114 @@
+{% extends "base_faculty.html" %}
+
+{% block title %}Edit Mentee Details | EduPortal{% endblock %}
+{% block header_title %}Edit Mentee Details{% endblock %}
+
+{% block faculty_content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-6 flex items-center justify-between">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900">Edit Details: {{ student.display_name }}</h2>
+            <p class="text-sm text-gray-500">Update academic and personal information for your mentee.</p>
+        </div>
+        <a href="{{ url_for('faculty.mentorship') }}" class="text-indigo-600 hover:text-indigo-900 font-medium flex items-center">
+            <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+            Back to Mentees
+        </a>
+    </div>
+
+    <!-- Edit Form -->
+    <form action="{{ url_for('faculty.edit_mentee', student_id=student.id) }}" method="POST" class="space-y-8 bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6 space-y-6">
+            <!-- Academic Information -->
+            <div>
+                <h3 class="text-lg leading-6 font-medium text-gray-900 border-b pb-2 mb-4">Academic Information</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="display_name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                        <input type="text" name="display_name" id="display_name" value="{{ student.display_name }}" required
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="enrollment_number" class="block text-sm font-medium text-gray-700">Enrollment Number</label>
+                        <input type="text" name="enrollment_number" id="enrollment_number" value="{{ student.enrollment_number }}" required
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm font-mono">
+                    </div>
+                    <div>
+                        <label for="course_name" class="block text-sm font-medium text-gray-700">Course Name</label>
+                        <input type="text" name="course_name" id="course_name" value="{{ student.course_name }}" required
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="semester" class="block text-sm font-medium text-gray-700">Semester</label>
+                        <input type="number" name="semester" id="semester" value="{{ student.semester }}" required min="1" max="10"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="batch_year" class="block text-sm font-medium text-gray-700">Batch Year (e.g. 2023-2027)</label>
+                        <input type="text" name="batch_year" id="batch_year" value="{{ student.batch_year or '' }}"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="id_card_status" class="block text-sm font-medium text-gray-700">ID Card Status</label>
+                        <select name="id_card_status" id="id_card_status"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <option value="Active" {% if student.id_card_status == 'Active' %}selected{% endif %}>Active</option>
+                            <option value="Lost" {% if student.id_card_status == 'Lost' %}selected{% endif %}>Lost</option>
+                            <option value="Replaced" {% if student.id_card_status == 'Replaced' %}selected{% endif %}>Replaced</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personal Information -->
+            <div>
+                <h3 class="text-lg leading-6 font-medium text-gray-900 border-b pb-2 mb-4">Personal Information</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="date_of_birth" class="block text-sm font-medium text-gray-700">Date of Birth</label>
+                        <input type="date" name="date_of_birth" id="date_of_birth" value="{{ student.date_of_birth }}"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="phone_number" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                        <input type="text" name="phone_number" id="phone_number" value="{{ student.phone_number or '' }}"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="address" class="block text-sm font-medium text-gray-700">Residential Address</label>
+                        <textarea name="address" id="address" rows="3"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">{{ student.address or '' }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guardian Information -->
+            <div>
+                <h3 class="text-lg leading-6 font-medium text-gray-900 border-b pb-2 mb-4">Guardian Information</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="guardian_name" class="block text-sm font-medium text-gray-700">Guardian Name</label>
+                        <input type="text" name="guardian_name" id="guardian_name" value="{{ student.guardian_name or '' }}"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="guardian_contact" class="block text-sm font-medium text-gray-700">Guardian Contact</label>
+                        <input type="text" name="guardian_contact" id="guardian_contact" value="{{ student.guardian_contact or '' }}"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="px-4 py-4 bg-gray-50 flex items-center justify-end space-x-4 sm:px-6 rounded-b-lg border-t border-gray-200">
+            <a href="{{ url_for('faculty.mentorship') }}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Cancel
+            </a>
+            <button type="submit" class="px-6 py-2 text-sm font-bold text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Update Student Details
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

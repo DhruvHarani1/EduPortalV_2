@@ -1,0 +1,114 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Add Notice - EduPortal{% endblock %}
+
+{% block admin_content %}
+<div class="max-w-2xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <h1 class="text-xl font-semibold text-gray-900 mb-6">Publish New Notice</h1>
+    
+    <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <form method="POST" class="space-y-6">
+                <!-- Title -->
+                <div>
+                    <label for="title" class="block text-sm font-medium text-gray-700">Notice Title</label>
+                    <div class="mt-1">
+                        <input type="text" name="title" id="title" required class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border" placeholder="e.g. Exam Schedule Release">
+                    </div>
+                </div>
+
+                <!-- Category -->
+                <div>
+                    <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+                    <div class="mt-1">
+                        <select id="category" name="category" required onchange="toggleTargetFields()" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+                            <option value="university">Public General University Notice</option>
+                            <option value="course">Course-wise Notice</option>
+                            <option value="exam">Exam Notification</option>
+                            <option value="emergency">Emergency Alert</option>
+                            <option value="faculty">Specific Faculty Notice</option>
+                        </select>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-500" id="category-help">General notices visible to everyone.</p>
+                </div>
+
+                <!-- Target Course (Hidden by default) -->
+                <div id="course-field" class="hidden">
+                    <label for="target_course" class="block text-sm font-medium text-gray-700">Target Course</label>
+                    <div class="mt-1">
+                        <select name="target_course" id="target_course" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+                            <option value="">Select Course</option>
+                            {% for course in courses %}
+                            <option value="{{ course }}">{{ course }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Target Faculty (Hidden by default) -->
+                <div id="faculty-field" class="hidden">
+                    <label for="target_faculty_id" class="block text-sm font-medium text-gray-700">Select Faculty Member</label>
+                    <div class="mt-1">
+                        <select name="target_faculty_id" id="target_faculty_id" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+                            <option value="">Select Faculty</option>
+                            {% for faculty in faculty_members %}
+                            <option value="{{ faculty.id }}">{{ faculty.display_name }} ({{ faculty.designation }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div>
+                    <label for="content" class="block text-sm font-medium text-gray-700">Content</label>
+                    <div class="mt-1">
+                        <textarea id="content" name="content" rows="4" required class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border"></textarea>
+                    </div>
+                </div>
+
+                <div class="flex justify-end pt-5">
+                    <a href="{{ url_for('admin.notices_list') }}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-3">
+                        Cancel
+                    </a>
+                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Publish Notice
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleTargetFields() {
+    const category = document.getElementById('category').value;
+    const courseField = document.getElementById('course-field');
+    const facultyField = document.getElementById('faculty-field');
+    const helpText = document.getElementById('category-help');
+
+    // Reset visibility
+    courseField.classList.add('hidden');
+    facultyField.classList.add('hidden');
+    
+    // Reset required attributes
+    document.getElementById('target_course').required = false;
+    document.getElementById('target_faculty_id').required = false;
+
+    if (category === 'course') {
+        courseField.classList.remove('hidden');
+        document.getElementById('target_course').required = true;
+        helpText.textContent = "Notice visible only to students enrolled in this course.";
+    } else if (category === 'faculty') {
+        facultyField.classList.remove('hidden');
+        document.getElementById('target_faculty_id').required = true;
+        helpText.textContent = "Private notice for a specific faculty member.";
+    } else if (category === 'emergency') {
+        helpText.textContent = "High priority alert! Will be highlighted in red.";
+    } else if (category === 'exam') {
+        helpText.textContent = "Official examination schedule or update.";
+    } else {
+        helpText.textContent = "General notices visible to everyone.";
+    }
+}
+</script>
+{% endblock %}

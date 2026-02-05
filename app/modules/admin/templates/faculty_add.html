@@ -1,0 +1,121 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Add Faculty - EduPortal{% endblock %}
+
+{% block admin_content %}
+<div class="max-w-2xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <h1 class="text-xl font-semibold text-gray-900 mb-6">Add New Faculty Member</h1>
+    
+    <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <form action="{{ url_for('admin.add_faculty') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                <!-- Photo Upload -->
+                <div>
+                     <label class="block text-sm font-medium text-gray-700">Profile Photo</label>
+                     <div class="mt-1 flex items-center">
+                        <span class="h-12 w-12 rounded-full overflow-hidden bg-gray-100">
+                            <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                        </span>
+                        <input type="file" name="photo" accept="image/*" class="ml-5 bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                     </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                    <!-- Full Name -->
+                    <div class="sm:col-span-3">
+                        <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                        <div class="mt-1">
+                            <input type="text" name="name" id="name" required class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="sm:col-span-3">
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                        <div class="mt-1">
+                            <input type="email" name="email" id="email" required class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+                        </div>
+                    </div>
+
+                     <!-- Password -->
+                    <div class="sm:col-span-6">
+                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <div class="mt-1">
+                            <input type="password" name="password" id="password" required class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+                        </div>
+                    </div>
+
+                    <!-- Designation -->
+                    <div class="sm:col-span-3">
+                        <label for="designation" class="block text-sm font-medium text-gray-700">Designation</label>
+                        <div class="mt-1">
+                            <input type="text" name="designation" id="designation" placeholder="e.g. Professor" required class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+                        </div>
+                    </div>
+
+                    <!-- Department -->
+                    <div class="sm:col-span-3">
+                        <label for="department" class="block text-sm font-medium text-gray-700">Department</label>
+                        <div class="mt-1">
+                            <input type="text" name="department" id="department" placeholder="e.g. Computer Science" required class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+                        </div>
+                    </div>
+                    
+                    <!-- Experience -->
+                     <div class="sm:col-span-2">
+                        <label for="experience" class="block text-sm font-medium text-gray-700">Experience (Years)</label>
+                        <div class="mt-1">
+                            <input type="number" name="experience" id="experience" min="0" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+                        </div>
+                    </div>
+
+                    <!-- Specialization -->
+                    <div class="sm:col-span-4">
+                        <label for="specialization" class="block text-sm font-medium text-gray-700">Specialization</label>
+                        <div class="mt-1">
+                            <input type="text" name="specialization" id="specialization" placeholder="e.g. Machine Learning" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+                        </div>
+                    </div>
+
+                    <!-- Assigned Subject -->
+                    <div class="sm:col-span-6">
+                        <label for="assigned_subject" class="block text-sm font-medium text-gray-700">Assigned Subject</label>
+                        <div class="mt-1">
+                            <div class="mt-1 border border-gray-300 rounded-md p-3 max-h-48 overflow-y-auto bg-gray-50">
+                                {% if subjects %}
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    {% for sub in subjects %}
+                                    <div class="relative flex items-start">
+                                        <div class="flex items-center h-5">
+                                            <input id="sub_{{ sub.id }}" name="assigned_subjects" value="{{ sub.name }}" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                        </div>
+                                        <div class="ml-3 text-sm">
+                                            <label for="sub_{{ sub.id }}" class="font-medium text-gray-700 select-none">{{ sub.name }}</label>
+                                            <span class="text-gray-500 block text-xs">{{ sub.course_name }} - Sem {{ sub.semester }}</span>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                <p class="text-sm text-gray-500">No subjects available.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end pt-5">
+                    <a href="{{ url_for('admin.faculty_list') }}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-3">
+                        Cancel
+                    </a>
+                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

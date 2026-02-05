@@ -1,0 +1,77 @@
+{% extends "base_admin.html" %}
+
+{% block title %}View Exam Schedule: {{ event.name }}{% endblock %}
+
+{% block admin_content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-6">
+    <div class="md:flex md:items-center md:justify-between mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">{{ event.name }}</h1>
+            <p class="text-sm text-gray-500">{{ event.course_name }} Semester {{ event.semester }} | {{ event.academic_year }}</p>
+        </div>
+        <div class="flex space-x-3">
+             <a href="{{ url_for('admin.exams.exams_dashboard') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                Back to Dashboard
+            </a>
+            {% if not event.is_published %}
+            <a href="{{ url_for('admin.exams.schedule_exam', event_id=event.id) }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                Edit Schedule
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Schedule Table -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Exam Schedule</h3>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                Status: 
+                {% if event.is_published %}
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Published</span>
+                {% else %}
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Draft</span>
+                {% endif %}
+            </p>
+        </div>
+        <div class="border-t border-gray-200">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Marks</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for paper in papers %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {{ paper.date.strftime('%d %b %Y (%a)') if paper.date else 'Not Scheduled' }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {% if paper.start_time and paper.end_time %}
+                                {{ paper.start_time.strftime('%I:%M %p') }} - {{ paper.end_time.strftime('%I:%M %p') }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
+                            {{ paper.subject.name }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ paper.total_marks }}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500 italic">No papers scheduled for this exam yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

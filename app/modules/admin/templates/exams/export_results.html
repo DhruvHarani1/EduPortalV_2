@@ -1,0 +1,47 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Export Results{% endblock %}
+
+{% block admin_content %}
+<div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div class="md:flex md:items-center md:justify-between mb-8">
+        <div class="flex-1 min-w-0">
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                Export Result Sheet
+            </h2>
+        </div>
+        <div class="mt-4 flex md:mt-0 md:ml-4">
+            <a href="{{ url_for('admin.exams.exams_dashboard') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <form action="{{ url_for('admin.exams.export_results') }}" method="POST" class="grid grid-cols-1 gap-y-6">
+                
+                <!-- Exam Event Selection -->
+                <div>
+                    <label for="event_id" class="block text-sm font-medium text-gray-700">Select Exam Event</label>
+                    <select name="event_id" id="event_id" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md border">
+                        <option value="">-- Select Completed Exam --</option>
+                        {% for event in events %}
+                        <option value="{{ event.id }}">
+                            {{ event.name }} ({{ event.course_name }} Sem {{ event.semester }} - {{ event.academic_year }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <p class="mt-2 text-sm text-gray-500">Only published exams are shown.</p>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none">
+                        Download Result Sheet (CSV)
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

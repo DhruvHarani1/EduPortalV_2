@@ -1,0 +1,73 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Notices - EduPortal{% endblock %}
+
+{% block admin_content %}
+<div class="sm:flex sm:items-center sm:justify-between">
+    <div>
+        <h1 class="text-xl font-semibold text-gray-900">Notices Board</h1>
+        <p class="mt-2 text-sm text-gray-700">Official announcements and alerts.</p>
+    </div>
+    <div class="mt-4 sm:mt-0">
+        <a href="{{ url_for('admin.add_notice') }}" class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto">
+            Publish Notice
+        </a>
+    </div>
+</div>
+
+<div class="mt-8 flex flex-col">
+    <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+            <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                <table class="min-w-full divide-y divide-gray-300">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Title & Content</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Category</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Target</th>
+                            <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 bg-white">
+                        {% for notice in notices %}
+                        <tr class="{% if notice.category == 'emergency' %}bg-red-50{% endif %}">
+                            <td class="py-4 pl-4 pr-3 sm:pl-6">
+                                <div class="font-medium text-gray-900 {% if notice.category == 'emergency' %}text-red-700{% endif %}">{{ notice.title }}</div>
+                                <div class="text-sm text-gray-500 mt-1">{{ notice.content }}</div>
+                            </td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
+                                    {% if notice.category == 'emergency' %} bg-red-100 text-red-800
+                                    {% elif notice.category == 'university' %} bg-blue-100 text-blue-800
+                                    {% elif notice.category == 'course' %} bg-green-100 text-green-800
+                                    {% elif notice.category == 'exam' %} bg-yellow-100 text-yellow-800
+                                    {% elif notice.category == 'faculty' %} bg-purple-100 text-purple-800
+                                    {% else %} bg-gray-100 text-gray-800 {% endif %}">
+                                    {{ notice.category }}
+                                </span>
+                            </td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                {% if notice.category == 'course' %}
+                                    {{ notice.target_course }}
+                                {% elif notice.category == 'faculty' %}
+                                    Faculty ID: {{ notice.target_faculty_id }}
+                                {% else %}
+                                    All
+                                {% endif %}
+                            </td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right">
+                                {{ notice.created_at.strftime('%Y-%m-%d') }}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="py-4 text-center text-sm text-gray-500">No notices found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

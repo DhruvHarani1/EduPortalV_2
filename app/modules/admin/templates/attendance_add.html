@@ -1,0 +1,69 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Mark Attendance - EduPortal{% endblock %}
+
+{% block admin_content %}
+<div class="max-w-md mx-auto">
+    <h1 class="text-xl font-semibold text-gray-900 mb-6">Mark Attendance</h1>
+    
+    <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <form action="{{ url_for('admin.mark_attendance') }}" method="POST" class="space-y-6">
+                <div>
+                    <label for="student_id" class="block text-sm font-medium text-gray-700">Student</label>
+                    <div class="mt-1">
+                        <select id="student_id" name="student_id" required class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+                            {% for student in students %}
+                            <option value="{{ student.id }}">{{ student.enrollment_number }} - {{ student.user.email }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="course_name" class="block text-sm font-medium text-gray-700">Branch</label>
+                    <div class="mt-1">
+                        <select id="course_name" name="course_name" required class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+                            <option value="">-- Select Branch --</option>
+                            {% for c in courses %}
+                            <option value="{{ c.code }}">{{ c.name }} ({{ c.code }})</option>
+                            {% endfor %}
+                            {% if not courses %}
+                            <option value="B.Tech">B.Tech</option>
+                            <option value="MBA">MBA</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
+                    <div class="mt-1">
+                        <input type="date" name="date" id="date" required class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                    <div class="mt-1">
+                        <select id="status" name="status" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+                            <option value="Present">Present</option>
+                            <option value="Absent">Absent</option>
+                            <option value="Late">Late</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex justify-end">
+                    <a href="{{ url_for('admin.attendance_list') }}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-3">
+                        Cancel
+                    </a>
+                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Mark Attendance
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,244 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Manage Subjects{% endblock %}
+
+{% block admin_content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-6">
+    <!-- Header -->
+    <div class="md:flex md:items-center md:justify-between mb-6">
+        <div>
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                Subject Management
+            </h2>
+            <p class="mt-1 text-sm text-gray-500">Create subjects and assign them to faculty and courses.</p>
+        </div>
+        <div class="mt-4 flex md:mt-0 md:ml-4">
+            <!-- Create Subject Trigger -->
+             <button onclick="document.getElementById('createModal').classList.remove('hidden')" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Create Subject
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats / Overview (Optional) -->
+    
+    <!-- Subject Grid / List -->
+    <div class="flex flex-col">
+        <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+                <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject Name</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Branch & Sem</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Academic Year</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Faculty</th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for sub in subjects %}
+                            <tr class="hover:bg-gray-50 transition duration-150">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">{{ sub.name }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {% if sub.course_name %}
+                                        <div class="text-sm text-gray-900">{{ sub.course_name }}</div>
+                                        <div class="text-xs text-gray-500">Semester {{ sub.semester }}</div>
+                                    {% else %}
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Unassigned</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ sub.academic_year or '-' }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {% if sub.faculty %}
+                                        <div class="flex items-center">
+                                            <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-xs ring-2 ring-white">
+                                                {{ sub.faculty.display_name[0] }}
+                                            </div>
+                                            <div class="ml-3">
+                                                <div class="text-sm font-medium text-gray-900">{{ sub.faculty.display_name }}</div>
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <span class="text-sm text-gray-400 italic">No Faculty</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                                    <button onclick="openAssignModal('{{ sub.id }}', `{{ sub.name }}`, `{{ sub.course_name or '' }}`, `{{ sub.semester or '' }}`, `{{ sub.academic_year or '' }}`)"
+                                            class="text-indigo-600 hover:text-indigo-900 bg-indigo-50 px-3 py-1 rounded-md transition duration-150">
+                                        Assign / Edit
+                                    </button>
+                                    
+                                    <form action="{{ url_for('admin.subjects.delete_subject', subject_id=sub.id) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure? This will remove all related timetables/exams.')">
+                                        <button type="submit" class="text-red-600 hover:text-red-900 bg-red-50 px-3 py-1 rounded-md transition duration-150">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            
+                            {% if not subjects %}
+                            <tr>
+                                <td colspan="5" class="px-6 py-10 text-center text-gray-500">
+                                    <p class="text-base">No subjects found.</p>
+                                    <p class="text-sm mt-1">Create a new subject to get started.</p>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Modal -->
+<div id="createModal" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="document.getElementById('createModal').classList.add('hidden')"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+            <div>
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100">
+                    <svg class="h-6 w-6 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div class="mt-3 text-center sm:mt-5">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Create New Subject</h3>
+                    <div class="mt-2">
+                        <p class="text-sm text-gray-500">Define the branch and semester for this subject. Ensure you have created branches in the "Branches" section first.</p>
+                    </div>
+                </div>
+            </div>
+            <form action="{{ url_for('admin.subjects.create_subject') }}" method="POST" class="mt-5 sm:mt-6 space-y-4">
+                <div>
+                     <label for="name" class="block text-sm font-bold text-gray-700 text-left">Subject Name</label>
+                     <input type="text" name="name" id="name" required class="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border" placeholder="e.g. Applied Physics">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 text-left">Branch</label>
+                        <select name="course" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md border">
+                            <option value="">Select Branch</option>
+                            {% for c in courses %}
+                            <option value="{{ c.code }}">{{ c.name }} ({{ c.code }})</option>
+                            {% endfor %}
+                            {% if not courses %}
+                            <option value="CSE">Computer Science (CSE)</option>
+                            <option value="ME">Mechanical (ME)</option>
+                            <option value="CE">Civil (CE)</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 text-left">Semester</label>
+                        <input type="number" name="semester" min="1" max="8" required class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 text-left">Academic Year</label>
+                    <input type="text" name="academic_year" placeholder="e.g. 2025-2026" class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2">
+                </div>
+
+                <div class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:col-start-2 sm:text-sm">
+                        Create
+                    </button>
+                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:col-start-1 sm:text-sm" onclick="document.getElementById('createModal').classList.add('hidden')">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Assign Widget Modal -->
+<div id="assignModal" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="document.getElementById('assignModal').classList.add('hidden')"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full sm:p-6 backdrop-blur-md bg-opacity-95">
+             <div class="absolute top-0 right-0 pt-4 pr-4">
+                <button type="button" class="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none" onclick="document.getElementById('assignModal').classList.add('hidden')">
+                    <span class="sr-only">Close</span>
+                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="sm:flex sm:items-start">
+                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                    <h3 class="text-xl leading-6 font-bold text-gray-900" id="assignModalTitle">Assign Details</h3>
+                    <div class="mt-2">
+                        <p class="text-sm text-gray-500">Configure academic year, branch, and assigned faculty for <span id="assignSubjectName" class="font-semibold text-indigo-600"></span>.</p>
+                    </div>
+                    
+                    <form action="{{ url_for('admin.subjects.assign_subject') }}" method="POST" class="mt-6 space-y-4">
+                        <input type="hidden" name="subject_id" id="assignSubjectId">
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                             <div>
+                                <label class="block text-sm font-medium text-gray-700">Branch</label>
+                                <select name="course" id="assignCourse" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md border">
+                                    <option value="">Select Branch</option>
+                                    {% for c in courses %}
+                                    <option value="{{ c.code }}">{{ c.name }} ({{ c.code }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                             <div>
+                                <label class="block text-sm font-medium text-gray-700">Semester</label>
+                                <input type="number" name="semester" id="assignSemester" min="1" max="8" required class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Academic Year</label>
+                            <input type="text" name="academic_year" id="assignYear" placeholder="e.g. 2025-2026" class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2">
+                        </div>
+                        
+                        <!-- Faculty Assignment Removed (Managed via Faculty Page) -->
+                        
+                        <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                            <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
+                                Save Assignments
+                            </button>
+                            <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm" onclick="document.getElementById('assignModal').classList.add('hidden')">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openAssignModal(id, name, course, semester, year, faculty) {
+        document.getElementById('assignSubjectId').value = id;
+        document.getElementById('assignSubjectName').textContent = name;
+        document.getElementById('assignCourse').value = course;
+        document.getElementById('assignSemester').value = semester;
+        document.getElementById('assignYear').value = year;
+        
+        document.getElementById('assignModal').classList.remove('hidden');
+    }
+</script>
+{% endblock %}

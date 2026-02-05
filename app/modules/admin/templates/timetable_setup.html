@@ -1,0 +1,191 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Setup Timetable - {{ course }} Sem {{ semester }}{% endblock %}
+
+{% block admin_content %}
+<div class="max-w-4xl mx-auto py-8">
+    <div class="md:flex md:items-center md:justify-between mb-8">
+        <div class="flex-1 min-w-0">
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                Setup: {{ course }} - Semester {{ semester }}
+            </h2>
+        </div>
+        <div class="mt-4 flex space-x-3 md:mt-0 md:ml-4">
+             <a href="{{ url_for('admin.timetable_landing') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                &larr; Back
+            </a>
+             <a href="{{ url_for('admin.view_timetable', course=course, semester=semester) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                Skip to View
+            </a>
+        </div>
+    </div>
+
+    <!-- 1. Define Subjects -->
+    <div class="bg-white shadow sm:rounded-lg mb-8">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">1. Defined Subjects</h3>
+            <div class="mt-4">
+                {% if subjects %}
+                <ul role="list" class="divide-y divide-gray-200 border rounded-md">
+                    {% for subject in subjects %}
+                    <li class="px-4 py-4 flex items-center justify-between sm:px-6">
+                        <div class="flex items-center">
+                            <span class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-xs ring-2 ring-white">
+                                {{ subject.weekly_lectures }}
+                            </span>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-indigo-600 truncate">{{ subject.name }}</p>
+                                <p class="flex items-center text-xs text-gray-500">
+                                    Taught by {{ subject.faculty.display_name }}
+                                </p>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-sm text-gray-500 italic">No subjects defined yet. Add some below.</p>
+                {% endif %}
+            </div>
+
+            <!-- Add Subject Form -->
+            <div class="mt-6 border-t pt-4">
+                <h4 class="text-sm font-medium text-gray-900 mb-2">Add New Subject</h4>
+                <form action="{{ url_for('admin.add_subject') }}" method="POST" class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6 items-end">
+                    <input type="hidden" name="course" value="{{ course }}">
+                    <input type="hidden" name="semester" value="{{ semester }}">
+                    
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-medium text-gray-500 uppercase">Subject</label>
+                        <!-- Dropdown for Existing Subjects -->
+                        <div id="subjectSelectContainer">
+                            <select name="subject_id" id="subjectSelect" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md border" onchange="checkNewSubject(this)">
+                                <option value="">-- Select Subject --</option>
+                                {% for s in all_subjects %}
+                                <option value="{{ s.id }}" data-faculty="{{ s.faculty_id }}">
+                                    {{ s.name }} {% if s.faculty %}({{ s.faculty.display_name }}){% endif %}
+                                </option>
+                                {% endfor %}
+                                <option value="new" class="font-bold text-indigo-600">+ Create New Subject</option>
+                            </select>
+                        </div>
+                        <!-- Fallback Text Input for New Subject (Hidden by default, used only if fallback needed or handling removed) -->
+                        <div id="newSubjectInput" class="hidden mt-2">
+                             <input type="text" name="name" id="nameInput" class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2" placeholder="Enter New Subject Name">
+                        </div>
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-medium text-gray-500 uppercase">Faculty</label>
+                        <select name="faculty_id" id="facultySelect" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md border">
+                            <option value="">-- Select Faculty --</option>
+                            {% for f in faculty_members %}
+                            <option value="{{ f.id }}">{{ f.display_name }} ({{ f.department }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="sm:col-span-1">
+                        <label class="block text-xs font-medium text-gray-500 uppercase">Weekly Load</label>
+                        <input type="number" name="lectures" value="3" min="1" max="10" required class="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md border p-2">
+                    </div>
+
+                    <div class="sm:col-span-1">
+                        <button type="submit" class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none">
+                            Add
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Configuration & Generate -->
+    <div class="bg-indigo-50 shadow sm:rounded-lg border border-indigo-100">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg leading-6 font-medium text-indigo-900">2. Generate Timetable</h3>
+            <div class="mt-2 max-w-xl text-sm text-indigo-500">
+                <p>Configured settings will save to database.</p>
+            </div>
+            <form action="{{ url_for('admin.generate_timetable') }}" method="POST" class="mt-5 grid grid-cols-1 gap-y-6 sm:grid-cols-2 lg:grid-cols-4 gap-x-4">
+                <input type="hidden" name="course" value="{{ course }}">
+                <input type="hidden" name="semester" value="{{ semester }}">
+                
+                <div>
+                     <label for="start_time" class="block text-sm font-medium text-gray-700">Start Time</label>
+                     <input type="time" name="start_time" id="start_time" value="09:00" class="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+                </div>
+                
+                <div>
+                     <label for="end_time" class="block text-sm font-medium text-gray-700">End Time</label>
+                     <input type="time" name="end_time" id="end_time" value="17:00" class="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+                </div>
+                
+                <div>
+                    <label for="slots" class="block text-sm font-medium text-gray-700">Slots per Day</label>
+                    <input type="number" name="slots_per_day" id="slots" value="8" class="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+                </div>
+                
+                <div>
+                    <label for="days" class="block text-sm font-medium text-gray-700">Days per Week</label>
+                    <select name="days_per_week" class="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+                         <option value="5">5 (Mon-Fri)</option>
+                         <option value="6">6 (Mon-Sat)</option>
+                     </select>
+                </div>
+
+                <div>
+                    <label for="recess_duration" class="block text-sm font-medium text-gray-700">Recess Duration (Minutes)</label>
+                    <input type="number" name="recess_duration" id="recess_duration" value="0" min="0" step="5" class="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border">
+                    <p class="mt-1 text-xs text-gray-500">Break time (e.g. 30, 60 min) placed in the middle of the day.</p>
+                </div>
+
+                <div class="sm:col-span-full pt-4">
+                    <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm">
+                        Generate Optimized Timetable
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    function checkNewSubject(select) {
+        const val = select.value;
+        const nameInputDiv = document.getElementById('newSubjectInput');
+        
+        if (val === 'new') {
+            // Redirect to Create Subject Page
+            if (confirm("Redirect to Subject Management to create a new subject?")) {
+                 window.location.href = "{{ url_for('admin.subjects.subject_list') }}";
+            } else {
+                select.value = ""; // Reset dropdown
+            }
+        } else {
+            nameInputDiv.classList.add('hidden');
+            document.getElementById('nameInput').required = false;
+            
+            // Auto Select Faculty
+            const selectedOption = select.options[select.selectedIndex];
+            let facultyId = selectedOption.getAttribute('data-faculty');
+            
+            // Handle 'None' string from Jinja template or null
+            // Also check for empty string
+            if (facultyId === 'None' || facultyId === null || facultyId.trim() === "") facultyId = "";
+            
+            // Force value assignment
+            if (facultyId) {
+                document.getElementById('facultySelect').value = facultyId;
+            } else {
+                 document.getElementById('facultySelect').value = "";
+            }
+        }
+    }
+    
+    function cancelNewSubject() {
+        document.getElementById('newSubjectInput').classList.add('hidden');
+        document.getElementById('subjectSelect').value = "";
+        document.getElementById('nameInput').required = false;
+    }
+</script>
+{% endblock %}

@@ -1,28 +1,37 @@
 from flask import Flask
-from config import Config
-from app.extensions import db
-from datetime import timedelta
+from config import config
+from app.extensions import db, migrate, login_manager
 
-def create_app(config_class=Config):
+def create_app(config_name='default'):
     app = Flask(__name__)
-    app.config.from_object(config_class)
+    app.config.from_object(config[config_name])
 
-    # Initialize Flask extensions
     db.init_app(app)
+    migrate.init_app(app, db)
+    login_manager.init_app(app)
+
+    # Register Filters
+    import base64
+    @app.template_filter('b64encode')
+    def b64encode_filter(data):
+        if not data:
+            return ''
+        return base64.b64encode(data).decode('utf-8')
 
     # Register Blueprints
-    from app.routes.main import main_bp
-    from app.routes.auth import auth_bp
-    from app.routes.student import student_bp
-    from app.routes.faculty import faculty_bp
-    from app.routes.admin import admin_bp
-
+    from app.modules.main import main_bp
     app.register_blueprint(main_bp)
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(student_bp)
-    app.register_blueprint(faculty_bp)
-    app.register_blueprint(admin_bp)
-    
-    # Register error handlers or other common logic here
-    
+
+    from app.modules.auth import auth_bp
+    app.register_blueprint(auth_bp, url_prefix='/auth')
+
+    from app.modules.admin import admin_bp
+    app.register_blueprint(admin_bp, url_prefix='/admin')
+
+    from app.modules.faculty import faculty_bp
+    app.register_blueprint(faculty_bp, url_prefix='/faculty')
+
+    from app.modules.student import student_bp
+    app.register_blueprint(student_bp, url_prefix='/student')
+
     return app

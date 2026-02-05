@@ -1,0 +1,123 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Manage Courses - EduPortal{% endblock %}
+
+{% block admin_content %}
+<div class="space-y-6">
+    <!-- Header & Actions -->
+    <div class="sm:flex sm:items-center sm:justify-between">
+        <div>
+            <h1 class="text-3xl font-extrabold text-gray-900">Academic Branches</h1>
+            <p class="mt-2 text-sm text-gray-700">Manage specialized branches (CSE, CE, ME, etc.) and their academic durations.</p>
+        </div>
+        <div class="mt-4 sm:mt-0">
+            <button onclick="toggleAddModal()" class="inline-flex items-center justify-center rounded-xl border border-transparent bg-indigo-600 px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:-translate-y-0.5 transition-all">
+                <svg class="mr-2 -ml-1 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                New Course
+            </button>
+        </div>
+    </div>
+
+    <!-- Course Table -->
+    <div class="bg-white shadow-xl sm:rounded-2xl overflow-hidden border border-gray-100">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50/50">
+                <tr>
+                    <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Code</th>
+                    <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Course Name</th>
+                    <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Department</th>
+                    <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Duration</th>
+                    <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for course in courses %}
+                <tr class="hover:bg-gray-50/50 transition-colors">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700">
+                            {{ course.code }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ course.name }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ course.department or 'N/A' }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ course.duration_years }} Years ({{ course.total_semesters }} Sems)</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <form action="{{ url_for('admin.delete_course', id=course.id) }}" method="POST" onsubmit="return confirm('Are you sure? This may affect student records referencing this course.')" class="inline">
+                            <button type="submit" class="text-red-600 hover:text-red-900 font-bold p-2 hover:bg-red-50 rounded-lg transition-colors">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="px-6 py-12 text-center text-gray-400 italic">No courses defined yet. Click "New Course" to start.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Course Modal -->
+<div id="addModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="toggleAddModal()"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        
+        <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-gray-100">
+            <form action="{{ url_for('admin.add_course') }}" method="POST">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <h3 class="text-xl font-bold leading-6 text-gray-900 mb-6" id="modal-title">Create New Course</h3>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-700 mb-1">Course Code</label>
+                                    <input type="text" name="code" required class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 border transition-all" placeholder="e.g. B.Tech">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-700 mb-1">Full Name</label>
+                                    <input type="text" name="name" required class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 border transition-all" placeholder="e.g. Bachelor of Technology">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-700 mb-1">Department</label>
+                                    <input type="text" name="department" class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 border transition-all" placeholder="e.g. Engineering">
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1">Duration (Years)</label>
+                                        <input type="number" name="duration_years" value="4" required class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 border transition-all">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-1">Total Semesters</label>
+                                        <input type="number" name="total_semesters" value="8" required class="w-full rounded-xl border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 p-2.5 border transition-all">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50/50 px-4 py-4 sm:px-6 sm:flex sm:flex-row-reverse space-x-reverse space-x-3">
+                    <button type="submit" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-lg shadow-indigo-100 px-6 py-2.5 bg-indigo-600 text-sm font-bold text-white hover:bg-indigo-700 sm:w-auto transition-all">
+                        Create Course
+                    </button>
+                    <button type="button" onclick="toggleAddModal()" class="mt-3 w-full inline-flex justify-center rounded-xl border border-gray-300 px-6 py-2.5 bg-white text-sm font-bold text-gray-700 hover:bg-gray-50 sm:mt-0 sm:w-auto transition-all">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleAddModal() {
+    const modal = document.getElementById('addModal');
+    modal.classList.toggle('hidden');
+}
+</script>
+{% endblock %}

@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Environment Variables
+.env
+
+# Flask
+instance/
+.webassets-cache
+.flask_history
+
+# Database
+*.sqlite
+*.db
+migrations/versions/* # Optional: Sometimes you want to commit migrations, sometimes not. Standard is usually to commit them, but I'll leave the versions folder alone unless you specify otherwise. Actually, usually migrations ARE committed. Let's keep migrations.
+# But definitely ignore the local DB if sqlite
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Tailwind/CSS
+app/static/css/output.css
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

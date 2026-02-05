@@ -1,0 +1,140 @@
+{% extends "base_student.html" %}
+
+{% block title %}Scholarship Finder | EduPortal{% endblock %}
+{% block header_title %}Scholarship Search{% endblock %}
+
+{% block student_content %}
+<div class="px-4 sm:px-0 max-w-5xl mx-auto">
+    
+    <!-- Search Form -->
+    <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 md:p-8 mb-10 transition-all hover:shadow-xl">
+        <div class="text-center mb-8">
+            <h2 class="text-2xl font-bold text-gray-900">Find the Perfect Scholarship</h2>
+            <p class="mt-2 text-gray-500">Enter your details below to discover financial aid opportunities tailored for you.</p>
+        </div>
+
+        <form method="POST" class="space-y-6 max-w-3xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Annual Income -->
+                <div class="space-y-2">
+                    <label for="income" class="text-sm font-semibold text-gray-700">Annual Family Income (₹)</label>
+                    <div class="relative rounded-md shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-500 sm:text-sm">₹</span>
+                        </div>
+                        <input type="number" name="income" id="income" required placeholder="e.g. 250000"
+                            class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 px-4 py-3 sm:text-sm border-gray-300 rounded-lg bg-gray-50"
+                            value="{{ request.form.get('income', '') }}">
+                    </div>
+                </div>
+
+                <!-- Category -->
+                <div class="space-y-2">
+                    <label for="category" class="text-sm font-semibold text-gray-700">Category</label>
+                    <select id="category" name="category" required
+                        class="focus:ring-indigo-500 focus:border-indigo-500 block w-full px-4 py-3 sm:text-sm border-gray-300 rounded-lg bg-gray-50">
+                        <option value="" disabled {% if not request.form.get('category') %}selected{% endif %}>Select Category</option>
+                        <option value="General" {% if request.form.get('category') == 'General' %}selected{% endif %}>General</option>
+                        <option value="OBC" {% if request.form.get('category') == 'OBC' %}selected{% endif %}>OBC</option>
+                        <option value="SC" {% if request.form.get('category') == 'SC' %}selected{% endif %}>SC</option>
+                        <option value="ST" {% if request.form.get('category') == 'ST' %}selected{% endif %}>ST</option>
+                    </select>
+                </div>
+
+                <!-- Gender -->
+                <div class="space-y-2">
+                    <label for="gender" class="text-sm font-semibold text-gray-700">Gender</label>
+                    <select id="gender" name="gender" required
+                        class="focus:ring-indigo-500 focus:border-indigo-500 block w-full px-4 py-3 sm:text-sm border-gray-300 rounded-lg bg-gray-50">
+                        <option value="" disabled {% if not request.form.get('gender') %}selected{% endif %}>Select Gender</option>
+                        <option value="Male" {% if request.form.get('gender') == 'Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if request.form.get('gender') == 'Female' %}selected{% endif %}>Female</option>
+                        <option value="Other" {% if request.form.get('gender') == 'Other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="pt-4 flex justify-center">
+                <button type="submit" class="inline-flex justify-center items-center py-3 px-8 border border-transparent shadow-sm text-base font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all transform hover:scale-105">
+                    <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    Find Scholarships
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% if searched %}
+    <div class="space-y-6 animate-fade-in-up">
+        <div class="flex items-center justify-between">
+            <h3 class="text-xl font-bold text-gray-900">Matching Results</h3>
+            <span class="text-sm text-gray-500">{{ results|length }} schemes found</span>
+        </div>
+
+        {% if results %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for item in results %}
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 hover:border-indigo-300 hover:shadow-lg transition-all duration-300 flex flex-col h-full group">
+                    <div class="p-6 flex-1">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="bg-indigo-50 p-3 rounded-lg text-indigo-600 group-hover:bg-indigo-100 transition-colors">
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                </svg>
+                            </div>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                {{ item.amount }}
+                            </span>
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-900 mb-1 group-hover:text-indigo-600 transition-colors">{{ item.name }}</h4>
+                        <p class="text-sm text-gray-500 mb-4">{{ item.provider }}</p>
+                        
+                        <div class="space-y-2">
+                             <div class="flex items-center text-xs text-gray-500">
+                                <svg class="w-4 h-4 mr-1.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                Max Income: ₹{{ "{:,}".format(item.max_income) }}
+                             </div>
+                             <div class="flex items-center text-xs text-gray-500">
+                                <svg class="w-4 h-4 mr-1.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                For: {{ item.categories|join(', ') }}
+                             </div>
+                        </div>
+                    </div>
+                    <div class="p-6 pt-0 mt-auto">
+                        <a href="{{ item.url }}" target="_blank" class="block w-full text-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none transition-colors">
+                            Apply / View Details
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="mt-12 text-center">
+                <p class="text-sm text-gray-500 mb-4">Want to explore more options?</p>
+                <a href="https://www.google.com/search?q=scholarships+for+{{ request.form.get('category') }}+students+{{ request.form.get('gender') }}+income+below+{{ request.form.get('income') }}" target="_blank" class="inline-flex items-center px-6 py-3 border border-gray-300 shadow-sm text-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                    <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor"><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/></svg>
+                    Search More on Google
+                </a>
+            </div>
+
+        {% else %}
+            <!-- Empty State -->
+            <div class="text-center py-16 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+                <svg class="mx-auto h-16 w-16 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h3 class="mt-4 text-lg font-medium text-gray-900">No matching scholarships found</h3>
+                <p class="mt-2 text-sm text-gray-500 max-w-md mx-auto">We couldn't find any direct matches in our verified database. Try searching the wider web.</p>
+                <div class="mt-6">
+                    <a href="https://www.google.com/search?q=scholarships+for+{{ request.form.get('category') }}+students+{{ request.form.get('gender') }}+income+below+{{ request.form.get('income') }}" target="_blank" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                        Search on Google
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

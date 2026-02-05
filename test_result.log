@@ -1,0 +1,76 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.4, pytest-9.0.2, pluggy-1.6.0
+rootdir: P:\EDU-PORTAL
+plugins: anyio-4.12.1, base-url-2.1.0, cov-7.0.0, playwright-0.7.2
+collected 1 item
+
+tests\test_report_consistency.py F                                       [100%]
+
+================================== FAILURES ===================================
+_____________________ test_student_performance_api_crash ______________________
+
+client = <FlaskClient <Flask 'app'>>
+
+    def test_student_performance_api_crash(client):
+        """
+        Regression Test: Ensure the API handles students with partial semester data without crashing.
+        Bug: TypeError: '>' not supported between instances of 'list' and 'int'
+        """
+        # 1. Setup Data
+        # Create User & Valid Student
+        u = User(email="crash_test@edu.com", role='student')
+        u.set_password('123')
+        db.session.add(u)
+        db.session.flush()
+    
+        s = StudentProfile(user_id=u.id, display_name="Crash Test Dummy", enrollment_number="CRASH001", course_name="B.Tech", semester=3)
+        db.session.add(s)
+        db.session.flush()
+    
+        # Create Subject & Event for Semester 1 (We will NOT add Semester 3 data to trigger the gap)
+        sub = Subject(name="Maths", course_name="B.Tech", semester=1)
+        db.session.add(sub)
+        db.session.flush()
+    
+>       event = ExamEvent(name="Sem 1 Finals", date=date.today(), event_type="Final", semester=1)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_report_consistency.py:39: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+<string>:4: in __init__
+    ???
+C:\Users\TEST\AppData\Roaming\Python\Python313\site-packages\sqlalchemy\orm\state.py:596: in _initialize_instance
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+C:\Users\TEST\AppData\Roaming\Python\Python313\site-packages\sqlalchemy\util\langhelpers.py:224: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+C:\Users\TEST\AppData\Roaming\Python\Python313\site-packages\sqlalchemy\orm\state.py:594: in _initialize_instance
+    manager.original_init(*mixed[1:], **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <ExamEvent Sem 1 Finals>
+kwargs = {'date': datetime.date(2026, 2, 5), 'event_type': 'Final', 'name': 'Sem 1 Finals', 'semester': 1}
+cls_ = <class 'app.models.academics.ExamEvent'>, k = 'date'
+
+    def _declarative_constructor(self: Any, **kwargs: Any) -> None:
+        """A simple constructor that allows initialization from kwargs.
+    
+        Sets attributes on the constructed instance using the names and
+        values in ``kwargs``.
+    
+        Only keys that are present as
+        attributes of the instance's class are allowed. These could be,
+        for example, any mapped columns or relationships.
+        """
+        cls_ = type(self)
+        for k in kwargs:
+            if not hasattr(cls_, k):
+>               raise TypeError(
+                    "%r is an invalid keyword argument for %s" % (k, cls_.__name__)
+                )
+E               TypeError: 'date' is an invalid keyword argument for ExamEvent
+
+C:\Users\TEST\AppData\Roaming\Python\Python313\site-packages\sqlalchemy\orm\decl_base.py:2179: TypeError
+=========================== short test summary info ===========================
+FAILED tests/test_report_consistency.py::test_student_performance_api_crash
+============================== 1 failed in 1.94s ==============================
