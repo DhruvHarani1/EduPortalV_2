@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required
 from app.extensions import db
-from app.models import ExamEvent, ExamPaper, Subject, StudentProfile, StudentResult
+from app.models import ExamEvent, ExamPaper, Subject, StudentProfile, StudentResult, Course
 from datetime import datetime
 
 exams_bp = Blueprint('exams', __name__)
@@ -41,8 +41,11 @@ def create_exam_event():
         flash('Exam Event Created!', 'success')
         return redirect(url_for('.schedule_exam', event_id=event.id))
 
-    courses = db.session.query(StudentProfile.course_name).distinct().all()
-    courses = [c[0] for c in courses]
+    # Fetch courses from standard Course definition
+    # Use Course.code (e.g. B.Tech) to match Subject.course_name which stores the Course Code
+    courses_query = Course.query.with_entities(Course.code, Course.name).all()
+    # Pass dicts to template for code/name separation
+    courses = [{'code': c.code, 'name': c.name} for c in courses_query]
     return render_template('exams/create_event.html', courses=courses)
 
 @exams_bp.route('/exams/<int:event_id>/schedule', methods=['GET', 'POST'])

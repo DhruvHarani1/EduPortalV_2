@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from app.extensions import db
 
 class Course(db.Model):
@@ -8,7 +8,7 @@ class Course(db.Model):
     department = db.Column(db.String(100), nullable=True)
     duration_years = db.Column(db.Integer, default=4)
     total_semesters = db.Column(db.Integer, default=8)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     def __repr__(self):
         return f'<Course {self.code}>'
@@ -36,6 +36,7 @@ class Attendance(db.Model):
     # Relationship
     student = db.relationship('StudentProfile', backref=db.backref('attendance_records', lazy=True, cascade="all, delete-orphan"))
     subject = db.relationship('Subject', backref=db.backref('attendance_records', lazy=True))
+    faculty = db.relationship('FacultyProfile', backref=db.backref('attendance_records', lazy=True))
 
     def __repr__(self):
         return f'<Attendance {self.student.enrollment_number} - {self.date} - {self.status}>'
@@ -63,7 +64,7 @@ class Syllabus(db.Model):
     subject_id = db.Column(db.Integer, db.ForeignKey('subject.id'), nullable=False)
     filename = db.Column(db.String(255), nullable=False)
     file_data = db.Column(db.LargeBinary, nullable=False) # Storing PDF as BLOB
-    upload_date = db.Column(db.DateTime, default=datetime.utcnow)
+    upload_date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     
     subject = db.relationship('Subject', backref=db.backref('syllabus', uselist=False, cascade="all, delete-orphan"))
 
@@ -83,8 +84,8 @@ class Timetable(db.Model):
     room_number = db.Column(db.String(20), default='Room 101') # Added Room
     
     # Relationship
-    subject = db.relationship('Subject', backref=db.backref('timetable_slots', lazy=True))
-    faculty = db.relationship('FacultyProfile', backref=db.backref('timetable_slots', lazy=True))
+    subject = db.relationship('Subject', backref=db.backref('timetable_slots', lazy=True, cascade="all, delete-orphan"))
+    faculty = db.relationship('FacultyProfile', backref=db.backref('timetable_slots', lazy=True, cascade="all, delete-orphan"))
 
     def __repr__(self):
         return f'<Timetable {self.course_name} {self.day_of_week} P{self.period_number}>'
@@ -164,7 +165,8 @@ class ExamPaper(db.Model):
     total_marks = db.Column(db.Integer, default=100)
     
     # Relationships
-    subject = db.relationship('Subject', backref='exam_papers')
+    # Relationships
+    subject = db.relationship('Subject', backref=db.backref('exam_papers', cascade="all, delete-orphan"))
 
     def __repr__(self):
         return f'<ExamPaper {self.subject.name} on {self.date}>'
@@ -178,7 +180,7 @@ class StudentResult(db.Model):
     is_fail = db.Column(db.Boolean, default=False)
     
     # Relationships
-    paper = db.relationship('ExamPaper', backref=db.backref('results', lazy=True))
+    paper = db.relationship('ExamPaper', backref=db.backref('results', lazy=True, cascade="all, delete-orphan"))
     student = db.relationship('StudentProfile', backref=db.backref('exam_results', lazy=True, cascade="all, delete-orphan"))
 
     def __repr__(self):

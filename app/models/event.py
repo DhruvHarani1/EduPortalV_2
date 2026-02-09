@@ -1,5 +1,5 @@
 from app.extensions import db
-from datetime import datetime
+from datetime import datetime, timezone
 
 class UniversityEvent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -24,7 +24,7 @@ class EventRegistration(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     event_id = db.Column(db.Integer, db.ForeignKey('university_event.id'), nullable=False)
     student_id = db.Column(db.Integer, db.ForeignKey('student_profile.id'), nullable=False)
-    registered_at = db.Column(db.DateTime, default=datetime.utcnow)
+    registered_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     student = db.relationship('StudentProfile', backref=db.backref('event_registrations', lazy=True, cascade="all, delete-orphan"))

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from app.extensions import db
 
 class StudentQuery(db.Model):
@@ -10,12 +10,12 @@ class StudentQuery(db.Model):
     title = db.Column(db.String(200), nullable=False) # Context/Subject of the doubt
     status = db.Column(db.String(20), default='Pending') # Pending, Answered, Resolved
     
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     # Relationships
     student = db.relationship('StudentProfile', backref=db.backref('queries', lazy=True, cascade="all, delete-orphan"))
-    faculty = db.relationship('FacultyProfile', backref=db.backref('queries', lazy=True))
+    faculty = db.relationship('FacultyProfile', backref=db.backref('queries', lazy=True, cascade="all, delete-orphan"))
     subject = db.relationship('Subject', backref=db.backref('queries', lazy=True))
     messages = db.relationship('QueryMessage', backref='query', lazy=True, cascade="all, delete-orphan")
 
@@ -33,7 +33,7 @@ class QueryMessage(db.Model):
     image_data = db.Column(db.LargeBinary, nullable=True)
     image_mimetype = db.Column(db.String(50), nullable=True)
     
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     def __repr__(self):
         return f'<Msg {self.id} from {self.sender_type}>'

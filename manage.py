@@ -3,7 +3,7 @@ import sys
 import os
 import random
 import click
-from datetime import datetime, date, timedelta, time
+from datetime import datetime, date, timedelta, time, timezone
 from flask.cli import FlaskGroup
 
 sys.path.append(os.getcwd())
@@ -274,7 +274,7 @@ def seed():
             ("Library Due Date", "admin", "Please return all books by end of month.")
         ]
         for t, c, b in notices:
-            n = Notice(title=t, category=c, content=b, created_at=datetime.utcnow())
+            n = Notice(title=t, category=c, content=b, created_at=datetime.now(timezone.utc))
             db.session.add(n)
 
         # 9. Queries
@@ -354,7 +354,7 @@ def seed():
                 reg = EventRegistration(
                     event_id=ev.id,
                     student_id=stu.id,
-                    registered_at=datetime.utcnow() - timedelta(days=random.randint(1, 5))
+                    registered_at=datetime.now(timezone.utc) - timedelta(days=random.randint(1, 5))
                 )
                 db.session.add(reg)
         db.session.commit()

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from app.extensions import db
 
 class Notice(db.Model):
@@ -19,7 +19,7 @@ class Notice(db.Model):
     # Sender Info (If None, assumed Admin)
     sender_faculty_id = db.Column(db.Integer, db.ForeignKey('faculty_profile.id'))
     
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     sender = db.relationship('FacultyProfile', foreign_keys=[sender_faculty_id], backref='sent_notices')

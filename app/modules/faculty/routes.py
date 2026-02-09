@@ -1,6 +1,6 @@
 from flask import render_template, request
 from flask_login import login_required
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, timezone
 from app.models import FeeRecord, StudentQuery, QueryMessage, FacultyProfile, Attendance, Timetable
 from flask_login import current_user, login_required
 from flask import render_template, request, redirect, url_for, flash, send_file
@@ -79,9 +79,9 @@ def fees():
 def mark_paid(fee_id):
     fee = FeeRecord.query.get_or_404(fee_id)
     fee.status = 'Paid'
-    fee.payment_date = datetime.utcnow()
+    fee.payment_date = datetime.now(timezone.utc)
     fee.payment_mode = 'Cash/Office'
-    fee.transaction_reference = f"OFFICE-MANUAL-{fee.id}-{int(datetime.utcnow().timestamp())}"
+    fee.transaction_reference = f"OFFICE-MANUAL-{fee.id}-{int(datetime.now(timezone.utc).timestamp())}"
     db.session.commit()
     return {'status': 'success'}
 
@@ -131,7 +131,7 @@ def query_chat(query_id):
             if query.status == 'Pending':
                  query.status = 'Answered'
             
-            query.updated_at = datetime.utcnow()
+            query.updated_at = datetime.now(timezone.utc)
             db.session.commit()
             return redirect(url_for('faculty.query_chat', query_id=query_id))
 
@@ -167,7 +167,7 @@ def classes():
                     if existing:
                         existing.filename = filename
                         existing.file_data = file_data
-                        existing.upload_date = datetime.utcnow()
+                        existing.upload_date = datetime.now(timezone.utc)
                     else:
                         new_syllabus = Syllabus(subject_id=subject_id, filename=filename, file_data=file_data)
                         db.session.add(new_syllabus)
@@ -781,7 +781,7 @@ def schedule():
     faculty = FacultyProfile.query.filter_by(user_id=current_user.id).first_or_404()
     
     # Get current day
-    today_name = datetime.utcnow().strftime('%A') # e.g. "Monday"
+    today_name = datetime.now(timezone.utc).strftime('%A') # e.g. "Monday"
     # For Demo purposes, if it's Sunday, show Monday's schedule so the user sees something
     if today_name == 'Sunday':
         today_name = 'Monday' # Demo fallback
@@ -793,7 +793,7 @@ def schedule():
     ).order_by(Timetable.period_number).all()
     
     schedule_data = []
-    current_time = datetime.utcnow().time() # UTC time, might need offset for display logic
+    current_time = datetime.now(timezone.utc).time() # UTC time, might need offset for display logic
     
     # Base Time: 9:00 AM
     base_hour = 9 

@@ -19,8 +19,11 @@
              <a href="{{ url_for('admin.timetable_setup', course=course, semester=semester) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
                 Regenerate / Settings
             </a>
-            <button onclick="window.print()" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
-                Print / Export
+            <button onclick="window.print()" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-indigo-700 bg-indigo-100 hover:bg-indigo-200">
+                Print
+            </button>
+            <button onclick="downloadPDF()" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                Export PDF
             </button>
         </div>
     </div>
@@ -95,7 +98,71 @@
     </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
+function downloadPDF() {
+    // 1. Select the element
+    const element = document.querySelector('.flex-1.overflow-auto > div'); 
+    
+    // 2. Clone it 
+    const clone = element.cloneNode(true);
+    
+    // 3. Apply PDF-specific styles to the CLONE
+    // A4 Landscape is ~297mm wide. We set explicit width to fit.
+    clone.style.width = '280mm'; 
+    clone.style.maxWidth = '280mm';
+    clone.style.fontSize = '9px'; // Reduced font further
+    clone.style.background = 'white';
+    
+    // Remove layout-breaking constraints
+    const fixedWidths = clone.querySelectorAll('.w-32, .min-w-\\[150px\\], .min-w-full, .overflow-auto, .overflow-hidden');
+    fixedWidths.forEach(el => {
+        el.classList.remove('w-32', 'min-w-[150px]', 'min-w-full', 'overflow-auto', 'overflow-hidden');
+        el.style.width = 'auto';
+        el.style.minWidth = '0';
+        el.style.overflow = 'visible';
+    });
+
+    // Clean up Selects -> Text
+    const selects = clone.querySelectorAll('select');
+    selects.forEach(select => {
+        const selectedOption = select.options[select.selectedIndex];
+        const span = document.createElement('div');
+        
+        if (select.value) {
+            span.innerHTML = `<div style="font-weight:bold; font-size:8px;">${selectedOption.text.split('(')[0]}</div>
+                              <div style="font-size:7px; color:#666;">${selectedOption.text.split('(')[1] ? '(' + selectedOption.text.split('(')[1] : ''}</div>`;
+        } else {
+            span.textContent = '-';
+            span.style.color = '#eee';
+        }
+        select.parentNode.replaceChild(span, select);
+    });
+    
+    // Style cells
+    const cells = clone.querySelectorAll('td, th');
+    cells.forEach(cell => {
+        cell.style.padding = '2px';
+        cell.style.border = '1px solid #ccc'; 
+        cell.style.whiteSpace = 'normal'; // Allow wrapping
+    });
+    
+    // Remove "Edit" helpers
+    const helpers = clone.querySelectorAll('.text-\\[10px\\]');
+    helpers.forEach(el => el.remove()); 
+
+    // 4. Generate PDF
+    const opt = {
+        margin:       [5, 5, 5, 5], 
+        filename:     'timetable_{{ course }}_S{{ semester }}.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true }, // Removed fixed windowWidth
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+    };
+
+    html2pdf().set(opt).from(clone).save();
+}
+
 function updateSlot(day, period, subjectId, slotId) {
     const data = {
         day: day,
