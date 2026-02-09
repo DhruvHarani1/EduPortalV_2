@@ -1,7 +1,7 @@
 from flask import render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required
 from app.extensions import db
-from app.models import Subject, Timetable, FacultyProfile, StudentProfile, ScheduleSettings
+from app.models import Subject, Timetable, FacultyProfile, StudentProfile, ScheduleSettings, Course
 from . import admin_bp
 import random
 import math
@@ -11,9 +11,9 @@ from datetime import datetime, time, date, timedelta
 @login_required
 def timetable_landing():
     # step 1: Select Course and Semester
-    courses = db.session.query(StudentProfile.course_name).distinct().all()
-    # Deduplicate in Python (handle whitespace/case potentially) and sort
-    courses = sorted(list(set([c[0].strip() for c in courses if c[0]])))
+    # Fetch courses from standard Course definition
+    courses_query = Course.query.with_entities(Course.code).all()
+    courses = sorted([c.code for c in courses_query])
     return render_template('timetable_landing.html', courses=courses)
 
 @admin_bp.route('/timetable/setup', methods=['GET', 'POST'])

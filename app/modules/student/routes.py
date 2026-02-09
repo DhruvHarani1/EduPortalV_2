@@ -1,7 +1,7 @@
 from flask import render_template, send_file, Response
 from flask_login import login_required, current_user
 import io
-from datetime import datetime
+from datetime import datetime, timezone
 from . import student_bp
 from app.models import StudentProfile, Attendance, Subject, Timetable, StudentResult, ExamPaper, ExamEvent, UniversityEvent, EventRegistration, Notice, FeeRecord, StudentQuery, QueryMessage, FacultyProfile, Syllabus
 from app.extensions import db
@@ -409,10 +409,10 @@ def pay_fee(fee_id):
     
     # Simulate Payment
     fee.status = 'Paid'
-    fee.payment_date = datetime.utcnow()
+    fee.payment_date = datetime.now(timezone.utc)
     fee.payment_mode = 'Online'
     fee.amount_paid = fee.amount_due
-    fee.transaction_reference = f"TXN{int(datetime.utcnow().timestamp())}{fee.id}"
+    fee.transaction_reference = f"TXN{int(datetime.now(timezone.utc).timestamp())}{fee.id}"
     
     db.session.commit()
     return {'status': 'success', 'message': 'Payment successful!'}, 200
@@ -544,7 +544,7 @@ def send_message(query_id):
     if query.status == 'Answered':
         query.status = 'Pending'
     
-    query.updated_at = datetime.utcnow()
+    query.updated_at = datetime.now(timezone.utc)
     db.session.commit()
     
     return redirect(url_for('student.query_chat', query_id=query_id))
@@ -629,11 +629,45 @@ def report_lost_card():
 def timetable():
     student = StudentProfile.query.filter_by(user_id=current_user.id).first_or_404()
     
-    # Fetch Timetable entries
-    entries = Timetable.query.filter_by(
-        course_name=student.course_name,
-        semester=student.semester
-    ).order_by(Timetable.period_number).all()
+    # Robust Course Name Lookup (Handle Name vs Code mismatch)
+    from app.models import Course
+    
+    # 1. Try exact match first
+    course_query_val = student.course_name
+    
+    # 2. Check if student has Name but Timetable uses Code, or vice versa
+    # Find the Course object definition
+    course_def = Course.query.filter((Course.name == student.course_name) | (Course.code == student.course_name)).first()
+    
+    if course_def:
+        # We need to know what Timetable uses. 
+        # Since Admin standardization, Timetable uses Code. 
+        # But old data might use Name. 
+        # So we try to fetch using Code first (preferred), then Name.
+        
+        # Try finding entries with Code
+        entries = Timetable.query.filter_by(
+            course_name=course_def.code,
+            semester=student.semester
+        ).order_by(Timetable.period_number).all()
+        
+        if not entries:
+            # Fallback: Try finding entries with Name
+            entries = Timetable.query.filter_by(
+                course_name=course_def.name,
+                semester=student.semester
+            ).order_by(Timetable.period_number).all()
+            
+            if entries:
+                # Update student profile to use the working specific identifier (Optional fix)
+                # student.course_name = course_def.name 
+                pass
+    else:
+        # Fallback if Course definition missing
+        entries = Timetable.query.filter_by(
+            course_name=student.course_name,
+            semester=student.semester
+        ).order_by(Timetable.period_number).all()
     
     # Structure Data: Days -> Slots
     days_order = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -660,8 +694,17 @@ def timetable():
     
     from datetime import timedelta, datetime, date
     
+    # Map Full Names (DB) to Abbr (UI)
+    day_map = {
+        'Monday': 'Mon', 'Tuesday': 'Tue', 'Wednesday': 'Wed', 
+        'Thursday': 'Thu', 'Friday': 'Fri', 'Saturday': 'Sat', 'Sunday': 'Sun'
+    }
+
     for entry in entries:
-        if entry.day_of_week in schedule:
+        # Resolve UI Key
+        ui_day = day_map.get(entry.day_of_week, entry.day_of_week) # Fallback to original if not found
+        
+        if ui_day in schedule:
             p_idx = entry.period_number - 1 # Period is usually 1-indexed
             
             if settings:
@@ -677,7 +720,7 @@ def timetable():
             # Fake room number if missing
             entry.room_number = "Main Block" 
             
-            schedule[entry.day_of_week].append(entry)
+            schedule[ui_day].append(entry)
             
     # Remove Sunday if empty
     if not schedule['Sun']:

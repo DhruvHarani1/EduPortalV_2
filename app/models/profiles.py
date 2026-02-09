@@ -48,7 +48,7 @@ class FacultyProfile(db.Model):
     photo_mimetype = db.Column(db.String(50)) # Mimetype e.g. 'image/jpeg'
     
     # Relationship with User
-    user = db.relationship('User', backref=db.backref('faculty_profile', uselist=False))
+    user = db.relationship('User', backref=db.backref('faculty_profile', uselist=False, cascade="all, delete-orphan"))
 
     def __repr__(self):
         return f'<FacultyProfile {self.user.email}>'

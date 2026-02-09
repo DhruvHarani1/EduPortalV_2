@@ -1,0 +1,32 @@
+
+--- 1. ALL COURSES ---
+ID: 5, Name: 'M.tech', Code: 'M.tech'
+
+--- 2. TARGET STUDENT (student1@edu.com) ---
+Found Student: ID=1, Name='Student 1', Course='B.Tech', Sem=1
+
+--- 3. TIMETABLE ENTRIES FOR THIS STUDENT ---
+Entries matching Course='B.Tech': 11
+ - Day: Monday, Period: 3, SubjectID: 2
+ - Day: Monday, Period: 6, SubjectID: 3
+ - Day: Monday, Period: 7, SubjectID: 2
+ - Day: Tuesday, Period: 3, SubjectID: 3
+ - Day: Tuesday, Period: 6, SubjectID: 2
+ - Day: Wednesday, Period: 4, SubjectID: 1
+ - Day: Thursday, Period: 4, SubjectID: 3
+ - Day: Thursday, Period: 6, SubjectID: 2
+ - Day: Thursday, Period: 7, SubjectID: 3
+ - Day: Saturday, Period: 6, SubjectID: 1
+ - Day: Saturday, Period: 7, SubjectID: 1
+CRITICAL: Course Definition NOT FOUND for this student's course_name!
+
+--- 4. ALL TIMETABLE ENTRIES (Summary) ---
+Course: 'B.Tech', Sem: 1 -> 11 slots
+Course: 'B.Tech', Sem: 2 -> 27 slots
+Course: 'B.Tech', Sem: 3 -> 28 slots
+Course: 'BCA', Sem: 1 -> 27 slots
+Course: 'BCA', Sem: 2 -> 26 slots
+Course: 'BCA', Sem: 3 -> 27 slots
+Course: 'MCA', Sem: 1 -> 27 slots
+Course: 'MCA', Sem: 2 -> 27 slots
+Course: 'MCA', Sem: 3 -> 29 slots
