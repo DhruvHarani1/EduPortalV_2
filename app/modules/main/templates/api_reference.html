@@ -1,0 +1,480 @@
+{% extends "base.html" %}
+
+{% block title %}API Reference | EduPortal{% endblock %}
+
+{% block layout %}
+<div class="bg-gray-900 font-mono text-gray-300 min-h-screen flex flex-col" x-data="{ activeCategory: 'general' }">
+    <!-- Navbar (Dark for API) -->
+     <nav class="bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="shrink-0 flex items-center">
+                        <a href="{{ url_for('main.index') }}" class="text-xl font-bold text-indigo-500 tracking-tight flex items-center gap-2">
+                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            EduPortal <span class="text-xs ml-2 bg-indigo-900 text-indigo-300 px-2 py-0.5 rounded border border-indigo-700">DEV</span>
+                        </a>
+                    </div>
+                </div>
+                 <div class="flex items-center space-x-6">
+                    <a href="{{ url_for('main.index') }}" class="text-gray-400 hover:text-indigo-400 font-medium text-sm flex items-center gap-1 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        Back to Home
+                    </a>
+                     <a href="{{ url_for('auth.login') }}" class="text-indigo-400 hover:text-indigo-300 font-medium text-sm">Login</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flex-grow flex max-w-7xl mx-auto w-full">
+        <!-- Sidebar -->
+        <aside class="w-64 hidden lg:block border-r border-gray-800 p-8 shrink-0 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto">
+             <h5 class="text-gray-500 font-bold uppercase tracking-wide text-xs mb-4">Introduction</h5>
+             <ul class="space-y-2 mb-8">
+                <li><a href="#" @click.prevent="activeCategory = 'general'" :class="{'text-indigo-400 font-bold': activeCategory === 'general', 'text-gray-400 hover:text-white': activeCategory !== 'general'}" class="block">Getting Started</a></li>
+                <li><a href="#" @click.prevent="activeCategory = 'auth'" :class="{'text-indigo-400 font-bold': activeCategory === 'auth', 'text-gray-400 hover:text-white': activeCategory !== 'auth'}" class="block">Authentication</a></li>
+            </ul>
+
+            <h5 class="text-gray-500 font-bold uppercase tracking-wide text-xs mb-4">Core API</h5>
+             <ul class="space-y-2 mb-8">
+                <li><a href="#" @click.prevent="activeCategory = 'reports'" :class="{'text-indigo-400 font-bold': activeCategory === 'reports', 'text-gray-400 hover:text-white': activeCategory !== 'reports'}" class="block">Analytics & Reports</a></li>
+                <li><a href="#" @click.prevent="activeCategory = 'timetable'" :class="{'text-indigo-400 font-bold': activeCategory === 'timetable', 'text-gray-400 hover:text-white': activeCategory !== 'timetable'}" class="block">Timetable Management</a></li>
+            </ul>
+
+            <h5 class="text-gray-500 font-bold uppercase tracking-wide text-xs mb-4">Form Interactions</h5>
+             <ul class="space-y-2 mb-8">
+                <li><a href="#" @click.prevent="activeCategory = 'student-forms'" :class="{'text-indigo-400 font-bold': activeCategory === 'student-forms', 'text-gray-400 hover:text-white': activeCategory !== 'student-forms'}" class="block">Student Operations</a></li>
+                <li><a href="#" @click.prevent="activeCategory = 'faculty-forms'" :class="{'text-indigo-400 font-bold': activeCategory === 'faculty-forms', 'text-gray-400 hover:text-white': activeCategory !== 'faculty-forms'}" class="block">Faculty Operations</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-grow p-8 lg:p-12 overflow-y-auto">
+            
+            <!-- General Section -->
+            <div x-show="activeCategory === 'general'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <span class="text-indigo-500 font-bold tracking-wide uppercase text-xs">Overview</span>
+                <h1 class="mt-2 text-3xl font-extrabold text-white">Getting Started</h1>
+                <p class="mt-4 text-lg text-gray-400">
+                    Welcome to the EduPortal Developer API. This reference documents both the JSON-based internal APIs used for asynchronous data fetching and the standard Form-based endpoints used for core operations.
+                </p>
+
+                <h3 class="text-xl font-bold text-white mt-8 mb-4">Base URL</h3>
+                <div class="bg-gray-950 rounded p-4 font-mono text-sm text-gray-300 border border-gray-800">
+                    https://eduportal.com
+                </div>
+
+                <h3 class="text-xl font-bold text-white mt-8 mb-4">Response Codes</h3>
+                <div class="overflow-hidden border border-gray-800 rounded-lg">
+                    <table class="min-w-full divide-y divide-gray-800">
+                        <thead class="bg-gray-900">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-gray-950 divide-y divide-gray-800">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-400">200 OK</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Request succeeded.</td>
+                            </tr>
+                             <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-400">302 Found</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Redirection (Common for Form POSTs).</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-yellow-500">401 Unauthorized</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Authentication required.</td>
+                            </tr>
+                             <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-yellow-500">403 Forbidden</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Access denied for your role.</td>
+                            </tr>
+                             <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-500">404 Not Found</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Resource does not exist.</td>
+                            </tr>
+                             <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-500">500 Server Error</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">Internal system failure.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Authentication Section -->
+            <div x-show="activeCategory === 'auth'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <span class="text-indigo-500 font-bold tracking-wide uppercase text-xs">Security</span>
+                <h1 class="mt-2 text-3xl font-extrabold text-white">Authentication</h1>
+                <p class="mt-4 text-lg text-gray-400">
+                    EduPortal uses session-based authentication. Clients must maintain cookies describing the session state.
+                </p>
+
+                <div class="mt-12 space-y-16">
+                     <!-- Endpoint 1 -->
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="bg-blue-900 text-blue-300 px-2 py-1 rounded text-xs font-bold border border-blue-700">POST</span>
+                            <code class="text-white font-mono">/auth/login</code>
+                        </div>
+                        <p class="text-gray-400 mb-4">Establish a session.</p>
+                        
+                        <div class="bg-gray-950 rounded-lg border border-gray-800 overflow-hidden">
+                            <div class="flex border-b border-gray-800">
+                                <span class="px-4 py-2 text-sm text-gray-500">Form Data</span>
+                            </div>
+                            <div class="p-4 overflow-x-auto">
+<pre class="text-xs text-blue-300 font-mono leading-relaxed">
+email: "user@example.com"
+password: "your_password"
+role: "student" | "faculty" | "admin"
+</pre>
+                            </div>
+                             <div class="border-t border-gray-800 p-4 bg-gray-900">
+                                <span class="text-xs text-gray-500 uppercase tracking-wider font-bold">Response</span>
+                                <p class="text-sm text-gray-300 mt-1">Returns <code>302 Redirect</code> to the role-specific dashboard upon success.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Endpoint 2 -->
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="bg-green-900 text-green-300 px-2 py-1 rounded text-xs font-bold border border-green-700">GET</span>
+                            <code class="text-white font-mono">/auth/logout</code>
+                        </div>
+                        <p class="text-gray-400 mb-4">Terminate the current session.</p>
+                         <div class="bg-gray-950 rounded-lg border border-gray-800 overflow-hidden">
+                             <div class="border-b border-gray-800 p-4 bg-gray-900">
+                                <span class="text-xs text-gray-500 uppercase tracking-wider font-bold">Response</span>
+                                <p class="text-sm text-gray-300 mt-1">Returns <code>302 Redirect</code> to the landing page.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Section (JSON) -->
+            <div x-show="activeCategory === 'reports'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <span class="text-indigo-500 font-bold tracking-wide uppercase text-xs">Analytics API (JSON)</span>
+                <h1 class="mt-2 text-3xl font-extrabold text-white">Reports & Intelligence</h1>
+                <p class="mt-4 text-lg text-gray-400">
+                    Endpoints for retrieving aggregated analytics. Returns <code class="text-indigo-400">application/json</code>.
+                </p>
+                
+                <div class="mt-12 space-y-16">
+                     <!-- Endpoint 1 -->
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="bg-green-900 text-green-300 px-2 py-1 rounded text-xs font-bold border border-green-700">GET</span>
+                            <code class="text-white font-mono">/api/reports/student-performance</code>
+                        </div>
+                        <p class="text-gray-400 mb-4">
+                            Get deep insights into student academic performance, including "Academic DNA" (Radar), consistency scores, and growth velocity.
+                        </p>
+                        
+                        <div class="bg-gray-950 rounded-lg border border-gray-800 overflow-hidden">
+                            <div class="flex border-b border-gray-800">
+                                <span class="px-4 py-2 text-sm text-gray-500">Response Example</span>
+                            </div>
+                            <div class="p-4 overflow-x-auto">
+<pre class="text-xs text-green-300 font-mono leading-relaxed">
+{
+  "consistency": [
+    {
+      "growth": 12.5,
+      "name": "Arjun Patel",
+      "x": 78.5,
+      "y": 4.2
+    }
+  ],
+  "danger_zone": [
+    {
+      "avg": 35.0,
+      "name": "Rohan Gupta",
+      "risk": "Critical"
+    }
+  ],
+  "insights": {
+    "review": "The batch is currently Improving.",
+    "status": "Improving",
+    "suggestion": "Maintain current momentum.",
+    "tips": [
+      "Encourage the 15 'Rising Stars' to mentor their peers."
+    ]
+  },
+  "radar": {
+    "data": [85.0, 72.0, 91.0, 68.0],
+    "labels": ["Algorithms", "Database", "Networking", "Math"]
+  }
+}
+</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Endpoint 2 -->
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="bg-green-900 text-green-300 px-2 py-1 rounded text-xs font-bold border border-green-700">GET</span>
+                            <code class="text-white font-mono">/api/reports/attendance</code>
+                        </div>
+                        <p class="text-gray-400 mb-4">Retrieve attendance fatigue metrics and identify students at risk of truancy.</p>
+                         <div class="bg-gray-950 rounded-lg border border-gray-800 overflow-hidden">
+                             <div class="flex border-b border-gray-800">
+                                <span class="px-4 py-2 text-sm text-gray-500">Response Example</span>
+                            </div>
+                            <div class="p-4 overflow-x-auto">
+<pre class="text-xs text-green-300 font-mono leading-relaxed">
+{
+  "fatigue": [95.0, 92.0, 85.0, 88.0, 70.0], // Mon-Fri %
+  "insights": {
+    "status": "Fatigue Detected",
+    "summary": "Fridays are showing significant drops in attendance (70%).",
+    "tip": "Consider light activities or gamified sessions on Fridays."
+  },
+  "truancy_prob": [
+    {
+      "name": "Sarah Lee",
+      "perc": 65.0,
+      "prob": 35.0
+    }
+  ]
+}
+</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timetable Section (JSON) -->
+            <div x-show="activeCategory === 'timetable'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <span class="text-indigo-500 font-bold tracking-wide uppercase text-xs">Management API (JSON)</span>
+                <h1 class="mt-2 text-3xl font-extrabold text-white">Timetable Management</h1>
+                <p class="mt-4 text-lg text-gray-400">
+                    Operations for updating schedule slots dynamically.
+                </p>
+
+                <div class="mt-12 space-y-16">
+                     <!-- Endpoint 1 -->
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="bg-indigo-900 text-indigo-300 px-2 py-1 rounded text-xs font-bold border border-indigo-700">POST</span>
+                            <code class="text-white font-mono">/admin/timetable/update_slot</code>
+                        </div>
+                        <p class="text-gray-400 mb-4">Update or create a timetable slot assignment.</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-gray-950 rounded-lg border border-gray-800 overflow-hidden">
+                                <div class="flex border-b border-gray-800">
+                                    <span class="px-4 py-2 text-sm text-gray-500">Request Body</span>
+                                </div>
+                                <div class="p-4 overflow-x-auto">
+<pre class="text-xs text-indigo-300 font-mono leading-relaxed">
+{
+  "slot_id": 105,       // Optional (if editing)
+  "day": "Monday",
+  "period": 3,
+  "subject_id": 12,
+  "course": "B.Tech",
+  "semester": 4
+}
+</pre>
+                                </div>
+                            </div>
+                             <div class="bg-gray-950 rounded-lg border border-gray-800 overflow-hidden">
+                                <div class="flex border-b border-gray-800">
+                                    <span class="px-4 py-2 text-sm text-gray-500">Response</span>
+                                </div>
+                                <div class="p-4 overflow-x-auto">
+<pre class="text-xs text-green-300 font-mono leading-relaxed">
+{
+  "status": "success"
+}
+</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Student Forms (POST) -->
+            <div x-show="activeCategory === 'student-forms'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <span class="text-indigo-500 font-bold tracking-wide uppercase text-xs">Form Interactions (POST)</span>
+                <h1 class="mt-2 text-3xl font-extrabold text-white">Student Operations</h1>
+                <p class="mt-4 text-lg text-gray-400">
+                    Interactions typically handled via HTML Forms. Response is usually a Redirect or HTML render.
+                </p>
+
+                <div class="mt-12 space-y-16">
+                     <!-- Form Endpoint 1 -->
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="bg-blue-900 text-blue-300 px-2 py-1 rounded text-xs font-bold border border-blue-700">POST</span>
+                            <code class="text-white font-mono">/student/queries/create</code>
+                        </div>
+                        <p class="text-gray-400 mb-4">Submit a new query to the faculty/admin.</p>
+                        
+                        <div class="bg-gray-950 rounded-lg border border-gray-800 overflow-hidden">
+                            <div class="flex border-b border-gray-800">
+                                <span class="px-4 py-2 text-sm text-gray-500">Form Data Keys</span>
+                            </div>
+                            <div class="p-4 overflow-x-auto">
+<pre class="text-xs text-blue-300 font-mono leading-relaxed">
+category: "Academic" | "Hostel" | "Fees" | "Other"
+subject: "Linear Algebra Doubt"
+description: "Detailed explanation of the issue..."
+priority: "Low" | "Medium" | "High"
+</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Endpoint 2 -->
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="bg-blue-900 text-blue-300 px-2 py-1 rounded text-xs font-bold border border-blue-700">POST</span>
+                            <code class="text-white font-mono">/student/events/register/{event_id}</code>
+                        </div>
+                        <p class="text-gray-400 mb-4">Register for a university event.</p>
+                         <div class="bg-gray-950 rounded-lg border border-gray-800 overflow-hidden">
+                            <div class="flex border-b border-gray-800">
+                                <span class="px-4 py-2 text-sm text-gray-500">Form Data</span>
+                            </div>
+                            <div class="p-4 overflow-x-auto">
+<pre class="text-xs text-blue-300 font-mono leading-relaxed">
+(No body required, ID is in URL)
+</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Faculty Forms (POST) -->
+            <div x-show="activeCategory === 'faculty-forms'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <span class="text-indigo-500 font-bold tracking-wide uppercase text-xs">Form Interactions (POST)</span>
+                <h1 class="mt-2 text-3xl font-extrabold text-white">Faculty Operations</h1>
+                <p class="mt-4 text-lg text-gray-400">
+                    Actions for managing academic data.
+                </p>
+
+                <div class="mt-12 space-y-16">
+                     <!-- Form Endpoint 1 -->
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="bg-blue-900 text-blue-300 px-2 py-1 rounded text-xs font-bold border border-blue-700">POST</span>
+                            <code class="text-white font-mono">/faculty/attendance</code>
+                        </div>
+                        <p class="text-gray-400 mb-4">Submit attendance for a class.</p>
+                        
+                        <div class="bg-gray-950 rounded-lg border border-gray-800 overflow-hidden">
+                            <div class="flex border-b border-gray-800">
+                                <span class="px-4 py-2 text-sm text-gray-500">Form Data Keys</span>
+                            </div>
+                            <div class="p-4 overflow-x-auto">
+<pre class="text-xs text-blue-300 font-mono leading-relaxed">
+course: "B.Tech"
+semester: 4
+subject_id: 12
+date: "2024-03-15"
+attendance_{student_id}: "Present" | "Absent" (Repeat for each student)
+</pre>
+                            </div>
+                        </div>
+                    </div>
+                     <!-- Form Endpoint 2 -->
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="bg-blue-900 text-blue-300 px-2 py-1 rounded text-xs font-bold border border-blue-700">POST</span>
+                            <code class="text-white font-mono">/faculty/marks</code>
+                        </div>
+                        <p class="text-gray-400 mb-4">Update marks for an exam paper.</p>
+                        
+                        <div class="bg-gray-950 rounded-lg border border-gray-800 overflow-hidden">
+                            <div class="flex border-b border-gray-800">
+                                <span class="px-4 py-2 text-sm text-gray-500">Form Data Keys</span>
+                            </div>
+                            <div class="p-4 overflow-x-auto">
+<pre class="text-xs text-blue-300 font-mono leading-relaxed">
+exam_paper_id: 45
+marks_{student_id}: 85 (Repeat for each student)
+</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+     <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-800 text-white mt-auto">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <!-- Brand -->
+            <div class="col-span-1 md:col-span-1">
+                 <div class="flex items-center gap-2 mb-4">
+                    <svg class="w-8 h-8 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <span class="text-xl font-bold">EduPortal</span>
+                </div>
+                <p class="text-gray-400 text-sm">
+                    Empowering improved educational outcomes through unified digital management.
+                </p>
+                <div class="mt-6 flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-indigo-400"><span class="sr-only">Twitter</span><svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path></svg></a>
+                    <a href="#" class="text-gray-400 hover:text-indigo-400"><span class="sr-only">LinkedIn</span><svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd"></path></svg></a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div>
+                <h3 class="text-sm font-semibold text-gray-200 tracking-wider uppercase mb-4">Product</h3>
+                <ul class="space-y-3 text-sm text-gray-400">
+                    <li><a href="{{ url_for('main.features_student') }}" class="hover:text-white transition-colors">Student Portal</a></li>
+                    <li><a href="{{ url_for('main.features_faculty') }}" class="hover:text-white transition-colors">Faculty Suite</a></li>
+                    <li><a href="{{ url_for('main.features_admin') }}" class="hover:text-white transition-colors">Admin Control</a></li>
+                    <li><a href="{{ url_for('main.pricing') }}" class="hover:text-white transition-colors">Pricing</a></li>
+                </ul>
+            </div>
+
+            <!-- Resources -->
+            <div>
+                <h3 class="text-sm font-semibold text-gray-200 tracking-wider uppercase mb-4">Resources</h3>
+                <ul class="space-y-3 text-sm text-gray-400">
+                     <li><a href="{{ url_for('main.documentation') }}" class="hover:text-white transition-colors">Documentation</a></li>
+                    <li><a href="{{ url_for('main.api_reference') }}" class="hover:text-white transition-colors">API Reference</a></li>
+                    <li><a href="{{ url_for('main.help_center') }}" class="hover:text-white transition-colors">Help Center</a></li>
+                    <li><a href="{{ url_for('main.system_status') }}" class="hover:text-white transition-colors">System Status</a></li>
+                </ul>
+            </div>
+
+             <!-- Contact -->
+            <div>
+                <h3 class="text-sm font-semibold text-gray-200 tracking-wider uppercase mb-4">Contact</h3>
+                <ul class="space-y-3 text-sm text-gray-400">
+                    <li>support@eduportal.com</li>
+                    <li>+91 98765 43210</li>
+                    <li>One World Trade Center, Suite 8500, New York, NY 10007</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Bottom Bar -->
+        <div class="bg-gray-950 py-6">
+             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+                <p>&copy; 2026 EduPortal Inc. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="{{ url_for('main.privacy_policy') }}" class="hover:text-gray-300">Privacy Policy</a>
+                    <a href="{{ url_for('main.terms_of_service') }}" class="hover:text-gray-300">Terms of Service</a>
+                    <a href="{{ url_for('main.cookie_settings') }}" class="hover:text-gray-300">Cookie Settings</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+{% endblock %}

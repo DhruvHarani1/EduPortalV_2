@@ -1,0 +1,294 @@
+{% extends "base.html" %}
+
+{% block title %}Documentation | EduPortal{% endblock %}
+
+{% block layout %}
+<div class="bg-gray-50 font-sans text-gray-900 min-h-screen flex flex-col" x-data="{ activeSection: 'introduction' }">
+    <!-- Navbar (Standard) -->
+    <nav class="bg-white shadow sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="shrink-0 flex items-center">
+                        <a href="{{ url_for('main.index') }}" class="text-xl font-bold text-indigo-600 tracking-tight flex items-center gap-2">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            EduPortal
+                        </a>
+                    </div>
+                </div>
+                 <div class="flex items-center space-x-6">
+                    <a href="{{ url_for('main.index') }}" class="text-gray-500 hover:text-indigo-600 font-medium text-sm flex items-center gap-1 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        Back to Home
+                    </a>
+                     <a href="{{ url_for('auth.login') }}" class="text-indigo-600 hover:text-indigo-800 font-medium text-sm">Login</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-grow flex gap-12">
+        <!-- Sidebar -->
+        <aside class="w-64 hidden lg:block shrink-0 sticky top-24 h-screen overflow-y-auto pb-24">
+            <h5 class="text-gray-900 font-bold uppercase tracking-wide text-sm mb-4">Getting Started</h5>
+            <ul class="space-y-3 mb-8 border-l border-gray-200">
+                <li><a href="#" @click.prevent="activeSection = 'introduction'" :class="{'text-indigo-600 border-indigo-600 font-bold': activeSection === 'introduction', 'text-gray-500 hover:text-gray-900 border-transparent': activeSection !== 'introduction'}" class="block pl-4 border-l-2 -ml-px transition-colors">Introduction</a></li>
+                <li><a href="#" @click.prevent="activeSection = 'architecture'" :class="{'text-indigo-600 border-indigo-600 font-bold': activeSection === 'architecture', 'text-gray-500 hover:text-gray-900 border-transparent': activeSection !== 'architecture'}" class="block pl-4 border-l-2 -ml-px transition-colors">System Architecture</a></li>
+            </ul>
+
+            <h5 class="text-gray-900 font-bold uppercase tracking-wide text-sm mb-4">Admin Guide</h5>
+             <ul class="space-y-3 mb-8 border-l border-gray-200">
+                <li><a href="#" @click.prevent="activeSection = 'admin-dashboard'" :class="{'text-indigo-600 border-indigo-600 font-bold': activeSection === 'admin-dashboard', 'text-gray-500 hover:text-gray-900 border-transparent': activeSection !== 'admin-dashboard'}" class="block pl-4 border-l-2 -ml-px transition-colors">Dashboard Overview</a></li>
+                <li><a href="#" @click.prevent="activeSection = 'admin-users'" :class="{'text-indigo-600 border-indigo-600 font-bold': activeSection === 'admin-users', 'text-gray-500 hover:text-gray-900 border-transparent': activeSection !== 'admin-users'}" class="block pl-4 border-l-2 -ml-px transition-colors">User Management</a></li>
+                <li><a href="#" @click.prevent="activeSection = 'admin-reports'" :class="{'text-indigo-600 border-indigo-600 font-bold': activeSection === 'admin-reports', 'text-gray-500 hover:text-gray-900 border-transparent': activeSection !== 'admin-reports'}" class="block pl-4 border-l-2 -ml-px transition-colors">System Reports</a></li>
+            </ul>
+
+            <h5 class="text-gray-900 font-bold uppercase tracking-wide text-sm mb-4">Faculty Guide</h5>
+             <ul class="space-y-3 mb-8 border-l border-gray-200">
+                <li><a href="#" @click.prevent="activeSection = 'faculty-attendance'" :class="{'text-indigo-600 border-indigo-600 font-bold': activeSection === 'faculty-attendance', 'text-gray-500 hover:text-gray-900 border-transparent': activeSection !== 'faculty-attendance'}" class="block pl-4 border-l-2 -ml-px transition-colors">Marking Attendance</a></li>
+                <li><a href="#" @click.prevent="activeSection = 'faculty-grading'" :class="{'text-indigo-600 border-indigo-600 font-bold': activeSection === 'faculty-grading', 'text-gray-500 hover:text-gray-900 border-transparent': activeSection !== 'faculty-grading'}" class="block pl-4 border-l-2 -ml-px transition-colors">Grading & Syllabus</a></li>
+                <li><a href="#" @click.prevent="activeSection = 'faculty-mentorship'" :class="{'text-indigo-600 border-indigo-600 font-bold': activeSection === 'faculty-mentorship', 'text-gray-500 hover:text-gray-900 border-transparent': activeSection !== 'faculty-mentorship'}" class="block pl-4 border-l-2 -ml-px transition-colors">Mentorship Program</a></li>
+            </ul>
+
+            <h5 class="text-gray-900 font-bold uppercase tracking-wide text-sm mb-4">Student Guide</h5>
+             <ul class="space-y-3 mb-8 border-l border-gray-200">
+                <li><a href="#" @click.prevent="activeSection = 'student-portal'" :class="{'text-indigo-600 border-indigo-600 font-bold': activeSection === 'student-portal', 'text-gray-500 hover:text-gray-900 border-transparent': activeSection !== 'student-portal'}" class="block pl-4 border-l-2 -ml-px transition-colors">Using the Portal</a></li>
+                <li><a href="#" @click.prevent="activeSection = 'student-academics'" :class="{'text-indigo-600 border-indigo-600 font-bold': activeSection === 'student-academics', 'text-gray-500 hover:text-gray-900 border-transparent': activeSection !== 'student-academics'}" class="block pl-4 border-l-2 -ml-px transition-colors">Academics & Exams</a></li>
+                <li><a href="#" @click.prevent="activeSection = 'student-services'" :class="{'text-indigo-600 border-indigo-600 font-bold': activeSection === 'student-services', 'text-gray-500 hover:text-gray-900 border-transparent': activeSection !== 'student-services'}" class="block pl-4 border-l-2 -ml-px transition-colors">Student Services</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-grow max-w-4xl">
+            <!-- Introduction -->
+            <div x-show="activeSection === 'introduction'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <span class="text-indigo-600 font-semibold tracking-wide uppercase text-sm">Documentation</span>
+                <h1 class="mt-2 text-4xl font-extrabold text-gray-900 sm:text-5xl">Welcome to EduPortal</h1>
+                <p class="mt-4 text-xl text-gray-500 leading-8">
+                    The complete operating system for modern educational institutions.
+                </p>
+                <hr class="my-8 border-gray-200">
+                <div class="prose prose-indigo max-w-none text-gray-600">
+                    <p>EduPortal is a unified platform designed to bridge the gap between administration, faculty, and students. By centralizing data and workflows, it ensures that everyone stays connected and informed.</p>
+                    <p>Whether you are an administrator managing hundreds of courses, a faculty member tracking attendance, or a student checking your exam results, EduPortal provides a tailored experience for your role.</p>
+                </div>
+            </div>
+
+             <!-- System Architecture -->
+             <div x-show="activeSection === 'architecture'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">System Architecture</h2>
+                <div class="prose prose-indigo max-w-none text-gray-600">
+                    <p>EduPortal follows a modular Model-View-Controller (MVC) architecture, powered by Flask (Python) on the backend and modern HTML5/TailwindCSS on the frontend.</p>
+                    <h3 class="text-xl font-bold text-gray-900 mt-6">Core Components</h3>
+                    <ul class="list-disc pl-5 mt-4 space-y-2">
+                        <li><strong>Authentication Layer:</strong> Secure login with role-based access control (RBAC) ensuring users only see what they need.</li>
+                        <li><strong>Database:</strong> Relational database schema managing complex relationships between Students, Courses, Attendance, and Exams.</li>
+                        <li><strong>Reporting Engine:</strong> Generates real-time PDF reports and visual analytics for data-driven decision making.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Admin Sections -->
+            <div x-show="activeSection === 'admin-dashboard'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">Admin Dashboard Overview</h2>
+                 <div class="prose prose-indigo max-w-none text-gray-600">
+                    <p>The Admin Dashboard is the command center of EduPortal. Upon logging in, administrators are greeted with high-level metrics:</p>
+                    <ul class="list-disc pl-5 mt-4 space-y-2">
+                        <li><strong>Total Students & Faculty:</strong> Real-time headcount.</li>
+                        <li><strong>Course Distribution:</strong> Visual breakdown of student enrollment by course.</li>
+                        <li><strong>Recent Activity:</strong> Audit log of latest system notices and updates.</li>
+                    </ul>
+                    <div class="bg-gray-100 border-l-4 border-indigo-500 p-4 mt-6">
+                        <p class="text-sm"><strong>Pro Tip:</strong> Use the "System Report Print" feature in the top-right to generate a PDF snapshot of these metrics for board meetings.</p>
+                    </div>
+                </div>
+            </div>
+
+             <div x-show="activeSection === 'admin-users'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">User Management</h2>
+                 <div class="prose prose-indigo max-w-none text-gray-600">
+                    <p>Admins have full control over the institution's roster.</p>
+                    <h3 class="text-xl font-bold text-gray-900 mt-6">Managing Students</h3>
+                    <p>You can add, edit, or remove student profiles. Key data points include:</p>
+                    <ul class="list-disc pl-5 mt-2 mb-4 space-y-1">
+                        <li>Personal details (Name, DOB, Contact)</li>
+                        <li>Academic Info (Course, Year, Enrollment Date)</li>
+                        <li>Parent/Guardian Contact Info</li>
+                    </ul>
+                    <h3 class="text-xl font-bold text-gray-900 mt-6">Managing Faculty</h3>
+                    <p>Faculty profiles include designation, department, and assigned courses. Deleting a faculty member will intelligently prompt to reassign their classes.</p>
+                </div>
+            </div>
+            
+             <div x-show="activeSection === 'admin-reports'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">System Reports</h2>
+                 <div class="prose prose-indigo max-w-none text-gray-600">
+                    <p>Generate comprehensive reports to track institutional health.</p>
+                    <table class="min-w-full mt-6 border border-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Report Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Student Performance</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">Aggregate view of grades across all courses.</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Attendance Logs</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">Daily, weekly, and monthly attendance trends.</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Fee Status</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">List of paid, pending, and overdue fees.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Faculty Sections -->
+            <div x-show="activeSection === 'faculty-attendance'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">Marking Attendance</h2>
+                 <div class="prose prose-indigo max-w-none text-gray-600">
+                    <p>The "My Classes" section allows faculty to view their schedule and mark daily attendance.</p>
+                    <ol class="list-decimal pl-5 mt-4 space-y-2">
+                        <li>Navigate to <strong>Attendance</strong> in the sidebar.</li>
+                        <li>Select the <strong>Course</strong> and <strong>Date</strong>.</li>
+                        <li>You will see a checklist of students. Mark those who are <strong>Present</strong> (default is Absent).</li>
+                        <li>Click <strong>Save Attendance</strong>.</li>
+                    </ol>
+                    <p class="mt-4">Attendance data is immediately available to students in their dashboard.</p>
+                </div>
+            </div>
+
+            <div x-show="activeSection === 'faculty-grading'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">Grading & Syllabus</h2>
+                 <div class="prose prose-indigo max-w-none text-gray-600">
+                    <h3 class="text-xl font-bold text-gray-900">Uploading Syllabus</h3>
+                    <p>Keep students informed by uploading the latest course syllabus (PDF format supported). This appears in the Student's "Academics" tab.</p>
+                    
+                    <h3 class="text-xl font-bold text-gray-900 mt-6">Entering Marks</h3>
+                    <p>Go to the <strong>Marks</strong> section to input exam results. You can enter marks for internal assessments, mid-terms, and final exams. The system automatically calculates the GPA based on credit weightage.</p>
+                </div>
+            </div>
+
+             <div x-show="activeSection === 'faculty-mentorship'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">Mentorship Program</h2>
+                 <div class="prose prose-indigo max-w-none text-gray-600">
+                    <p>EduPortal fosters close guidance through its Mentorship module.</p>
+                    <ul class="list-disc pl-5 mt-4 space-y-2">
+                        <li><strong>Assigned Mentees:</strong> View the list of students assigned to you for guidance.</li>
+                        <li><strong>Progress Tracking:</strong> Monitor their attendance and academic performance.</li>
+                        <li><strong>Query Resolution:</strong> Respond to private queries sent by your mentees regarding academic or personal issues.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Student Sections -->
+             <div x-show="activeSection === 'student-portal'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">Using the Student Portal</h2>
+                 <div class="prose prose-indigo max-w-none text-gray-600">
+                    <p>Your personal dashboard gives you a snapshot of your campus life.</p>
+                    <ul class="list-disc pl-5 mt-4 space-y-2">
+                        <li><strong>Timetable:</strong> View your daily class schedule.</li>
+                        <li><strong>Notices:</strong> Important announcements from the admin office.</li>
+                        <li><strong>Quick Links:</strong> Fast access to Fees, Library, and Exams.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div x-show="activeSection === 'student-academics'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">Academics & Exams</h2>
+                 <div class="prose prose-indigo max-w-none text-gray-600">
+                    <h3 class="text-xl font-bold text-gray-900">Attendance Tracking</h3>
+                    <p>Check your attendance percentage per subject. If your attendance drops below 75%, it will be highlighted in red.</p>
+                    
+                    <h3 class="text-xl font-bold text-gray-900 mt-6">Examination Results</h3>
+                    <p>View your marksheet for completed semesters. You can download a PDF copy of your marksheet for official use.</p>
+                </div>
+            </div>
+
+             <div x-show="activeSection === 'student-services'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">Student Services</h2>
+                 <div class="prose prose-indigo max-w-none text-gray-600">
+                    <p>Access essential campus services directly from the portal:</p>
+                    <ul class="list-disc pl-5 mt-4 space-y-2">
+                        <li><strong>Fee Payment:</strong> View pending dues and pay online securely. Download receipts instantly.</li>
+                        <li><strong>Scholarships:</strong> Apply for merit-based or need-based scholarships. Track your application status.</li>
+                        <li><strong>ID Card:</strong> Report a lost ID card and request a replacement.</li>
+                        <li><strong>Event Registration:</strong> Browse upcoming university events and register with a single click.</li>
+                    </ul>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-800 text-white mt-auto">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <!-- Brand -->
+            <div class="col-span-1 md:col-span-1">
+                 <div class="flex items-center gap-2 mb-4">
+                    <svg class="w-8 h-8 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <span class="text-xl font-bold">EduPortal</span>
+                </div>
+                <p class="text-gray-400 text-sm">
+                    Empowering improved educational outcomes through unified digital management.
+                </p>
+                <div class="mt-6 flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-indigo-400"><span class="sr-only">Twitter</span><svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path></svg></a>
+                    <a href="#" class="text-gray-400 hover:text-indigo-400"><span class="sr-only">LinkedIn</span><svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd"></path></svg></a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div>
+                <h3 class="text-sm font-semibold text-gray-200 tracking-wider uppercase mb-4">Product</h3>
+                <ul class="space-y-3 text-sm text-gray-400">
+                    <li><a href="{{ url_for('main.features_student') }}" class="hover:text-white transition-colors">Student Portal</a></li>
+                    <li><a href="{{ url_for('main.features_faculty') }}" class="hover:text-white transition-colors">Faculty Suite</a></li>
+                    <li><a href="{{ url_for('main.features_admin') }}" class="hover:text-white transition-colors">Admin Control</a></li>
+                    <li><a href="{{ url_for('main.pricing') }}" class="hover:text-white transition-colors">Pricing</a></li>
+                </ul>
+            </div>
+
+            <!-- Resources -->
+            <div>
+                <h3 class="text-sm font-semibold text-gray-200 tracking-wider uppercase mb-4">Resources</h3>
+                <ul class="space-y-3 text-sm text-gray-400">
+                     <li><a href="{{ url_for('main.documentation') }}" class="hover:text-white transition-colors">Documentation</a></li>
+                    <li><a href="{{ url_for('main.api_reference') }}" class="hover:text-white transition-colors">API Reference</a></li>
+                    <li><a href="{{ url_for('main.help_center') }}" class="hover:text-white transition-colors">Help Center</a></li>
+                    <li><a href="{{ url_for('main.system_status') }}" class="hover:text-white transition-colors">System Status</a></li>
+                </ul>
+            </div>
+
+             <!-- Contact -->
+            <div>
+                <h3 class="text-sm font-semibold text-gray-200 tracking-wider uppercase mb-4">Contact</h3>
+                <ul class="space-y-3 text-sm text-gray-400">
+                    <li>support@eduportal.com</li>
+                    <li>+91 98765 43210</li>
+                    <li>One World Trade Center, Suite 8500, New York, NY 10007</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Bottom Bar -->
+        <div class="bg-gray-950 py-6">
+             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+                <p>&copy; 2026 EduPortal Inc. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="{{ url_for('main.privacy_policy') }}" class="hover:text-gray-300">Privacy Policy</a>
+                    <a href="{{ url_for('main.terms_of_service') }}" class="hover:text-gray-300">Terms of Service</a>
+                    <a href="{{ url_for('main.cookie_settings') }}" class="hover:text-gray-300">Cookie Settings</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+{% endblock %}

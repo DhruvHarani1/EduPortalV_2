@@ -21,7 +21,8 @@ def login():
                 flash(f'Access Denied: Account exists but does not belong to the {role.capitalize()} domain.')
                 return render_template('login.html', role=role)
 
-            login_user(user)
+            remember = True if request.form.get('remember-me') else False
+            login_user(user, remember=remember)
             if user.role == 'admin':
                 return redirect(url_for('admin.dashboard'))
             elif user.role == 'faculty':

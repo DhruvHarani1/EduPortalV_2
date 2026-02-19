@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy Policy | EduPortal{% endblock %}
+
+{% block layout %}
+<div class="bg-gray-50 font-sans text-gray-900 min-h-screen flex flex-col">
+    <!-- Navbar (Standard) -->
+    <nav class="bg-white shadow sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="shrink-0 flex items-center">
+                        <a href="{{ url_for('main.index') }}" class="text-xl font-bold text-indigo-600 tracking-tight flex items-center gap-2">
+                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            EduPortal
+                        </a>
+                    </div>
+                </div>
+                 <div class="flex items-center space-x-6">
+                    <a href="{{ url_for('main.index') }}" class="text-gray-500 hover:text-indigo-600 font-medium text-sm flex items-center gap-1 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <h1 class="text-3xl font-extrabold text-gray-900 mb-8">Privacy Policy</h1>
+        
+        <div class="prose prose-indigo text-gray-600">
+            <p class="mb-4">Last Updated: February 20, 2026</p>
+            
+            <p>At EduPortal, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclosure, and safeguard your information when you visit our website or use our services.</p>
+
+            <h2 class="text-xl font-bold text-gray-900 mt-8 mb-4">1. Information We Collect</h2>
+            <p>We collect information that you provide directly to us when you register, update your profile, or interact with our platform. This includes personal information such as your name, email address, student/faculty ID, and academic records.</p>
+            
+            <h2 class="text-xl font-bold text-gray-900 mt-8 mb-4">2. How We Use Your Information</h2>
+            <p>We use the information we collect to:</p>
+            <ul class="list-disc pl-5 space-y-2">
+                <li>Provide, maintain, and improve our services.</li>
+                <li>Process transactions and manage academic records.</li>
+                <li>Send you technical notices, updates, and support messages.</li>
+                <li>Respond to your comments and questions.</li>
+            </ul>
+
+            <h2 class="text-xl font-bold text-gray-900 mt-8 mb-4">3. Data Security</h2>
+            <p>We implement appropriate technical and organizational measures to protect your personal data against unauthorized access, alteration, disclosure, or destruction.</p>
+
+            <h2 class="text-xl font-bold text-gray-900 mt-8 mb-4">4. Contact Us</h2>
+            <p>If you have any questions about this Privacy Policy, please contact us at:</p>
+            <p class="mt-2">
+                <strong>Email:</strong> support@eduportal.com<br>
+                <strong>Address:</strong> One World Trade Center, Suite 8500, New York, NY 10007
+            </p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-800 text-white mt-auto">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="col-span-1 md:col-span-1">
+                 <div class="flex items-center gap-2 mb-4">
+                    <svg class="w-8 h-8 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    <span class="text-xl font-bold">EduPortal</span>
+                </div>
+                <p class="text-gray-400 text-sm">Empowering improved educational outcomes through unified digital management.</p>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-gray-200 tracking-wider uppercase mb-4">Product</h3>
+                <ul class="space-y-3 text-sm text-gray-400">
+                    <li><a href="{{ url_for('main.features_student') }}" class="hover:text-white transition-colors">Student Portal</a></li>
+                    <li><a href="{{ url_for('main.features_faculty') }}" class="hover:text-white transition-colors">Faculty Suite</a></li>
+                    <li><a href="{{ url_for('main.features_admin') }}" class="hover:text-white transition-colors">Admin Control</a></li>
+                    <li><a href="{{ url_for('main.pricing') }}" class="hover:text-white transition-colors">Pricing</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-gray-200 tracking-wider uppercase mb-4">Resources</h3>
+                <ul class="space-y-3 text-sm text-gray-400">
+                     <li><a href="{{ url_for('main.documentation') }}" class="hover:text-white transition-colors">Documentation</a></li>
+                    <li><a href="{{ url_for('main.api_reference') }}" class="hover:text-white transition-colors">API Reference</a></li>
+                    <li><a href="{{ url_for('main.help_center') }}" class="hover:text-white transition-colors">Help Center</a></li>
+                    <li><a href="{{ url_for('main.system_status') }}" class="hover:text-white transition-colors">System Status</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-gray-200 tracking-wider uppercase mb-4">Contact</h3>
+                <ul class="space-y-3 text-sm text-gray-400">
+                    <li>support@eduportal.com</li>
+                    <li>+91 98765 43210</li>
+                    <li>One World Trade Center, Suite 8500, New York, NY 10007</li>
+                </ul>
+            </div>
+        </div>
+        <div class="bg-gray-950 py-6">
+             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+                <p>&copy; 2026 EduPortal Inc. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="{{ url_for('main.privacy_policy') }}" class="hover:text-gray-300">Privacy Policy</a>
+                    <a href="{{ url_for('main.terms_of_service') }}" class="hover:text-gray-300">Terms of Service</a>
+                    <a href="{{ url_for('main.cookie_settings') }}" class="hover:text-gray-300">Cookie Settings</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+{% endblock %}
