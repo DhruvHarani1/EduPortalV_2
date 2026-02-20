@@ -33,6 +33,11 @@ def api_reference():
 def help_center():
     return render_template('help_center.html')
 
+@main_bp.route('/developer')
+def developer():
+    # Hidden Portfolio (File: home.html)
+    return render_template('home.html')
+
 @main_bp.route('/system-status')
 def system_status():
     return render_template('system_status.html')

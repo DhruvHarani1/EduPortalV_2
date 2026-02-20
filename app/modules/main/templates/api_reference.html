@@ -36,16 +36,12 @@
                 <li><a href="#" @click.prevent="activeCategory = 'auth'" :class="{'text-indigo-400 font-bold': activeCategory === 'auth', 'text-gray-400 hover:text-white': activeCategory !== 'auth'}" class="block">Authentication</a></li>
             </ul>
 
-            <h5 class="text-gray-500 font-bold uppercase tracking-wide text-xs mb-4">Core API</h5>
+            <h5 class="text-gray-500 font-bold uppercase tracking-wide text-xs mb-4">Modules</h5>
              <ul class="space-y-2 mb-8">
-                <li><a href="#" @click.prevent="activeCategory = 'reports'" :class="{'text-indigo-400 font-bold': activeCategory === 'reports', 'text-gray-400 hover:text-white': activeCategory !== 'reports'}" class="block">Analytics & Reports</a></li>
-                <li><a href="#" @click.prevent="activeCategory = 'timetable'" :class="{'text-indigo-400 font-bold': activeCategory === 'timetable', 'text-gray-400 hover:text-white': activeCategory !== 'timetable'}" class="block">Timetable Management</a></li>
-            </ul>
-
-            <h5 class="text-gray-500 font-bold uppercase tracking-wide text-xs mb-4">Form Interactions</h5>
-             <ul class="space-y-2 mb-8">
-                <li><a href="#" @click.prevent="activeCategory = 'student-forms'" :class="{'text-indigo-400 font-bold': activeCategory === 'student-forms', 'text-gray-400 hover:text-white': activeCategory !== 'student-forms'}" class="block">Student Operations</a></li>
-                <li><a href="#" @click.prevent="activeCategory = 'faculty-forms'" :class="{'text-indigo-400 font-bold': activeCategory === 'faculty-forms', 'text-gray-400 hover:text-white': activeCategory !== 'faculty-forms'}" class="block">Faculty Operations</a></li>
+                <li><a href="#" @click.prevent="activeCategory = 'student'" :class="{'text-indigo-400 font-bold': activeCategory === 'student', 'text-gray-400 hover:text-white': activeCategory !== 'student'}" class="block">Student API</a></li>
+                <li><a href="#" @click.prevent="activeCategory = 'faculty'" :class="{'text-indigo-400 font-bold': activeCategory === 'faculty', 'text-gray-400 hover:text-white': activeCategory !== 'faculty'}" class="block">Faculty API</a></li>
+                <li><a href="#" @click.prevent="activeCategory = 'admin'" :class="{'text-indigo-400 font-bold': activeCategory === 'admin', 'text-gray-400 hover:text-white': activeCategory !== 'admin'}" class="block">Admin API</a></li>
+                <li><a href="#" @click.prevent="activeCategory = 'main'" :class="{'text-indigo-400 font-bold': activeCategory === 'main', 'text-gray-400 hover:text-white': activeCategory !== 'main'}" class="block">Public / Main</a></li>
             </ul>
         </aside>
 
@@ -57,7 +53,7 @@
                 <span class="text-indigo-500 font-bold tracking-wide uppercase text-xs">Overview</span>
                 <h1 class="mt-2 text-3xl font-extrabold text-white">Getting Started</h1>
                 <p class="mt-4 text-lg text-gray-400">
-                    Welcome to the EduPortal Developer API. This reference documents both the JSON-based internal APIs used for asynchronous data fetching and the standard Form-based endpoints used for core operations.
+                    Welcome to the EduPortal Developer API. This reference documents the full list of available endpoints, corresponding to the application's internal routing table.
                 </p>
 
                 <h3 class="text-xl font-bold text-white mt-8 mb-4">Base URL</h3>
@@ -108,305 +104,643 @@
             <div x-show="activeCategory === 'auth'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
                 <span class="text-indigo-500 font-bold tracking-wide uppercase text-xs">Security</span>
                 <h1 class="mt-2 text-3xl font-extrabold text-white">Authentication</h1>
-                <p class="mt-4 text-lg text-gray-400">
-                    EduPortal uses session-based authentication. Clients must maintain cookies describing the session state.
+                <p class="mt-4 text-lg text-gray-400 mb-8">
+                    Endpoints for establishing and terminating user sessions.
                 </p>
 
-                <div class="mt-12 space-y-16">
-                     <!-- Endpoint 1 -->
-                    <div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="bg-blue-900 text-blue-300 px-2 py-1 rounded text-xs font-bold border border-blue-700">POST</span>
-                            <code class="text-white font-mono">/auth/login</code>
+                <div class="space-y-8">
+                    <!-- auth.login -->
+                    <div class="bg-gray-900 rounded-lg p-6 border border-gray-800">
+                        <div class="flex items-center gap-3 mb-2">
+                             <span class="bg-blue-900 text-blue-300 px-2 py-1 rounded text-xs font-bold border border-blue-700">GET, POST</span>
+                            <code class="text-white font-mono text-lg">/auth/login</code>
                         </div>
-                        <p class="text-gray-400 mb-4">Establish a session.</p>
-                        
-                        <div class="bg-gray-950 rounded-lg border border-gray-800 overflow-hidden">
-                            <div class="flex border-b border-gray-800">
-                                <span class="px-4 py-2 text-sm text-gray-500">Form Data</span>
-                            </div>
-                            <div class="p-4 overflow-x-auto">
-<pre class="text-xs text-blue-300 font-mono leading-relaxed">
-email: "user@example.com"
-password: "your_password"
-role: "student" | "faculty" | "admin"
-</pre>
-                            </div>
-                             <div class="border-t border-gray-800 p-4 bg-gray-900">
-                                <span class="text-xs text-gray-500 uppercase tracking-wider font-bold">Response</span>
-                                <p class="text-sm text-gray-300 mt-1">Returns <code>302 Redirect</code> to the role-specific dashboard upon success.</p>
-                            </div>
-                        </div>
+                        <p class="text-gray-400 text-sm font-mono mb-2">Endpoint: auth.login</p>
+                        <p class="text-gray-400 text-sm">Main login interface. POST with email, password, and role to authenticate.</p>
                     </div>
-
-                    <!-- Endpoint 2 -->
-                    <div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="bg-green-900 text-green-300 px-2 py-1 rounded text-xs font-bold border border-green-700">GET</span>
-                            <code class="text-white font-mono">/auth/logout</code>
+                     <!-- auth.logout -->
+                    <div class="bg-gray-900 rounded-lg p-6 border border-gray-800">
+                        <div class="flex items-center gap-3 mb-2">
+                             <span class="bg-green-900 text-green-300 px-2 py-1 rounded text-xs font-bold border border-green-700">GET</span>
+                            <code class="text-white font-mono text-lg">/auth/logout</code>
                         </div>
-                        <p class="text-gray-400 mb-4">Terminate the current session.</p>
-                         <div class="bg-gray-950 rounded-lg border border-gray-800 overflow-hidden">
-                             <div class="border-b border-gray-800 p-4 bg-gray-900">
-                                <span class="text-xs text-gray-500 uppercase tracking-wider font-bold">Response</span>
-                                <p class="text-sm text-gray-300 mt-1">Returns <code>302 Redirect</code> to the landing page.</p>
-                            </div>
-                        </div>
+                        <p class="text-gray-400 text-sm font-mono mb-2">Endpoint: auth.logout</p>
+                        <p class="text-gray-400 text-sm">Clears the session and redirects to index.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Reports Section (JSON) -->
-            <div x-show="activeCategory === 'reports'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
-                <span class="text-indigo-500 font-bold tracking-wide uppercase text-xs">Analytics API (JSON)</span>
-                <h1 class="mt-2 text-3xl font-extrabold text-white">Reports & Intelligence</h1>
-                <p class="mt-4 text-lg text-gray-400">
-                    Endpoints for retrieving aggregated analytics. Returns <code class="text-indigo-400">application/json</code>.
+            <!-- Student Section -->
+            <div x-show="activeCategory === 'student'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <span class="text-indigo-500 font-bold tracking-wide uppercase text-xs">Module</span>
+                <h1 class="mt-2 text-3xl font-extrabold text-white">Student API</h1>
+                <p class="mt-4 text-lg text-gray-400 mb-8">
+                    Complete reference for student-facing endpoints.
                 </p>
-                
-                <div class="mt-12 space-y-16">
-                     <!-- Endpoint 1 -->
-                    <div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="bg-green-900 text-green-300 px-2 py-1 rounded text-xs font-bold border border-green-700">GET</span>
-                            <code class="text-white font-mono">/api/reports/student-performance</code>
-                        </div>
-                        <p class="text-gray-400 mb-4">
-                            Get deep insights into student academic performance, including "Academic DNA" (Radar), consistency scores, and growth velocity.
-                        </p>
-                        
-                        <div class="bg-gray-950 rounded-lg border border-gray-800 overflow-hidden">
-                            <div class="flex border-b border-gray-800">
-                                <span class="px-4 py-2 text-sm text-gray-500">Response Example</span>
-                            </div>
-                            <div class="p-4 overflow-x-auto">
-<pre class="text-xs text-green-300 font-mono leading-relaxed">
-{
-  "consistency": [
-    {
-      "growth": 12.5,
-      "name": "Arjun Patel",
-      "x": 78.5,
-      "y": 4.2
-    }
-  ],
-  "danger_zone": [
-    {
-      "avg": 35.0,
-      "name": "Rohan Gupta",
-      "risk": "Critical"
-    }
-  ],
-  "insights": {
-    "review": "The batch is currently Improving.",
-    "status": "Improving",
-    "suggestion": "Maintain current momentum.",
-    "tips": [
-      "Encourage the 15 'Rising Stars' to mentor their peers."
-    ]
-  },
-  "radar": {
-    "data": [85.0, 72.0, 91.0, 68.0],
-    "labels": ["Algorithms", "Database", "Networking", "Math"]
-  }
-}
-</pre>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Endpoint 2 -->
-                    <div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="bg-green-900 text-green-300 px-2 py-1 rounded text-xs font-bold border border-green-700">GET</span>
-                            <code class="text-white font-mono">/api/reports/attendance</code>
-                        </div>
-                        <p class="text-gray-400 mb-4">Retrieve attendance fatigue metrics and identify students at risk of truancy.</p>
-                         <div class="bg-gray-950 rounded-lg border border-gray-800 overflow-hidden">
-                             <div class="flex border-b border-gray-800">
-                                <span class="px-4 py-2 text-sm text-gray-500">Response Example</span>
+                <div class="space-y-12">
+                    
+                    <!-- 1. Dashboard -->
+                    <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden shadow-lg">
+                        <div class="p-6 border-b border-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-green-900 text-green-300 px-3 py-1 rounded text-sm font-bold border border-green-700">GET</span>
+                                <code class="text-white font-mono text-xl">/student/dashboard</code>
                             </div>
-                            <div class="p-4 overflow-x-auto">
-<pre class="text-xs text-green-300 font-mono leading-relaxed">
+                            <span class="text-gray-500 text-xs font-mono bg-gray-950 px-2 py-1 rounded">student.dashboard</span>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-300 mb-6">Aggregates all critical data for the student's landing page: attendance summaries, fee status, upcoming events, and recent notices.</p>
+                            
+                            <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Response Structure (JSON)</h4>
+                            <div class="bg-gray-950 rounded-lg p-4 font-mono text-xs text-green-300 overflow-x-auto border border-gray-800">
 {
-  "fatigue": [95.0, 92.0, 85.0, 88.0, 70.0], // Mon-Fri %
-  "insights": {
-    "status": "Fatigue Detected",
-    "summary": "Fridays are showing significant drops in attendance (70%).",
-    "tip": "Consider light activities or gamified sessions on Fridays."
+  "student": {
+    "name": "Alex Johnson",
+    "course": "B.Tech Computer Science",
+    "semester": 6
   },
-  "truancy_prob": [
-    {
-      "name": "Sarah Lee",
-      "perc": 65.0,
-      "prob": 35.0
-    }
+  "attendance_pct": 85.5,
+  "pending_fees": 0,
+  "latest_spi": 9.2,
+  "next_event": {
+    "title": "Tech Symposium",
+    "date": "2024-04-20"
+  },
+  "notices": [
+    { "title": "Exam Schedule Released", "date": "2024-04-10" },
+    { "title": "Holiday on Friday", "date": "2024-04-08" }
   ]
 }
-</pre>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Timetable Section (JSON) -->
-            <div x-show="activeCategory === 'timetable'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
-                <span class="text-indigo-500 font-bold tracking-wide uppercase text-xs">Management API (JSON)</span>
-                <h1 class="mt-2 text-3xl font-extrabold text-white">Timetable Management</h1>
-                <p class="mt-4 text-lg text-gray-400">
-                    Operations for updating schedule slots dynamically.
-                </p>
-
-                <div class="mt-12 space-y-16">
-                     <!-- Endpoint 1 -->
-                    <div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="bg-indigo-900 text-indigo-300 px-2 py-1 rounded text-xs font-bold border border-indigo-700">POST</span>
-                            <code class="text-white font-mono">/admin/timetable/update_slot</code>
+                    <!-- 2. Attendance -->
+                    <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden shadow-lg">
+                        <div class="p-6 border-b border-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-green-900 text-green-300 px-3 py-1 rounded text-sm font-bold border border-green-700">GET</span>
+                                <code class="text-white font-mono text-xl">/student/attendance</code>
+                            </div>
+                            <span class="text-gray-500 text-xs font-mono bg-gray-950 px-2 py-1 rounded">student.attendance</span>
                         </div>
-                        <p class="text-gray-400 mb-4">Update or create a timetable slot assignment.</p>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="bg-gray-950 rounded-lg border border-gray-800 overflow-hidden">
-                                <div class="flex border-b border-gray-800">
-                                    <span class="px-4 py-2 text-sm text-gray-500">Request Body</span>
+                        <div class="p-6">
+                            <p class="text-gray-300 mb-6">Returns detailed subject-wise attendance statistics. Calculates recovery needed for subjects below 75%.</p>
+                             <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Response Structure (HTML View Logic)</h4>
+                             <ul class="list-disc list-inside text-gray-400 text-sm space-y-2">
+                                <li><strong>overall_percent</strong>: Aggregate percentage across all subjects.</li>
+                                <li><strong>subjects</strong>: List of objects containing:
+                                    <ul class="pl-6 list-square mt-1 space-y-1">
+                                        <li><code>name</code>: Subject Name</li>
+                                        <li><code>present</code>: Days present</li>
+                                        <li><code>total</code>: Total days taught</li>
+                                        <li><code>percent</code>: (Present/Total)*100</li>
+                                        <li><code>recovery_needed</code>: Number of consecutive classes needed to reach 75%.</li>
+                                    </ul>
+                                </li>
+                             </ul>
+                        </div>
+                    </div>
+
+                    <!-- 3. Academics & Results -->
+                    <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden shadow-lg">
+                        <div class="p-6 border-b border-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-green-900 text-green-300 px-3 py-1 rounded text-sm font-bold border border-green-700">GET</span>
+                                <code class="text-white font-mono text-xl">/student/academics</code>
+                            </div>
+                            <span class="text-gray-500 text-xs font-mono bg-gray-950 px-2 py-1 rounded">student.academics</span>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-300 mb-6">Displays academic history grouped by Exam Events. Calculates SPI for each exam and overall CGPI.</p>
+                            
+                            <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Key Data Points</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-gray-950 p-3 rounded border border-gray-800">
+                                    <span class="text-indigo-400 font-bold block mb-1">Exams List</span>
+                                    <p class="text-gray-500 text-xs">Sorted by date (latest first). Contains results for all subjects in that exam.</p>
                                 </div>
-                                <div class="p-4 overflow-x-auto">
-<pre class="text-xs text-indigo-300 font-mono leading-relaxed">
+                                <div class="bg-gray-950 p-3 rounded border border-gray-800">
+                                    <span class="text-indigo-400 font-bold block mb-1">Grading Logic</span>
+                                    <p class="text-gray-500 text-xs">AA (>90), AB (>80), BB (>70), etc. Points are calculated as per credit weightage.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Download Marksheet -->
+                    <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden shadow-lg">
+                         <div class="p-6 border-b border-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-green-900 text-green-300 px-3 py-1 rounded text-sm font-bold border border-green-700">GET</span>
+                                <code class="text-white font-mono text-xl">/student/academics/marksheet/&lt;id&gt;</code>
+                            </div>
+                            <span class="text-gray-500 text-xs font-mono bg-gray-950 px-2 py-1 rounded">student.download_marksheet</span>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-300 mb-4">Generates a printable Marksheet for a specific Exam Event ID.</p>
+                            <table class="w-full text-left text-sm text-gray-400 mb-4">
+                                <thead class="border-b border-gray-800 text-gray-500 uppercase font-bold text-xs">
+                                    <tr>
+                                        <th class="py-2">Parameter</th>
+                                        <th class="py-2">Type</th>
+                                        <th class="py-2">Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="py-2 font-mono text-indigo-400">exam_id</td>
+                                        <td class="py-2">Integer (Path)</td>
+                                        <td class="py-2">Unique ID of the Exam Event (e.g., 5 for "Mid Term 2024").</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 5. Fees Listing -->
+                    <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden shadow-lg">
+                        <div class="p-6 border-b border-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-green-900 text-green-300 px-3 py-1 rounded text-sm font-bold border border-green-700">GET</span>
+                                <code class="text-white font-mono text-xl">/student/fees</code>
+                            </div>
+                            <span class="text-gray-500 text-xs font-mono bg-gray-950 px-2 py-1 rounded">student.fees</span>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-300">Lists all fee records split into two groups: <strong>Pending/Overdue</strong> and <strong>Paid History</strong>.</p>
+                        </div>
+                    </div>
+
+                    <!-- 6. Pay Fee -->
+                    <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden shadow-lg">
+                         <div class="p-6 border-b border-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-blue-900 text-blue-300 px-3 py-1 rounded text-sm font-bold border border-blue-700">POST</span>
+                                <code class="text-white font-mono text-xl">/student/fees/pay/&lt;id&gt;</code>
+                            </div>
+                            <span class="text-gray-500 text-xs font-mono bg-gray-950 px-2 py-1 rounded">student.pay_fee</span>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-300 mb-6">Initiates payment for a specific fee record. Currently simulates a successful transaction updating the status to 'Paid'.</p>
+                            
+                            <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Response (JSON)</h4>
+                            <div class="bg-gray-950 rounded p-4 font-mono text-xs text-green-300 overflow-x-auto border border-gray-800">
 {
-  "slot_id": 105,       // Optional (if editing)
-  "day": "Monday",
-  "period": 3,
-  "subject_id": 12,
-  "course": "B.Tech",
-  "semester": 4
+  "status": "success",
+  "message": "Payment successful!",
+  "transaction_id": "TXN17150112347"
 }
-</pre>
-                                </div>
                             </div>
-                             <div class="bg-gray-950 rounded-lg border border-gray-800 overflow-hidden">
-                                <div class="flex border-b border-gray-800">
-                                    <span class="px-4 py-2 text-sm text-gray-500">Response</span>
-                                </div>
-                                <div class="p-4 overflow-x-auto">
-<pre class="text-xs text-green-300 font-mono leading-relaxed">
+                        </div>
+                    </div>
+
+                    <!-- 7. Create Query -->
+                    <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden shadow-lg">
+                         <div class="p-6 border-b border-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-blue-900 text-blue-300 px-3 py-1 rounded text-sm font-bold border border-blue-700">POST</span>
+                                <code class="text-white font-mono text-xl">/student/queries/create</code>
+                            </div>
+                            <span class="text-gray-500 text-xs font-mono bg-gray-950 px-2 py-1 rounded">student.create_query</span>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-300 mb-6">Submit a new academic or general query to a faculty member.</p>
+                            
+                            <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Form Data Parameters</h4>
+                            <table class="w-full text-left text-sm text-gray-400 mb-4">
+                                <thead class="border-b border-gray-800 text-gray-500 uppercase font-bold text-xs">
+                                    <tr>
+                                        <th class="py-2">Field</th>
+                                        <th class="py-2">Type</th>
+                                        <th class="py-2">Required</th>
+                                        <th class="py-2">Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-gray-800/50">
+                                        <td class="py-2 font-mono text-indigo-400">subject_id</td>
+                                        <td class="py-2">Integer</td>
+                                        <td class="py-2 text-green-400">Yes</td>
+                                        <td class="py-2">ID of the subject interacting with.</td>
+                                    </tr>
+                                    <tr class="border-b border-gray-800/50">
+                                        <td class="py-2 font-mono text-indigo-400">title</td>
+                                        <td class="py-2">String</td>
+                                        <td class="py-2 text-green-400">Yes</td>
+                                        <td class="py-2">Brief subject line of the query.</td>
+                                    </tr>
+                                    <tr class="border-b border-gray-800/50">
+                                        <td class="py-2 font-mono text-indigo-400">content</td>
+                                        <td class="py-2">String</td>
+                                        <td class="py-2 text-green-400">Yes</td>
+                                        <td class="py-2">Detailed explanation of the issue.</td>
+                                    </tr>
+                                     <tr>
+                                        <td class="py-2 font-mono text-indigo-400">image</td>
+                                        <td class="py-2">File</td>
+                                        <td class="py-2 text-gray-500">No</td>
+                                        <td class="py-2">Optional screenshot/image attachment.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 8. Timetable -->
+                    <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden shadow-lg">
+                        <div class="p-6 border-b border-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-green-900 text-green-300 px-3 py-1 rounded text-sm font-bold border border-green-700">GET</span>
+                                <code class="text-white font-mono text-xl">/student/timetable</code>
+                            </div>
+                            <span class="text-gray-500 text-xs font-mono bg-gray-950 px-2 py-1 rounded">student.timetable</span>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-300">Renders the weekly schedule. Uses heuristic matching if specific Timetable entries are missing (mapping days to subjects).</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Faculty Section -->
+            <div x-show="activeCategory === 'faculty'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <span class="text-indigo-500 font-bold tracking-wide uppercase text-xs">Module</span>
+                <h1 class="mt-2 text-3xl font-extrabold text-white">Faculty API</h1>
+                <p class="mt-4 text-lg text-gray-400 mb-8">
+                    Endpoints for faculty management (Attendance, Marks, Mentorship).
+                </p>
+
+                <div class="space-y-12">
+                    
+                    <!-- 1. Dashboard -->
+                    <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden shadow-lg">
+                        <div class="p-6 border-b border-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-green-900 text-green-300 px-3 py-1 rounded text-sm font-bold border border-green-700">GET</span>
+                                <code class="text-white font-mono text-xl">/faculty/dashboard</code>
+                            </div>
+                            <span class="text-gray-500 text-xs font-mono bg-gray-950 px-2 py-1 rounded">faculty.dashboard</span>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-300 mb-6">Overview for faculty: today's schedule, pending attendance tasks, mentee count, and recent notices.</p>
+                        </div>
+                    </div>
+
+                    <!-- 2. Mark Attendance (Complex) -->
+                    <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden shadow-lg">
+                         <div class="p-6 border-b border-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-blue-900 text-blue-300 px-3 py-1 rounded text-sm font-bold border border-blue-700">POST</span>
+                                <code class="text-white font-mono text-xl">/faculty/attendance</code>
+                            </div>
+                            <span class="text-gray-500 text-xs font-mono bg-gray-950 px-2 py-1 rounded">faculty.attendance</span>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-300 mb-6">Submit daily attendance for a specific subject and batch. Supports bulk updates.</p>
+                            
+                            <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Form Data Parameters</h4>
+                            <table class="w-full text-left text-sm text-gray-400 mb-4">
+                                <thead class="border-b border-gray-800 text-gray-500 uppercase font-bold text-xs">
+                                    <tr>
+                                        <th class="py-2">Field</th>
+                                        <th class="py-2">Type</th>
+                                        <th class="py-2">Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-gray-800/50">
+                                        <td class="py-2 font-mono text-indigo-400">subject_id</td>
+                                        <td class="py-2">Integer</td>
+                                        <td class="py-2">ID of the subject class.</td>
+                                    </tr>
+                                    <tr class="border-b border-gray-800/50">
+                                        <td class="py-2 font-mono text-indigo-400">date</td>
+                                        <td class="py-2">Date (YYYY-MM-DD)</td>
+                                        <td class="py-2">The date of the lecture.</td>
+                                    </tr>
+                                    <tr class="border-b border-gray-800/50">
+                                        <td class="py-2 font-mono text-indigo-400">status_{student_id}</td>
+                                        <td class="py-2">String</td>
+                                        <td class="py-2">Status for each student (e.g., `status_101=Present`, `status_102=Absent`).</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 mt-6">Success Response</h4>
+                            <div class="bg-gray-950 rounded p-4 font-mono text-xs text-green-300 overflow-x-auto border border-gray-800">
 {
-  "status": "success"
+  "status": "success",
+  "message": "Attendance marked for 45 students.",
+  "timestamp": "2024-05-20T10:30:00Z"
 }
-</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Marks Entry -->
+                    <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden shadow-lg">
+                         <div class="p-6 border-b border-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-blue-900 text-blue-300 px-3 py-1 rounded text-sm font-bold border border-blue-700">POST</span>
+                                <code class="text-white font-mono text-xl">/faculty/marks</code>
+                            </div>
+                            <span class="text-gray-500 text-xs font-mono bg-gray-950 px-2 py-1 rounded">faculty.marks</span>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-300 mb-6">Submit marks for a specific Exam Paper. Validates against maximum marks defined in the paper.</p>
+                            
+                             <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Form Data Parameters</h4>
+                            <table class="w-full text-left text-sm text-gray-400 mb-4">
+                                <thead class="border-b border-gray-800 text-gray-500 uppercase font-bold text-xs">
+                                    <tr>
+                                        <th class="py-2">Field</th>
+                                        <th class="py-2">Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-gray-800/50">
+                                        <td class="py-2 font-mono text-indigo-400">exam_id</td>
+                                        <td class="py-2">Selected Exam Event ID (Query Param in GET).</td>
+                                    </tr>
+                                    <tr class="border-b border-gray-800/50">
+                                        <td class="py-2 font-mono text-indigo-400">paper_id</td>
+                                        <td class="py-2">Specific Exam Paper ID (Query Param in GET).</td>
+                                    </tr>
+                                    <tr class="border-b border-gray-800/50">
+                                        <td class="py-2 font-mono text-indigo-400">marks_{student_id}</td>
+                                        <td class="py-2">Numeric value for each student.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 4. My Classes (Details) -->
+                    <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden shadow-lg">
+                        <div class="p-6 border-b border-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-green-900 text-green-300 px-3 py-1 rounded text-sm font-bold border border-green-700">GET</span>
+                                <code class="text-white font-mono text-xl">/faculty/classes</code>
+                            </div>
+                            <span class="text-gray-500 text-xs font-mono bg-gray-950 px-2 py-1 rounded">faculty.classes</span>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-300 mb-4">Lists assigned subjects. Also processes Syllabus uploads via POST.</p>
+                        </div>
+                    </div>
+
+                     <!-- 5. Send Notice -->
+                    <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden shadow-lg">
+                         <div class="p-6 border-b border-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-blue-900 text-blue-300 px-3 py-1 rounded text-sm font-bold border border-blue-700">POST</span>
+                                <code class="text-white font-mono text-xl">/faculty/notices</code>
+                            </div>
+                            <span class="text-gray-500 text-xs font-mono bg-gray-950 px-2 py-1 rounded">faculty.notices</span>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-300 mb-6">Send a notice to a specific class or individual student.</p>
+                            
+                             <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Form Data Parameters</h4>
+                            <table class="w-full text-left text-sm text-gray-400 mb-4">
+                                <thead class="border-b border-gray-800 text-gray-500 uppercase font-bold text-xs">
+                                    <tr>
+                                        <th class="py-2">Field</th>
+                                        <th class="py-2">Required</th>
+                                        <th class="py-2">Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-gray-800/50">
+                                        <td class="py-2 font-mono text-indigo-400">title</td>
+                                        <td class="py-2 text-green-400">Yes</td>
+                                        <td class="py-2">Subject of the notice.</td>
+                                    </tr>
+                                    <tr class="border-b border-gray-800/50">
+                                        <td class="py-2 font-mono text-indigo-400">target_type</td>
+                                        <td class="py-2 text-green-400">Yes</td>
+                                        <td class="py-2">'class' or 'individual'.</td>
+                                    </tr>
+                                    <tr class="border-b border-gray-800/50">
+                                        <td class="py-2 font-mono text-indigo-400">target_course</td>
+                                        <td class="py-2 text-yellow-400">Cond.</td>
+                                        <td class="py-2">Required if target_type is 'class'.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Admin Section -->
+            <div x-show="activeCategory === 'admin'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <span class="text-indigo-500 font-bold tracking-wide uppercase text-xs">Module</span>
+                <h1 class="mt-2 text-3xl font-extrabold text-white">Admin API</h1>
+                <p class="mt-4 text-lg text-gray-400 mb-8">
+                    System-wide management endpoints (Users, Courses, Exams, Reports).
+                </p>
+
+                <div class="space-y-12">
+                    
+                    <!-- 1. Add Student (Detailed Form) -->
+                    <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden shadow-lg">
+                        <div class="p-6 border-b border-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-blue-900 text-blue-300 px-3 py-1 rounded text-sm font-bold border border-blue-700">POST</span>
+                                <code class="text-white font-mono text-xl">/admin/students/add</code>
+                            </div>
+                            <span class="text-gray-500 text-xs font-mono bg-gray-950 px-2 py-1 rounded">admin.add_student</span>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-300 mb-6">Create a new student profile and associated user account. Handles password hashing and initial setup.</p>
+                            
+                             <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Form Fields</h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-gray-400 mb-4 whitespace-nowrap">
+                                    <thead class="border-b border-gray-800 text-gray-500 uppercase font-bold text-xs">
+                                        <tr>
+                                            <th class="py-2 pr-4">Field Name</th>
+                                            <th class="py-2 pr-4">Type</th>
+                                            <th class="py-2 pr-4">Required</th>
+                                            <th class="py-2">Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-gray-800/50"><td class="py-2 font-mono text-indigo-400">name</td><td>String</td><td class="text-green-400">Yes</td><td>Full Name</td></tr>
+                                        <tr class="border-b border-gray-800/50"><td class="py-2 font-mono text-indigo-400">email</td><td>Email</td><td class="text-green-400">Yes</td><td>Unique Email Address</td></tr>
+                                        <tr class="border-b border-gray-800/50"><td class="py-2 font-mono text-indigo-400">password</td><td>String</td><td class="text-green-400">Yes</td><td>Initial Password</td></tr>
+                                        <tr class="border-b border-gray-800/50"><td class="py-2 font-mono text-indigo-400">enrollment_number</td><td>String</td><td class="text-green-400">Yes</td><td>Unique ID</td></tr>
+                                        <tr class="border-b border-gray-800/50"><td class="py-2 font-mono text-indigo-400">course_name</td><td>String</td><td class="text-green-400">Yes</td><td>e.g., "B.Tech"</td></tr>
+                                        <tr class="border-b border-gray-800/50"><td class="py-2 font-mono text-indigo-400">semester</td><td>Integer</td><td class="text-green-400">Yes</td><td>Current Semester</td></tr>
+                                        <tr class="border-b border-gray-800/50"><td class="py-2 font-mono text-indigo-400">batch_year</td><td>String</td><td class="text-gray-500">No</td><td>e.g., "2024-2028"</td></tr>
+                                        <tr class="border-b border-gray-800/50"><td class="py-2 font-mono text-indigo-400">date_of_birth</td><td>Date</td><td class="text-gray-500">No</td><td>YYYY-MM-DD</td></tr>
+                                        <tr class="border-b border-gray-800/50"><td class="py-2 font-mono text-indigo-400">phone_number</td><td>String</td><td class="text-gray-500">No</td><td>Contact Number</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Import Students (CSV) -->
+                    <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden shadow-lg">
+                         <div class="p-6 border-b border-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-blue-900 text-blue-300 px-3 py-1 rounded text-sm font-bold border border-blue-700">POST</span>
+                                <code class="text-white font-mono text-xl">/admin/students/import</code>
+                            </div>
+                            <span class="text-gray-500 text-xs font-mono bg-gray-950 px-2 py-1 rounded">admin.import_students</span>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-300 mb-6">Bulk upload students via CSV file.</p>
+                             <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">CSV Specification</h4>
+                            <div class="bg-gray-950 rounded p-4 font-mono text-xs text-yellow-300 overflow-x-auto border border-gray-800">
+name,email,password,enrollment_number,course_name,semester
+John Doe,john@example.com,pass123,EN1001,B.Tech,1
+Jane Smith,jane@example.com,pass456,EN1002,MCA,3
+                            </div>
+                        </div>
+                    </div>
+
+                     <!-- 3. Add Faculty -->
+                    <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden shadow-lg">
+                        <div class="p-6 border-b border-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-blue-900 text-blue-300 px-3 py-1 rounded text-sm font-bold border border-blue-700">POST</span>
+                                <code class="text-white font-mono text-xl">/admin/faculty/add</code>
+                            </div>
+                            <span class="text-gray-500 text-xs font-mono bg-gray-950 px-2 py-1 rounded">admin.add_faculty</span>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-300 mb-6">Create a new faculty profile. allow assigning multiple subjects initially.</p>
+                            
+                             <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Key Parameters</h4>
+                            <table class="w-full text-left text-sm text-gray-400 mb-4">
+                                <tbody>
+                                    <tr class="border-b border-gray-800/50"><td class="py-2 font-mono text-indigo-400 pr-4">designation</td><td>e.g., "Professor", "Assistant Professor"</td></tr>
+                                    <tr class="border-b border-gray-800/50"><td class="py-2 font-mono text-indigo-400 pr-4">assigned_subjects</td><td>Multi-select list of Subject Names</td></tr>
+                                    <tr class="border-b border-gray-800/50"><td class="py-2 font-mono text-indigo-400 pr-4">photo</td><td>Binary file upload (image)</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 4. Generate Timetable -->
+                    <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden shadow-lg">
+                        <div class="p-6 border-b border-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-blue-900 text-blue-300 px-3 py-1 rounded text-sm font-bold border border-blue-700">POST</span>
+                                <code class="text-white font-mono text-xl">/admin/timetable/generate</code>
+                            </div>
+                            <span class="text-gray-500 text-xs font-mono bg-gray-950 px-2 py-1 rounded">admin.generate_timetable</span>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-300 mb-6">Triggers the automatic scheduling algorithm for a specific course and semester. Replaces any existing schedule.</p>
+                            
+                             <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Algorithm Inputs</h4>
+                            <ul class="list-disc list-inside text-gray-400 text-sm space-y-2">
+                                <li><strong>Constraints</strong>: Days per week, Slots per day.</li>
+                                <li><strong>Subjects</strong>: Minimum weekly lectures per subject.</li>
+                                <li><strong>Logic</strong>: Randomizes subject pool, fills slots ensuring daily consistency, and respects faculty conflicts (if enabled).</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- 5. Create Exam Event -->
+                    <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden shadow-lg">
+                         <div class="p-6 border-b border-gray-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-blue-900 text-blue-300 px-3 py-1 rounded text-sm font-bold border border-blue-700">POST</span>
+                                <code class="text-white font-mono text-xl">/admin/exams/create</code>
+                            </div>
+                            <span class="text-gray-500 text-xs font-mono bg-gray-950 px-2 py-1 rounded">admin.create_exam_event</span>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-300">Initializes a new exam session (e.g., "End Sem May 2024"). Requires defining the start/end dates and the target course/semester.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-6 mt-8">
+                        {% for route in [
+                            ('admin.dashboard', '/admin/dashboard', 'GET'),
+                            ('admin.students_list', '/admin/students', 'GET'),
+                            ('admin.edit_student', '/admin/students/edit/<int:id>', 'GET, POST'),
+                            ('admin.delete_student', '/admin/students/delete/<int:id>', 'POST'),
+                            ('admin.faculty_list', '/admin/faculty', 'GET'),
+                            ('admin.edit_faculty', '/admin/faculty/edit/<int:id>', 'GET, POST'),
+                            ('admin.delete_faculty', '/admin/faculty/delete/<int:id>', 'POST'),
+                            ('admin.courses_list', '/admin/courses', 'GET'),
+                            ('admin.add_course', '/admin/courses/add', 'GET, POST'),
+                            ('admin.subjects_list', '/admin/subjects', 'GET'),
+                            ('admin.add_subject', '/admin/subjects/add', 'GET, POST'),
+                            ('admin.timetable_landing', '/admin/timetable', 'GET'),
+                            ('admin.timetable_setup', '/admin/timetable/setup', 'GET, POST'),
+                            ('admin.update_slot', '/admin/timetable/update_slot', 'POST'),
+                            ('admin.exams_dashboard', '/admin/exams', 'GET'),
+                            ('admin.schedule_exam', '/admin/exams/<int:event_id>/schedule', 'GET, POST'),
+                            ('admin.export_results', '/admin/exams/export', 'POST'),
+                            ('admin.system_reports', '/admin/reports', 'GET'),
+                            ('admin.notices_dashboard', '/admin/notices', 'GET'),
+                            ('admin.create_notice', '/admin/notices/create', 'GET, POST')
+                        ] %}
+                        <div class="bg-gray-900 rounded-lg p-5 border border-gray-800 hover:border-indigo-900 transition-colors">
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                <div class="flex items-center gap-3">
+                                    <span class="px-2 py-1 rounded text-xs font-bold border 
+                                        {% if 'POST' in route[2] %}bg-blue-900 text-blue-300 border-blue-700{% else %}bg-green-900 text-green-300 border-green-700{% endif %}">
+                                        {{ route[2] }}
+                                    </span>
+                                    <code class="text-indigo-300 font-mono text-sm break-all">{{ route[1] }}</code>
                                 </div>
+                                <code class="text-gray-500 text-xs font-mono bg-gray-950 px-2 py-1 rounded">{{ route[0] }}</code>
                             </div>
                         </div>
+                        {% endfor %}
                     </div>
+
                 </div>
             </div>
 
-             <!-- Student Forms (POST) -->
-            <div x-show="activeCategory === 'student-forms'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
-                <span class="text-indigo-500 font-bold tracking-wide uppercase text-xs">Form Interactions (POST)</span>
-                <h1 class="mt-2 text-3xl font-extrabold text-white">Student Operations</h1>
-                <p class="mt-4 text-lg text-gray-400">
-                    Interactions typically handled via HTML Forms. Response is usually a Redirect or HTML render.
+            <!-- Main Section -->
+            <div x-show="activeCategory === 'main'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <span class="text-indigo-500 font-bold tracking-wide uppercase text-xs">Public</span>
+                <h1 class="mt-2 text-3xl font-extrabold text-white">Public / Main API</h1>
+                <p class="mt-4 text-lg text-gray-400 mb-8">
+                    Publicly accessible routes and static resources.
                 </p>
 
-                <div class="mt-12 space-y-16">
-                     <!-- Form Endpoint 1 -->
-                    <div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="bg-blue-900 text-blue-300 px-2 py-1 rounded text-xs font-bold border border-blue-700">POST</span>
-                            <code class="text-white font-mono">/student/queries/create</code>
-                        </div>
-                        <p class="text-gray-400 mb-4">Submit a new query to the faculty/admin.</p>
-                        
-                        <div class="bg-gray-950 rounded-lg border border-gray-800 overflow-hidden">
-                            <div class="flex border-b border-gray-800">
-                                <span class="px-4 py-2 text-sm text-gray-500">Form Data Keys</span>
+                <div class="grid grid-cols-1 gap-6">
+                    {% for route in [
+                        ('main.index', '/', 'GET'),
+                        ('main.features_student', '/features/student', 'GET'),
+                        ('main.features_faculty', '/features/faculty', 'GET'),
+                        ('main.features_admin', '/features/admin', 'GET'),
+                        ('main.pricing', '/pricing', 'GET'),
+                        ('main.documentation', '/documentation', 'GET'),
+                        ('main.api_reference', '/api-reference', 'GET'),
+                        ('main.help_center', '/help-center', 'GET'),
+                        ('main.system_status', '/system-status', 'GET'),
+                        ('main.privacy_policy', '/privacy-policy', 'GET'),
+                        ('main.terms_of_service', '/terms-of-service', 'GET'),
+                        ('main.cookie_settings', '/cookie-settings', 'GET')
+                    ] %}
+                    <div class="bg-gray-900 rounded-lg p-5 border border-gray-800 hover:border-indigo-900 transition-colors">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <span class="px-2 py-1 rounded text-xs font-bold border 
+                                    {% if 'POST' in route[2] %}bg-blue-900 text-blue-300 border-blue-700{% else %}bg-green-900 text-green-300 border-green-700{% endif %}">
+                                    {{ route[2] }}
+                                </span>
+                                <code class="text-indigo-300 font-mono text-sm break-all">{{ route[1] }}</code>
                             </div>
-                            <div class="p-4 overflow-x-auto">
-<pre class="text-xs text-blue-300 font-mono leading-relaxed">
-category: "Academic" | "Hostel" | "Fees" | "Other"
-subject: "Linear Algebra Doubt"
-description: "Detailed explanation of the issue..."
-priority: "Low" | "Medium" | "High"
-</pre>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Form Endpoint 2 -->
-                    <div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="bg-blue-900 text-blue-300 px-2 py-1 rounded text-xs font-bold border border-blue-700">POST</span>
-                            <code class="text-white font-mono">/student/events/register/{event_id}</code>
-                        </div>
-                        <p class="text-gray-400 mb-4">Register for a university event.</p>
-                         <div class="bg-gray-950 rounded-lg border border-gray-800 overflow-hidden">
-                            <div class="flex border-b border-gray-800">
-                                <span class="px-4 py-2 text-sm text-gray-500">Form Data</span>
-                            </div>
-                            <div class="p-4 overflow-x-auto">
-<pre class="text-xs text-blue-300 font-mono leading-relaxed">
-(No body required, ID is in URL)
-</pre>
-                            </div>
+                            <code class="text-gray-500 text-xs font-mono bg-gray-950 px-2 py-1 rounded">{{ route[0] }}</code>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Faculty Forms (POST) -->
-            <div x-show="activeCategory === 'faculty-forms'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
-                <span class="text-indigo-500 font-bold tracking-wide uppercase text-xs">Form Interactions (POST)</span>
-                <h1 class="mt-2 text-3xl font-extrabold text-white">Faculty Operations</h1>
-                <p class="mt-4 text-lg text-gray-400">
-                    Actions for managing academic data.
-                </p>
-
-                <div class="mt-12 space-y-16">
-                     <!-- Form Endpoint 1 -->
-                    <div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="bg-blue-900 text-blue-300 px-2 py-1 rounded text-xs font-bold border border-blue-700">POST</span>
-                            <code class="text-white font-mono">/faculty/attendance</code>
-                        </div>
-                        <p class="text-gray-400 mb-4">Submit attendance for a class.</p>
-                        
-                        <div class="bg-gray-950 rounded-lg border border-gray-800 overflow-hidden">
-                            <div class="flex border-b border-gray-800">
-                                <span class="px-4 py-2 text-sm text-gray-500">Form Data Keys</span>
-                            </div>
-                            <div class="p-4 overflow-x-auto">
-<pre class="text-xs text-blue-300 font-mono leading-relaxed">
-course: "B.Tech"
-semester: 4
-subject_id: 12
-date: "2024-03-15"
-attendance_{student_id}: "Present" | "Absent" (Repeat for each student)
-</pre>
-                            </div>
-                        </div>
-                    </div>
-                     <!-- Form Endpoint 2 -->
-                    <div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="bg-blue-900 text-blue-300 px-2 py-1 rounded text-xs font-bold border border-blue-700">POST</span>
-                            <code class="text-white font-mono">/faculty/marks</code>
-                        </div>
-                        <p class="text-gray-400 mb-4">Update marks for an exam paper.</p>
-                        
-                        <div class="bg-gray-950 rounded-lg border border-gray-800 overflow-hidden">
-                            <div class="flex border-b border-gray-800">
-                                <span class="px-4 py-2 text-sm text-gray-500">Form Data Keys</span>
-                            </div>
-                            <div class="p-4 overflow-x-auto">
-<pre class="text-xs text-blue-300 font-mono leading-relaxed">
-exam_paper_id: 45
-marks_{student_id}: 85 (Repeat for each student)
-</pre>
-                            </div>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
 
